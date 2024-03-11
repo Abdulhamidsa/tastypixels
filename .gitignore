@@ -30,6 +30,4 @@ yarn-error.log*
 
 # vercel
 .vercel
-
-database
 .env
