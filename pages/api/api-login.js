@@ -1,5 +1,5 @@
 import { IncomingForm } from "formidable";
-import { loginUser } from "../../database/auth.js";
+import { loginUser } from "@/database/auth.js";
 
 export const config = {
   api: {
