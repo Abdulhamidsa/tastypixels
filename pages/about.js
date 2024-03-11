@@ -1,4 +1,4 @@
-import { fetchData } from "../../database/dataFetcher";
+import { fetchData } from "../database/dataFetcher";
 export default function UserPage({ userData }) {
   return (
     <div>
