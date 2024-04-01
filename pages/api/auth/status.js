@@ -6,22 +6,28 @@ import User from "../../../models/User";
 
 const jwtSecret = "verysecretekey";
 
-export async function authenticateUser(req) {
+export default async function handler(req, res) {
   await connectDB();
 
   const token = req.cookies.token;
 
   if (!token) {
-    return null; // Return null if token is not present
+    return res.status(401).json({ loggedIn: false });
   }
 
   try {
     const decoded = jwt.verify(token, jwtSecret);
     const userId = decoded.userId;
 
-    return userId; // Return the userId if authentication is successful
+    // Check if the user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(401).json({ loggedIn: false });
+    }
+
+    // If user exists, return login status
+    return res.status(200).json({ loggedIn: true, userId });
   } catch (error) {
-    console.error("Error authenticating user:", error);
-    return null; // Return null if authentication fails
+    return res.status(401).json({ loggedIn: false });
   }
 }
