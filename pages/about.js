@@ -2,7 +2,7 @@ import { Box, Badge, Image, Text } from "@chakra-ui/react";
 import React from "react";
 
 export async function getServerSideProps() {
-  const res = await fetch("http://localhost:3000/api/api-get-photos");
+  const res = await fetch("/api/api-get-photos");
   const photos = await res.json();
   return { props: { photos } };
 }
