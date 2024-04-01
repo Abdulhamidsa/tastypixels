@@ -1,34 +1,36 @@
+const mongoose = require("mongoose");
 const { client } = require("./db.js");
 const bcrypt = require("bcrypt");
 
-async function registerUser(email, password) {
-  try {
-    const db = client.db("tastypixels"); // replace with your database name
-    const users = db.collection("users"); // replace with your collection name
+// const userSchema = new mongoose.Schema({
+//   email: { type: String, required: true, unique: true },
+//   password: { type: String, required: true },
+// });
+// const User = mongoose.models.User || mongoose.model("User", userSchema);
+// async function registerUser(email, password) {
+//   try {
+//     // Hash the password before storing it
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Hash the password before storing it
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const result = await users.insertOne({ email, password: hashedPassword });
-    return result;
-  } catch (error) {
-    console.error("Error registering user:", error);
-    throw error;
-  }
-}
+//     const user = new User({ email, password: hashedPassword });
+//     const result = await user.save();
+//     return result;
+//   } catch (error) {
+//     console.error("Error registering user:", error);
+//     throw error;
+//   }
+// }
 
 async function loginUser(email, password) {
   try {
-    const db = client.db("tastypixels"); // replace with your database name
-    const users = db.collection("users"); // replace with your collection name
-
-    const user = await users.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Compare the passwords directly
-    if (password !== user.password) {
+    // Compare the passwords using bcrypt
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       throw new Error("Invalid password");
     }
 
@@ -39,4 +41,4 @@ async function loginUser(email, password) {
   }
 }
 
-module.exports = { registerUser, loginUser };
+module.exports = { loginUser };

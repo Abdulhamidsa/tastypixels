@@ -1,44 +1,57 @@
-import { fetchData } from "../database/dataFetcher";
-export default function UserPage({ userData }) {
+import { Box, Badge, Image, Text } from "@chakra-ui/react";
+import React from "react";
+
+export async function getServerSideProps() {
+  const res = await fetch("http://localhost:3000/api/api-get-photos");
+  const photos = await res.json();
+  return { props: { photos } };
+}
+
+function about({ photos }) {
+  console.log("Photos:", photos);
   return (
-    <div>
-      <h1>User Details</h1>
-      {/* Map over the userData array and render each user's details */}
-      {userData.map((user, index) => (
-        <div key={index}>
-          <h2>User ID: {user._id}</h2>
-          <p>Name: {user.username}</p>
-          <p>Email: {user.email}</p>
-          <p>Created At: {user.createdAt}</p>
-          <div>
-            <h2>Recipes:</h2>
-            {user.recipes && Array.isArray(user.recipes) && user.recipes.map((recipe, index) => <p key={index}>{JSON.stringify(recipe)}</p>)}
-          </div>
-        </div>
-      ))}
-    </div>
+    <>
+      {" "}
+      <Box>
+        sss
+        {photos.map((photo) => (
+          <Box>
+            {photos.map((photo) => (
+              <Box key={photo._id} maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden" m={4}>
+                <Image src={photo.imageUrl} alt={photo.title} />
+
+                <Box p="6">
+                  <Box d="flex" alignItems="baseline">
+                    {photo.category.map((category) => (
+                      <Badge key={category} borderRadius="full" px="2" colorScheme="teal" mr="2">
+                        {category}
+                      </Badge>
+                    ))}
+                  </Box>
+
+                  <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
+                    {photo.title}
+                  </Box>
+
+                  <Text mt="2" color="gray.600">
+                    {photo.description}
+                  </Text>
+
+                  <Box>
+                    {photo.tags.map((tag) => (
+                      <Badge key={tag} borderRadius="full" px="2" colorScheme="blue" mt="2" mr="2">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </Box>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        ))}
+      </Box>
+    </>
   );
 }
 
-export async function getStaticProps() {
-  const userData = await fetchData();
-  userData.forEach((user) => {
-    // Convert ObjectId to string
-    user._id = user._id.toString();
-    console.log(userData);
-    // Convert Date to string
-    if (user.createdAt) {
-      user.createdAt = user.createdAt.toISOString();
-    }
-
-    // Convert ObjectIds in recipes to strings
-    if (user.recipes) {
-      user.recipes.forEach((recipe) => {
-        if (recipe._id) {
-          recipe._id = recipe._id.toString();
-        }
-      });
-    }
-  });
-  return { props: { userData }, revalidate: 60 };
-}
+export default about;

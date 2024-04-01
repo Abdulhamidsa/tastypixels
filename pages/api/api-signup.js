@@ -1,9 +1,8 @@
-// api/signup.js
 import { IncomingForm } from "formidable";
-import { registerUser } from "../../database/auth.js";
-import { checkExistingUser, isValidEmail, isValidPassword } from "../../util/validations.js"; // Import the functions
-
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
+import user from "../../models/User";
+import connectDB from "../../database/db";
+import { isValidEmail, isValidPassword, checkExistingUser } from "../../util/validations";
 
 export const config = {
   api: {
@@ -12,53 +11,46 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  if (req.method === "POST") {
-    const form = new IncomingForm();
+  await connectDB();
 
-    form.parse(req, async (err, fields, files) => {
-      if (err) {
-        console.error("Error:", err);
-        res.status(500).json({ error: err.message });
-        return;
-      }
+  const form = new IncomingForm();
 
-      console.log("Parsed fields:", fields); // Log the parsed fields
-      try {
-        const email = fields.email[0];
-        const password = fields.password[0];
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.error("Error parsing form data:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
 
-        // Validate the email and password before proceeding
-        if (!isValidEmail(email)) {
-          res.status(400).json({ error: "Invalid email format" });
-          return;
-        }
+    const email = typeof fields.email === "string" ? fields.email : fields.email[0];
+    const password = typeof fields.password === "string" ? fields.password : fields.password[0];
 
-        if (!isValidPassword(password)) {
-          res.status(400).json({ error: "Password must be at least 8 characters long" });
-          return;
-        }
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
 
-        // Check if the email already exists in the database
-        const existingUser = await checkExistingUser(email);
-        if (existingUser) {
-          res.status(400).json({ error: "A user with this email already exists" });
-          return;
-        }
+    if (await checkExistingUser(email)) {
+      return res.status(400).json({ message: "User with this email already exists" });
+    }
 
-        // Hash the password before saving it to the database
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: "Invalid email" });
+    }
 
-        // Call the registerUser function to register the user with the hashed password
-        const result = await registerUser(email, hashedPassword);
-        console.log("Registration result:", result);
-        res.status(200).json({ message: "User registered successfully" });
-      } catch (error) {
-        console.error("Error:", error);
-        res.status(500).json({ error: error.message });
-      }
+    if (!isValidPassword(password)) {
+      return res.status(400).json({ message: "Invalid password" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const person = new user({
+      email: email,
+      password: hashedPassword,
     });
-  } else {
-    res.status(405).json({ error: "Method not allowed" });
-  }
+
+    try {
+      await person.save();
+      return res.status(200).json({ done: true });
+    } catch (error) {
+      console.error("Error saving user:", error);
+      return res.status(500).json({ message: "Error saving user" });
+    }
+  });
 }
