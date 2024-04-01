@@ -1,6 +1,6 @@
 // api-get-photos.js
 import dbConnect from "../../database/db";
-import ME from "../../models/Photo"; // Path to your Mongoose model file
+import ME from "../../models/Photo";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
