@@ -12,12 +12,10 @@ export const AuthProvider = ({ children }) => {
       try {
         const response = await fetch("/api/auth/status");
         const data = await response.json();
-        setIsLoggedIn(true);
-        console.log("Data:", data.loggedIn);
+        setIsLoggedIn(data.loggedIn);
       } catch (error) {
-        console.error("Error checking login status:", error);
-      } finally {
-        setIsLoading(false);
+        console.error("Error fetching login status:", error);
+        setIsLoggedIn(false); // Set isLoggedIn to false if an error occurs
       }
     };
 
