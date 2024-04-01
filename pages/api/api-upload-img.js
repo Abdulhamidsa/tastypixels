@@ -17,8 +17,8 @@ export default async function handler(req, res) {
     await dbConnect();
 
     // Authenticate user and get the user ID
-    const userId = await authenticateUser(req);
-    console.log("User ID:", userId); // Log the userId to check if it's retrieved correctly
+    // const userId = await authenticateUser(req);
+    // console.log("User ID:", userId); // Log the userId to check if it's retrieved correctly
 
     // Create a new photo document in the database with all required fields
     const newPhoto = new Photo({
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
       description,
       category,
       tags,
-      userId, // Pass the extracted user ID
+      // userId, // Pass the extracted user ID
       approved: true, // Set the default value for 'approved'
       // createdAt: Date.now(), // Set the current date for 'createdAt'
     });
