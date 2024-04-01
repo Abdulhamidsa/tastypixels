@@ -1,9 +1,7 @@
 import { useState, useRef } from "react";
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton, Flex } from "@chakra-ui/react";
 
-export default function Photos({ photos }) {
-  console.log("Received photos in Photos component:", photos); // Add this line to log the received photos
-
+export default function home({ photos }) {
   const [imageUrl, setImageUrl] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
