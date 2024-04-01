@@ -1,13 +1,6 @@
 import { Box, Badge, Image, Text } from "@chakra-ui/react";
-import React from "react";
 
-export async function getServerSideProps() {
-  const res = await fetch("/api/api-get-photos");
-  const photos = await res.json();
-  return { props: { photos } };
-}
-
-function about({ photos }) {
+export default function about({ photos }) {
   console.log("Photos:", photos);
   return (
     <>
@@ -50,4 +43,8 @@ function about({ photos }) {
   );
 }
 
-export default about;
+export async function getServerSideProps() {
+  const res = await fetch("/api/api-get-photos");
+  const photos = await res.json();
+  return { props: { photos } };
+}
