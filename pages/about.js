@@ -1,16 +1,5 @@
 import { Box, Badge, Image, Text } from "@chakra-ui/react";
 import clientPromise from "../database/db";
-
-export async function getServerSideProps(context) {
-  const client = await clientPromise;
-  const db = client.db("tastypixels");
-  const data = await db.collection("hims").find({}).toArray();
-  const photos = JSON.parse(JSON.stringify(data));
-  return {
-    props: { photos },
-  };
-}
-
 export default function about({ photos }) {
   console.log("Photos:", photos);
   return (
@@ -51,4 +40,14 @@ export default function about({ photos }) {
       </Box>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const client = await clientPromise;
+  const db = client.db("tastypixels");
+  const data = await db.collection("hims").find({}).toArray();
+  const photos = JSON.parse(JSON.stringify(data));
+  return {
+    props: { photos },
+  };
 }
