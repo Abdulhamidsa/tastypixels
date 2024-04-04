@@ -8,6 +8,7 @@ const nextConfig = {
     DB_USERNAME: "aboood",
     DB_NAME: "tastypixels",
     DB_CLUSTER_URL: "cluster0.bn3dcrh.mongodb.net",
+    MONGODB_URI: "mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
   },
   images: {
     domains: ["res.cloudinary.com"],
