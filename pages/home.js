@@ -49,7 +49,7 @@ export default function home({ photos }) {
           title,
           description,
           tags: selectedTags,
-          category: selectedCategory, // Changed to single category value
+          category: selectedCategory,
         }),
       })
         .then((response) => {
