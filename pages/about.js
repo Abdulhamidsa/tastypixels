@@ -1,5 +1,5 @@
 import { Box, Badge, Image, Text } from "@chakra-ui/react";
-
+import dbConnect from "../database/db";
 export default function about({ photos }) {
   console.log("Photos:", photos);
   return (
@@ -44,9 +44,23 @@ export default function about({ photos }) {
 }
 
 export async function getServerSideProps() {
-  const res = await fetch("/api/api-get-photos");
-  const photos = await res.json();
-  return {
-    props: { photos },
-  };
+  try {
+    await dbConnect();
+    const res = await fetch("/api/api-get-photos");
+    if (!res.ok) {
+      throw new Error("Failed to fetch photos");
+    }
+    const photos = await res.json();
+    return {
+      props: { photos },
+    };
+  } catch (error) {
+    console.error("Error fetching photos:", error);
+    return {
+      props: {
+        photos: [],
+        error: "Failed to fetch photos",
+      },
+    };
+  }
 }
