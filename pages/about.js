@@ -44,22 +44,9 @@ export default function about({ photos }) {
 }
 
 export async function getServerSideProps() {
-  try {
-    const res = await fetch("/api/api-get-photos");
-    if (!res.ok) {
-      throw new Error("Failed to fetch photos");
-    }
-    const photos = await res.json();
-    return {
-      props: { photos },
-    };
-  } catch (error) {
-    console.error("Error fetching photos:", error);
-    return {
-      props: {
-        photos: [],
-        error: "Failed to fetch photos",
-      },
-    };
-  }
+  const res = await fetch("/api/api-get-photos");
+  const photos = await res.json();
+  return {
+    props: { photos },
+  };
 }
