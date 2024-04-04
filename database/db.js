@@ -1,26 +1,38 @@
-const mongoose = require("mongoose");
+const { MongoClient } = require("mongodb");
 
-async function connectDB() {
-  const username = process.env.DB_USERNAME;
-  const password = process.env.DB_PASSWORD;
-  const databaseName = process.env.DB_NAME;
-  const clusterUrl = process.env.DB_CLUSTER_URL;
+const MONGODB_URI = "mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-  if (!username || !password || !databaseName || !clusterUrl) {
-    console.error("Missing required connection parameters for MongoDB connection.");
-    process.exit(1); // Exit the process if any required parameter is missing
-  }
-
-  const DATABASE_URL = `mongodb+srv://${username}:${password}@${clusterUrl}/${databaseName}?retryWrites=true&w=majority`;
-
-  try {
-    const connection = await mongoose.connect(DATABASE_URL);
-    console.log("You successfully connected to MongoDB!");
-    return connection;
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    throw error;
-  }
+if (!MONGODB_URI) {
+  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
 }
 
-module.exports = connectDB;
+const uri = MONGODB_URI;
+const options = {
+  serverApi: {
+    version: "1",
+    strict: true,
+    deprecationErrors: true,
+  },
+};
+
+let client;
+let clientPromise;
+
+if (process.env.NODE_ENV === "development") {
+  let globalWithMongo = global;
+  if (!globalWithMongo._mongoClientPromise) {
+    client = new MongoClient(uri, options);
+    globalWithMongo._mongoClientPromise = client.connect();
+  }
+  clientPromise = globalWithMongo._mongoClientPromise;
+} else {
+  client = new MongoClient(uri, options);
+  clientPromise = client.connect();
+}
+
+// Adding a console log for successful connection
+clientPromise.then(() => {
+  console.log("Successfully connected to MongoDB!");
+});
+
+module.exports = clientPromise;
