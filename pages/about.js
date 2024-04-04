@@ -43,7 +43,7 @@ export default function about({ photos }) {
   );
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const res = await fetch("http:/localhost:3000/api/api-get-photos");
   const photos = await res.json();
   return {
