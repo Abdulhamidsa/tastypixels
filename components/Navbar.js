@@ -67,6 +67,7 @@ const Navbar = () => {
         <ChakraLink as={NextLink} href="/home" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
           Upload
         </ChakraLink>
+        <IconButton aria-label="Logout" icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" />
         {/* Conditionally render Sign Up and Sign In buttons */}
         {!isLoggedIn && (
           <>
