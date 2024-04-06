@@ -4,8 +4,8 @@ import Layout from "@/components/Layout"; // adjust the path according to your p
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import theme from "@/components/theme";
 import { SessionProvider } from "next-auth/react";
-import { AuthProvider } from "../components/AuthContext"; // Import useAuth here
-import { useAuth } from "../components/AuthContext";
+import { AuthProvider } from "@/context/AuthContext"; // Import useAuth here
+// import { useAuth } from "@/context/AuthContext";
 // adjust the path according to your project structure
 
 export default function App({ Component, pageProps }) {

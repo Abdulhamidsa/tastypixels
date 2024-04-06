@@ -16,6 +16,8 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error("Error fetching login status:", error);
         setIsLoggedIn(false); // Set isLoggedIn to false if an error occurs
+      } finally {
+        setIsLoading(false);
       }
     };
 

@@ -6,17 +6,19 @@ import SignUp from "@/components/Signup";
 import NextLink from "next/link";
 import Signin from "./Signin";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
 import router from "next/router";
+import { useRouter } from "next/router";
 
 const Navbar = () => {
-  const { isLoggedIn, logouts, isLoading } = useAuth();
+  const { isLoggedIn, logouts, isLoading, userId } = useAuth();
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const [formType, setFormType] = useState(null);
-
+  // console.log("userId", userId);
+  console.log("isLoggedIn", isLoading);
   async function logout() {
     try {
       const response = await fetch("/api/api-logout", {
@@ -54,13 +56,16 @@ const Navbar = () => {
   }
   return (
     <Flex as="nav" align="center" justify="center" padding="1rem">
-      <ChakraLink as={NextLink} color="red" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-        My Next.js App
+      <ChakraLink as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
+        TASTY PIXELS
       </ChakraLink>
       <IconButton aria-label="Open menu" icon={<HamburgerIcon />} size="lg" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
       <Flex align="center" display={{ base: "none", md: "flex" }} gap={4}>
         <ChakraLink as={NextLink} href="/about" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
           About
+        </ChakraLink>
+        <ChakraLink as={NextLink} href="/home" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
+          Upload
         </ChakraLink>
         {/* Conditionally render Sign Up and Sign In buttons */}
         {!isLoggedIn && (
@@ -79,8 +84,8 @@ const Navbar = () => {
           <ModalContent maxW="800px">
             <ModalHeader>{formType === "logout" ? "Logout" : formType === "signup" ? "Sign Up" : "Sign In"}</ModalHeader>
             <ModalCloseButton />
-            <ModalBody>{formType === "signup" ? <SignUp /> : formType === "signin" ? <Signin /> : null}</ModalBody>
-            <ModalFooter>hi</ModalFooter>
+            <ModalBody>{formType === "signup" ? <SignUp /> : formType === "signin" ? <Signin closeModal={onModalClose} /> : null}</ModalBody>
+            {/* <ModalFooter>hi</ModalFooter> */}
           </ModalContent>
         </Modal>
         <IconButton aria-label="Toggle dark mode" icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />} onClick={toggleColorMode} />
@@ -95,9 +100,12 @@ const Navbar = () => {
                 <ChakraLink as={NextLink} href="/about" onClick={onMenuClose}>
                   About
                 </ChakraLink>
-                <ChakraLink as={NextLink} href="/contact" onClick={onMenuClose}>
+                {/* <ChakraLink as={NextLink} href="/contact" onClick={onMenuClose}>
                   Contact
-                </ChakraLink>
+                </ChakraLink> */}
+                {/* <ChakraLink as={NextLink} onClick={onMenuClose}>
+                  Home
+                </ChakraLink> */}
                 {!isLoggedIn && (
                   <>
                     <ChakraLink as={Button} onClick={() => handleOpenModal("signup")}>
@@ -108,6 +116,9 @@ const Navbar = () => {
                     </ChakraLink>
                   </>
                 )}
+                <ChakraLink as={NextLink} href="/home" onClick={onMenuClose}>
+                  Upload
+                </ChakraLink>
                 <IconButton aria-label="Toggle dark mode" icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />} onClick={toggleColorMode} />
               </VStack>
             </DrawerBody>

@@ -2,7 +2,7 @@
 import { Box } from "@chakra-ui/react";
 import Navbar from "@/components/Navbar";
 import { createContext, useState } from "react";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 // Define the LoginContext outside of the Layout component
 export const LoginContext = createContext();

@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     // Set the token as a cookie
     const cookieOptions = {
       httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7, // 1 week expiration
+      maxAge: 60 * 60 * 24,
       path: "/", // root path
       sameSite: "lax", // change to "strict" if needed
       secure: process.env.NODE_ENV === "production", // enable in production

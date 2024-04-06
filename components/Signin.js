@@ -4,15 +4,15 @@ import { useState } from "react";
 import { FormControl, Text, FormLabel, Input, FormErrorMessage, Button, useToast, Box } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { useAuth } from "../components/AuthContext";
+// import { signIn, signOut, useSession } from "next-auth/react";
+import { useAuth } from "@/context/AuthContext";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Required"),
   password: Yup.string().required("Required"),
 });
 
-const Signin = () => {
+const Signin = ({ closeModal }) => {
   const router = useRouter();
   const { login } = useAuth();
   const { isLoggedIn } = useAuth();
@@ -45,15 +45,14 @@ const Signin = () => {
             // sessionStorage.setItem("token", data.success);
             login();
             // }
-
-            router.push("/home");
-
             // Update login status
             setLoginStatus("success");
 
             // Reset login status after a certain time
             setTimeout(() => {
               setLoginStatus("idle");
+              closeModal();
+              router.push("/home");
             }, 3000); // Reset after 3 seconds
           } else {
             setLoginStatus("error");

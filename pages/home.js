@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton, Flex } from "@chakra-ui/react";
-
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton } from "@chakra-ui/react";
+import { useAuth } from "@/context/AuthContext";
 export default function home({ photos }) {
   const [imageUrl, setImageUrl] = useState("");
   const [title, setTitle] = useState("");
@@ -9,6 +9,7 @@ export default function home({ photos }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [tagInput, setTagInput] = useState(""); // State to store the current tag input
   const [tagError, setTagError] = useState(""); // State to store tag input error message
+  const { isLoggedIn } = useAuth();
 
   const fileInputRef = useRef(null); // Create a ref for the file input element
   const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
@@ -112,57 +113,63 @@ export default function home({ photos }) {
 
   return (
     <>
-      <Box>
-        <FormControl>
-          <FormLabel>Title</FormLabel>
-          <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter title" />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Description</FormLabel>
-          <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description" />
-        </FormControl>
-        <FormControl isInvalid={tagError !== ""}>
-          <FormLabel>Custom Tags</FormLabel>
-          <Wrap>
-            {selectedTags.map((tag) => (
-              <Tag key={tag} size="md" borderRadius="full" variant="solid" colorScheme="blue" mr={1} mb={1}>
-                <TagLabel>{tag}</TagLabel>
-                <TagCloseButton onClick={() => handleRemoveTag(tag)} />
-              </Tag>
-            ))}
-          </Wrap>
-          <Input
-            type="text"
-            value={tagInput}
-            onChange={handleTagInputChange}
-            placeholder="Enter custom tags"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleAddTag();
-              }
-            }}
-          />
-          <FormErrorMessage>{tagError}</FormErrorMessage> {/* Display tag error message */}
-        </FormControl>
-        <FormControl>
-          <FormLabel>Category</FormLabel>
-          <Select value={selectedCategory} onChange={handleCategorySelect}>
-            <option value="">Select Category</option>
-            {predefinedCategories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <FormLabel>Image</FormLabel>
-          <Input type="file" ref={fileInputRef} onChange={handleUpload} />
-        </FormControl>
-        {imageUrl && <img src={imageUrl} alt="Uploaded" />}
-        <Button onClick={saveToDatabase}>Save to Database</Button>
-      </Box>
+      {isLoggedIn ? (
+        <Box>
+          <FormControl>
+            <FormLabel>Title</FormLabel>
+            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter title" />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Description</FormLabel>
+            <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description" />
+          </FormControl>
+          <FormControl isInvalid={tagError !== ""}>
+            <FormLabel>Custom Tags</FormLabel>
+            <Wrap>
+              {selectedTags.map((tag) => (
+                <Tag key={tag} size="md" borderRadius="full" variant="solid" colorScheme="blue" mr={1} mb={1}>
+                  <TagLabel>{tag}</TagLabel>
+                  <TagCloseButton onClick={() => handleRemoveTag(tag)} />
+                </Tag>
+              ))}
+            </Wrap>
+            <Input
+              type="text"
+              value={tagInput}
+              onChange={handleTagInputChange}
+              placeholder="Enter custom tags"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddTag();
+                }
+              }}
+            />
+            <FormErrorMessage>{tagError}</FormErrorMessage> {/* Display tag error message */}
+          </FormControl>
+          <FormControl>
+            <FormLabel>Category</FormLabel>
+            <Select value={selectedCategory} onChange={handleCategorySelect}>
+              <option value="">Select Category</option>
+              {predefinedCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Image</FormLabel>
+            <Input type="file" ref={fileInputRef} onChange={handleUpload} />
+          </FormControl>
+          {imageUrl && <img src={imageUrl} alt="Uploaded" />}
+          <Button onClick={saveToDatabase}>Save to Database</Button>
+        </Box>
+      ) : (
+        <Box bg="tomato" w="100%" p={4} color="white" textAlign="center">
+          This content can only be seen after logging in.
+        </Box>
+      )}
     </>
   );
 }
