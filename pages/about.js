@@ -5,7 +5,6 @@ export default function about({ photos }) {
   return (
     <>
       <Box>
-        sss
         {photos.map((photo) => (
           <Box key={photo._id} m={4}>
             <Image src={photo.imageUrl} alt={photo.title} maxW="sm" borderWidth="1px" borderRadius="lg" />

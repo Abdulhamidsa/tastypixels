@@ -52,7 +52,7 @@ const Signin = ({ closeModal }) => {
             setTimeout(() => {
               setLoginStatus("idle");
               closeModal();
-              router.push("/home");
+              router.push("/");
             }, 3000); // Reset after 3 seconds
           } else {
             setLoginStatus("error");

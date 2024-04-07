@@ -11,9 +11,9 @@ const theme = extendTheme({
   styles: {
     global: (props) => ({
       body: {
-        bg: props.colorMode === "dark" ? "gray.800" : "gray.200",
+        bg: props.colorMode === "dark" ? "#212121" : "#ffffff",
         color: props.colorMode === "dark" ? "white" : "black",
-        transition: "background-color 1s",
+        transition: "background-color 1s ease-in-out",
       },
     }),
   },
