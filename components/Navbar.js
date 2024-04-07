@@ -106,6 +106,7 @@ const Navbar = () => {
                 <ChakraLink as={NextLink} href="/about" onClick={onMenuClose}>
                   About
                 </ChakraLink>
+                {isLoggedIn && <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" />}{" "}
                 {!isLoggedIn && (
                   <>
                     <ChakraLink as={Button} onClick={() => handleOpenModal("signup")}>
@@ -116,7 +117,6 @@ const Navbar = () => {
                     </ChakraLink>
                   </>
                 )}
-
                 <IconButton aria-label="Toggle dark mode" icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />} onClick={toggleColorMode} />
               </VStack>
             </DrawerBody>
