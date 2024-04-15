@@ -1,41 +1,58 @@
 import { Box, Badge, Image, Text } from "@chakra-ui/react";
 import clientPromise from "../database/db";
-export default function about({ photos }) {
+
+export default function About({ photos }) {
   console.log("Photos:", photos);
+
+  // Calculate the aspect ratio of each image
+  const calculateAspectRatio = (width, height) => {
+    return width / height;
+  };
+
   return (
     <>
-      <Box>
-        {photos.map((photo) => (
-          <Box key={photo._id} m={4}>
-            <Image src={photo.imageUrl} alt={photo.title} maxW="sm" borderWidth="1px" borderRadius="lg" />
+      <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={2}>
+        {photos.map((photo) => {
+          const aspectRatio = calculateAspectRatio(photo.width, photo.height);
+          const height = 300 / aspectRatio; // Set a fixed width of 300px and calculate the corresponding height
+          return (
+            <Box key={photo._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" height={`${height}px`}>
+              <Image
+                src={photo.imageUrl}
+                alt={photo.title}
+                objectFit="cover" // Images will fill the entire available space while maintaining aspect ratio
+                width="100%"
+                height="auto"
+              />
 
-            <Box p="6">
-              <Box d="flex" alignItems="baseline">
-                {photo.category.map((category, index) => (
-                  <Badge key={`${category}-${index}`} borderRadius="full" px="2" colorScheme="teal" mr="2">
-                    {category}
-                  </Badge>
-                ))}
-              </Box>
+              <Box p="6">
+                <Box d="flex" alignItems="baseline">
+                  {photo.category.map((category, index) => (
+                    <Badge key={`${category}-${index}`} borderRadius="full" px="2" colorScheme="teal" mr="2">
+                      {category}
+                    </Badge>
+                  ))}
+                </Box>
 
-              <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
-                {photo.title}
-              </Box>
+                <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
+                  {photo.title}
+                </Box>
 
-              <Text mt="2" color="gray.600">
-                {photo.description}
-              </Text>
+                <Text mt="2" color="gray.600">
+                  {photo.description}
+                </Text>
 
-              <Box>
-                {photo.tags.map((tag, index) => (
-                  <Badge key={`${tag}-${index}`} borderRadius="full" px="2" colorScheme="blue" mt="2" mr="2">
-                    {tag}
-                  </Badge>
-                ))}
+                <Box>
+                  {photo.tags.map((tag, index) => (
+                    <Badge key={`${tag}-${index}`} borderRadius="full" px="2" colorScheme="blue" mt="2" mr="2">
+                      {tag}
+                    </Badge>
+                  ))}
+                </Box>
               </Box>
             </Box>
-          </Box>
-        ))}
+          );
+        })}
       </Box>
     </>
   );

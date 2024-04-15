@@ -31,11 +31,16 @@ const UploadPopup = ({ isOpen, onClose }) => {
       }
 
       const data = await response.json();
-      setImageUrl(data.secure_url); // Save the image URL
+
+      // Apply transformations to resize and crop the image
+      const transformedImageUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,w_300,h_300/${data.public_id}.${data.format}`;
+
+      setImageUrl(transformedImageUrl); // Save the transformed image URL
     } catch (error) {
       console.error(error);
     }
   };
+
   const saveToDatabase = () => {
     try {
       fetch("/api/api-upload-img", {
