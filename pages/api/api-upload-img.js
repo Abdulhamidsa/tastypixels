@@ -12,12 +12,7 @@ export default async function handler(req, res) {
 
   try {
     // Connect to MongoDB using Mongoose
-    await mongoose.connect("mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/tastypixels", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    // Create a new photo document in the database with all required fields
+    await mongoose.connect("mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/tastypixels");
     const newPhoto = new Photo({
       imageUrl,
       title,
@@ -26,12 +21,8 @@ export default async function handler(req, res) {
       tags,
       approved: true, // Set the default value for 'approved'
     });
-
-    // Save the photo document to the database
     const savedPhoto = await newPhoto.save();
     console.log("Saved photo:", savedPhoto); // Log the saved photo document
-
-    // Close the Mongoose connection
     await mongoose.connection.close();
 
     // Return the saved photo document as the API response

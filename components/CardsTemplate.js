@@ -25,7 +25,7 @@ const PhotosGrid = ({ numCards }) => {
           <GridItem key={index}>{box}</GridItem>
         ))}
       </Grid>
-
+      {/* 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg="rgba(255, 255, 255, 0.8)">
@@ -39,24 +39,24 @@ const PhotosGrid = ({ numCards }) => {
             </Grid>
           </ModalBody>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
 
 const MyComponent = () => {
-  const numCards = 10; // Adjust the number of cards as needed
+  const numCards = 5; // Adjust the number of cards as needed
   return (
     <>
-      <Box p={6} position={"relative"}>
+      <Box height="100%" p={6} position={"relative"}>
         <Box position="absolute" top="0" left="0" width="100%" height="100%" bg="rgba(0, 0, 0, 0.8)" zIndex="1" pointerEvents="none" display="flex" justifyContent="center" alignItems="center"></Box>
         <Box zIndex={55} position="absolute" top="30%" left="50%" transform="translate(-50%, -50%)" textAlign="center" color="white" p={5} bg="gray.700" borderRadius="md" boxShadow="xl">
           <Text fontSize="xl" mb={3}>
             Login to have access to this page data
           </Text>
-          <Button colorScheme="blue" size="lg">
+          {/* <Button colorScheme="blue" size="lg">
             Login
-          </Button>
+          </Button> */}
         </Box>
         <PhotosGrid numCards={numCards} />
       </Box>

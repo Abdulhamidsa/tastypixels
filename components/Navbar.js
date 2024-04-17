@@ -18,11 +18,13 @@ const Navbar = () => {
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const [formType, setFormType] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const router = useRouter();
+  const isSpecificPage = router.pathname === "/home";
 
-  // console.log("userId", userId);
-  console.log("isLoggedIn", isLoading);
+  // console.log(isSpecificPage);
+
+  // console.log("isLoggedIn", isLoading);
   async function logout() {
     try {
       const response = await fetch("/api/api-logout", {
@@ -47,9 +49,7 @@ const Navbar = () => {
     if (type === "logout") {
       try {
         await logout();
-      } catch (error) {
-        // Handle the error here
-      }
+      } catch (error) {}
     } else {
       setFormType(type);
       onModalOpen();
@@ -60,19 +60,11 @@ const Navbar = () => {
     <>
       <Flex as="nav" align="center" justify="center" padding="1rem">
         <ChakraLink as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-          TASTY PIXELS
+          HOME
         </ChakraLink>
-        {isLoggedIn && (
-          <>
-            <IconButton mr={3} aria-label="Upload" icon={<ArrowUpIcon />} onClick={() => setIsUploadOpen(true)} />
-            <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
-          </>
-        )}
+
         <IconButton aria-label="Open menu" icon={<HamburgerIcon />} size="lg" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
         <Flex align="center" display={{ base: "none", md: "flex" }} gap={4}>
-          <ChakraLink as={NextLink} href="/about" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
-            About
-          </ChakraLink>
           {!isLoggedIn && (
             <>
               <ChakraLink as={Button} onClick={() => handleOpenModal("signup")}>
@@ -85,19 +77,42 @@ const Navbar = () => {
           )}
           {isLoggedIn && (
             <>
-              {/* <ChakraLink as={Button} onClick={() => setIsUploadOpen(true)}>
-                Open Upload Popup
-              </ChakraLink> */}
+              {/* <ChakraLink as={NextLink} href="/home" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
+                Gallary
+              </ChakraLink>
+              <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} /> */}
+            </>
+          )}
+          {isLoggedIn && (
+            <>
+              {/* <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" /> */}
+              <ChakraLink as={Button} onClick={() => handleOpenModal("logout")}>
+                Logout
+              </ChakraLink>
+              {isSpecificPage && (
+                <>
+                  <ChakraLink>Upload</ChakraLink>
+                  <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
+                </>
+              )}
+              <ChakraLink as={NextLink} href="/home" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
+                Gallary
+              </ChakraLink>
               <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
             </>
           )}
-          {isLoggedIn && <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" />}{" "}
           <Modal isOpen={isModalOpen} onClose={onModalClose}>
             <ModalOverlay />
             <ModalContent maxW="800px">
               <ModalHeader>{formType === "logout" ? "Logout" : formType === "signup" ? "Sign Up" : "Sign In"}</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>{formType === "signup" ? <SignUp /> : formType === "signin" ? <Signin closeModal={onModalClose} /> : null}</ModalBody>
+              <ModalBody>
+                {formType === "signup" ? (
+                  <SignUp isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
+                ) : formType === "signin" ? (
+                  <Signin isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
+                ) : null}
+              </ModalBody>
               {/* <ModalFooter>hi</ModalFooter> */}
             </ModalContent>
           </Modal>

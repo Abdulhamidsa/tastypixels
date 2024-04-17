@@ -1,17 +1,32 @@
 import mongoose from "mongoose";
 
 // Define the user schema
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    unique: true,
-    required: true,
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    userRole: {
+      type: String,
+      default: "user",
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
-// Export the User model using mongoose.model()
-export default mongoose.models.User || mongoose.model("User", userSchema);
+export default mongoose.models.wh || mongoose.model("wh", userSchema);

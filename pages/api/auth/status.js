@@ -1,14 +1,12 @@
 import jwt from "jsonwebtoken";
-import User from "../../../models/User";
+// import User from "../../../models/User";
 import cookieParser from "cookie-parser";
 
 const jwtSecret = "verysecretekey";
 
 export default async function handler(req, res) {
   cookieParser()(req, res, () => {});
-
   const token = req.cookies.token;
-
   if (!token) {
     return res.status(201).json({ loggedIn: false });
   }
@@ -16,7 +14,7 @@ export default async function handler(req, res) {
     const userId = jwt.verify(token, jwtSecret);
     return res.status(200).json({ loggedIn: true, userId });
   } catch (error) {
-    return res.status(201).json({ loggedIn: false });
+    return res.status(401).json({ loggedIn: false });
   }
 }
 // import jwt from "jsonwebtoken";

@@ -1,24 +1,31 @@
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
-import { FormControl, Text, FormLabel, Input, FormErrorMessage, Button, useToast, Box } from "@chakra-ui/react";
+import { FormControl, Link as ChakraLink, Text, FormLabel, Input, FormErrorMessage, Button, useToast, Box } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
+
 // import { signIn, signOut, useSession } from "next-auth/react";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Required"),
   password: Yup.string().required("Required"),
 });
 
-const Signin = ({ closeModal }) => {
+const Signin = ({ isModalOpen, onModalOpen, onModalClose, setFormType }) => {
   const router = useRouter();
   const { login } = useAuth();
   const { isLoggedIn } = useAuth();
   // console.log("isLoggedIn", isLoggedIn);
   const [loginStatus, setLoginStatus] = useState("idle");
   const toast = useToast();
+  const handleSignUpClick = () => {
+    setFormType("signup");
+    onModalOpen();
+  };
 
   return (
     <Formik
@@ -39,7 +46,7 @@ const Signin = ({ closeModal }) => {
           });
 
           if (response.ok) {
-            const data = await response.json();
+            // const data = await response.json();
             // Store the token in sessionStorage
             // if (data.success === true) {
             // sessionStorage.setItem("token", data.success);
@@ -51,9 +58,9 @@ const Signin = ({ closeModal }) => {
             // Reset login status after a certain time
             setTimeout(() => {
               setLoginStatus("idle");
-              closeModal();
-              router.push("/");
-            }, 3000); // Reset after 3 seconds
+              // closeModal();
+              // router.push("/home");
+            }, 1000); // Reset after 3 seconds
           } else {
             setLoginStatus("error");
             const errorData = await response.json();
@@ -103,6 +110,9 @@ const Signin = ({ closeModal }) => {
           </Button>
           <Text color="green.300" mt={2}>
             {loginStatus === "success" ? "Log in successful, redirecting..." : null}{" "}
+          </Text>
+          <Text as="span" onClick={handleSignUpClick} color="blue.500" mt={2} display="block" cursor="pointer">
+            Don't have an account yet? Sign up
           </Text>
         </Form>
       )}

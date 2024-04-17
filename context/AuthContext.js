@@ -14,8 +14,10 @@ export const AuthProvider = ({ children }) => {
       try {
         const response = await fetch("/api/auth/status");
         const data = await response.json();
-        setIsLoggedIn(data.loggedIn);
-        setUserId(data.userId);
+        if (data.loggedIn === true) {
+          setIsLoggedIn(true);
+          setUserId(data.userId);
+        }
         console.log("data.loggedIn", data.loggedIn, data.userId.userId);
       } catch (error) {
         console.error("Error fetching login status:", error);
