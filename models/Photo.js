@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
-const photoSchema = new mongoose.Schema({
+const uploadSchema = new mongoose.Schema({
+  // _id: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   default: () => new mongoose.Types.ObjectId(), // Generate a new ObjectId for each upload
+  // },
   imageUrl: {
     type: String,
     required: true,
@@ -14,17 +18,13 @@ const photoSchema = new mongoose.Schema({
     required: true,
   },
   category: {
-    type: [String],
+    type: String,
     required: true,
   },
   tags: {
     type: [String],
     required: true,
   },
-  //   userId: {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     required: true,
-  //   },
   approved: {
     type: Boolean,
     default: true,
@@ -43,6 +43,10 @@ const photoSchema = new mongoose.Schema({
   },
 });
 
-const him = mongoose.models.him || mongoose.model("him", photoSchema);
-
-export default him;
+const userSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId, // Use userId as the _id field
+  },
+  uploads: [uploadSchema], // Array to store multiple uploads
+});
+export default mongoose.models.fuck || mongoose.model("fuck", userSchema);

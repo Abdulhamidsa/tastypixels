@@ -3,7 +3,7 @@ import { Box, Button, FormControl, FormErrorMessage, FormLabel, Wrap, Input, Tex
 import { useAuth } from "@/context/AuthContext";
 import CardsTemplate from "@/components/CardsTemplate";
 
-const UploadPopup = ({ isOpen, onClose }) => {
+const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -11,7 +11,7 @@ const UploadPopup = ({ isOpen, onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tagError, setTagError] = useState("");
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, userId } = useAuth();
   const fileInputRef = useRef(null);
   const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
   const handleUpload = async (e) => {
@@ -33,8 +33,7 @@ const UploadPopup = ({ isOpen, onClose }) => {
       const data = await response.json();
 
       // Apply transformations to resize and crop the image
-      const transformedImageUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,w_300,h_300/${data.public_id}.${data.format}`;
-
+      const transformedImageUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${data.public_id}.${data.format}`;
       setImageUrl(transformedImageUrl); // Save the transformed image URL
     } catch (error) {
       console.error(error);
@@ -52,6 +51,7 @@ const UploadPopup = ({ isOpen, onClose }) => {
           imageUrl,
           title,
           description,
+          userId,
           tags: selectedTags,
           category: selectedCategory,
         }),
@@ -70,6 +70,7 @@ const UploadPopup = ({ isOpen, onClose }) => {
           if (fileInputRef.current) {
             fileInputRef.current.value = ""; // Reset the file input field
           }
+          closeMenu();
         })
         .catch((error) => {
           console.error(error);
@@ -78,6 +79,7 @@ const UploadPopup = ({ isOpen, onClose }) => {
       console.error(error);
     }
   };
+
   const handleAddTag = () => {
     if (selectedTags.length >= 5 || tagInput.trim() === "") {
       return;

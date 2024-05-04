@@ -4,11 +4,7 @@ import { useState } from "react";
 import { FormControl, Link as ChakraLink, Text, FormLabel, Input, FormErrorMessage, Button, useToast, Box } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
-import NextLink from "next/link";
-
-// import { signIn, signOut, useSession } from "next-auth/react";
 import { useAuth } from "@/context/AuthContext";
-import Link from "next/link";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Required"),
@@ -58,8 +54,8 @@ const Signin = ({ isModalOpen, onModalOpen, onModalClose, setFormType }) => {
             // Reset login status after a certain time
             setTimeout(() => {
               setLoginStatus("idle");
-              // closeModal();
-              // router.push("/home");
+              onModalClose();
+              router.push("/");
             }, 1000); // Reset after 3 seconds
           } else {
             setLoginStatus("error");

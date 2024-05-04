@@ -43,8 +43,8 @@ import mongoose from "mongoose";
 const connectToMongoDB = async () => {
   try {
     await mongoose.connect("mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/tastypixels");
-    console.log("Successfully connected to MongoDB!");
-    console.log("mongoose.connection:", mongoose.connection);
+    // console.log("Successfully connected to MongoDB!");
+    // console.log("mongoose.connection:", mongoose.connection);
     return mongoose.connection;
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -53,3 +53,6 @@ const connectToMongoDB = async () => {
 };
 
 export default connectToMongoDB;
+
+// const clientPromise = connectToMongoDB();
+// export { clientPromise };

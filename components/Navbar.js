@@ -1,14 +1,12 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Flex, IconButton, useColorMode, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack } from "@chakra-ui/react";
-import { HamburgerIcon, MoonIcon, ArrowForwardIcon, SunIcon, ArrowUpIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, MoonIcon, ArrowForwardIcon, SunIcon } from "@chakra-ui/icons";
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from "@chakra-ui/react";
 import SignUp from "@/components/Signup";
 import NextLink from "next/link";
 import Signin from "./Signin";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import Loading from "@/components/Loading";
-import router from "next/router";
 import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
 
@@ -22,9 +20,14 @@ const Navbar = () => {
   const router = useRouter();
   const isSpecificPage = router.pathname === "/home";
 
-  // console.log(isSpecificPage);
+  const openUpload = () => {
+    setIsUploadOpen(true);
+  };
 
-  // console.log("isLoggedIn", isLoading);
+  const handleMenuClose = useCallback(() => {
+    onMenuClose();
+  }, [onMenuClose]);
+
   async function logout() {
     try {
       const response = await fetch("/api/api-logout", {
@@ -53,6 +56,7 @@ const Navbar = () => {
     } else {
       setFormType(type);
       onModalOpen();
+      handleMenuClose();
     }
   };
 
@@ -75,12 +79,12 @@ const Navbar = () => {
               </ChakraLink>
             </>
           )}
-          {isLoggedIn && (
+          {isLoggedIn && isSpecificPage && (
             <>
-              {/* <ChakraLink as={NextLink} href="/home" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
-                Gallary
+              <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+              <ChakraLink as={Button} onClick={() => openUpload()}>
+                Upload
               </ChakraLink>
-              <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} /> */}
             </>
           )}
           {isLoggedIn && (
@@ -89,16 +93,13 @@ const Navbar = () => {
               <ChakraLink as={Button} onClick={() => handleOpenModal("logout")}>
                 Logout
               </ChakraLink>
-              {isSpecificPage && (
-                <>
-                  <ChakraLink>Upload</ChakraLink>
-                  <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
-                </>
-              )}
               <ChakraLink as={NextLink} href="/home" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
                 Gallary
               </ChakraLink>
-              <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />
+              <ChakraLink as={NextLink} href="/userProfile" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
+                Profile
+              </ChakraLink>
+              {/* <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} /> */}
             </>
           )}
           <Modal isOpen={isModalOpen} onClose={onModalClose}>
@@ -126,10 +127,26 @@ const Navbar = () => {
               <DrawerHeader>Navigation</DrawerHeader>
               <DrawerBody>
                 <VStack spacing="24px">
-                  <ChakraLink as={NextLink} href="/about" onClick={onMenuClose}>
-                    About
-                  </ChakraLink>
-                  {isLoggedIn && <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" />}{" "}
+                  {isLoggedIn && (
+                    <>
+                      <ChakraLink as={NextLink} href="/home" _hover={{ textDecoration: "none", color: "blue.500" }} onClick={onMenuClose}>
+                        Gallary
+                      </ChakraLink>
+                      <ChakraLink as={NextLink} href="/userProfile" _hover={{ textDecoration: "none", color: "blue.500" }} onClick={onMenuClose}>
+                        Profile
+                      </ChakraLink>
+                      {isSpecificPage && isLoggedIn && (
+                        <>
+                          <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+                          <ChakraLink as="button" onClick={() => openUpload()}>
+                            Upload
+                          </ChakraLink>
+                        </>
+                      )}
+                      <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" />
+                    </>
+                  )}
+
                   {!isLoggedIn && (
                     <>
                       <ChakraLink as={Button} onClick={() => handleOpenModal("signup")}>

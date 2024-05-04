@@ -5,7 +5,6 @@ const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      unique: true,
       required: true,
     },
     email: {
@@ -21,6 +20,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "user",
     },
+    uploads: {
+      type: Array,
+      default: [],
+    },
     deletedAt: {
       type: Date,
       default: null,
@@ -29,4 +32,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.wh || mongoose.model("wh", userSchema);
+export default mongoose.models.User || mongoose.model("User", userSchema);

@@ -18,7 +18,8 @@ export const AuthProvider = ({ children }) => {
           setIsLoggedIn(true);
           setUserId(data.userId);
         }
-        console.log("data.loggedIn", data.loggedIn, data.userId.userId);
+        console.log("data.loggedIn", data.loggedIn, data.userId);
+        // console.log(data);
       } catch (error) {
         console.error("Error fetching login status:", error);
         setIsLoggedIn(false);

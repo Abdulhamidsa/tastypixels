@@ -185,7 +185,6 @@ import { Box, Badge, Image, Text } from "@chakra-ui/react";
 import clientPromise from "../database/db";
 import { useAuth } from "@/context/AuthContext";
 import CardsTemplate from "@/components/CardsTemplate";
-
 export default function About({ photos }) {
   console.log("Photos:", photos);
   // const userAuth = { isLoggedIn };
@@ -215,11 +214,12 @@ export default function About({ photos }) {
 
                 <Box p="6">
                   <Box d="flex" alignItems="baseline">
-                    {photo.category.map((category, index) => (
-                      <Badge key={`${category}-${index}`} borderRadius="full" px="2" colorScheme="teal" mr="2">
-                        {category}
-                      </Badge>
-                    ))}
+                    {photo.category &&
+                      photo.category.map((category, index) => (
+                        <Badge key={`${category}-${index}`} borderRadius="full" px="2" colorScheme="teal" mr="2">
+                          {category}
+                        </Badge>
+                      ))}
                   </Box>
 
                   <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
@@ -231,11 +231,12 @@ export default function About({ photos }) {
                   </Text>
 
                   <Box>
-                    {photo.tags.map((tag, index) => (
-                      <Badge key={`${tag}-${index}`} borderRadius="full" px="2" colorScheme="blue" mt="2" mr="2">
-                        {tag}
-                      </Badge>
-                    ))}
+                    {photo.tags &&
+                      photo.tags.map((tag, index) => (
+                        <Badge key={`${tag}-${index}`} borderRadius="full" px="2" colorScheme="blue" mt="2" mr="2">
+                          {tag}
+                        </Badge>
+                      ))}
                   </Box>
                 </Box>
               </Box>
@@ -250,9 +251,9 @@ export default function About({ photos }) {
 }
 import connectToMongoDB from "../database/db";
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const db = await connectToMongoDB();
-  const data = await db.collection("hims").find({}).toArray();
+  const data = await db.collection("photos").find({}).toArray();
   const photos = JSON.parse(JSON.stringify(data)); // Deep clone the data array
 
   return {

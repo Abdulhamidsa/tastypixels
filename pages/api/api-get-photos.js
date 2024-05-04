@@ -1,6 +1,6 @@
 // api-get-photos.js
-import connectDB from "../../database/db";
-import ME from "../../models/Photo";
+// import connectDB from "../../database/db";
+// import ME from "../../models/Photo";
 
 export default async function handler(req, res) {
   //   if (req.method !== "GET") {
@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   //   }
 
   try {
-    await connectDB();
+    // await connectDB();
     const photos = await ME.find({});
     return res.status(200).json(photos);
   } catch (error) {
