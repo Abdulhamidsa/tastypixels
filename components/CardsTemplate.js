@@ -1,4 +1,4 @@
-import { Box, Text, Grid, Button, GridItem, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from "@chakra-ui/react";
+import { Box, Text, Grid, Button, GridItem, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 
 const generatePlaceholderBoxes = (numBoxes) => {
@@ -25,27 +25,12 @@ const PhotosGrid = ({ numCards }) => {
           <GridItem key={index}>{box}</GridItem>
         ))}
       </Grid>
-      {/* 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent bg="rgba(255, 255, 255, 0.8)">
-          <ModalHeader>Logged In</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Grid templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }} gap={6}>
-              {generatePlaceholderBoxes(numCards).map((box, index) => (
-                <GridItem key={index}>{box}</GridItem>
-              ))}
-            </Grid>
-          </ModalBody>
-        </ModalContent>
-      </Modal> */}
     </>
   );
 };
 
 const MyComponent = () => {
-  const numCards = 5; // Adjust the number of cards as needed
+  const numCards = 5;
   return (
     <>
       <Box height="100%" p={6} position={"relative"}>
@@ -54,9 +39,6 @@ const MyComponent = () => {
           <Text fontSize="xl" mb={3}>
             Login to have access to this page data
           </Text>
-          {/* <Button colorScheme="blue" size="lg">
-            Login
-          </Button> */}
         </Box>
         <PhotosGrid numCards={numCards} />
       </Box>

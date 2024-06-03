@@ -1,4 +1,4 @@
-import User from "@/models/User";
+import userDemo from "@/models/User";
 import connectToMongoDB from "@/database/db";
 import mongoose from "mongoose";
 
@@ -8,12 +8,12 @@ export default async function handler(req, res) {
   }
 
   const { imageUrl, title, description, category, tags, userId } = req.body;
-  console.log("Received userId:", userId);
+  // console.log("Received userId:", userId);
 
   try {
     await connectToMongoDB();
     const userIdObj = new mongoose.Types.ObjectId(userId);
-    let user = await User.findById(userIdObj);
+    let user = await userDemo.findById(userIdObj);
 
     if (!user) {
       return res.status(404).json({ errors: ["User not found"] });
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       category,
       tags,
     };
-    user.uploads.push(newData); // Push the data directly
+    user.uploads.push(newData);
     await user.save();
 
     return res.status(200).json({ message: "Upload saved successfully" });

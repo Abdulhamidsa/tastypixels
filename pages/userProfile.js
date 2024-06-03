@@ -1,23 +1,21 @@
 import { Grid } from "@chakra-ui/react";
 import { ObjectId } from "mongodb";
-import connectToMongoDB from "../database/db";
-import jwt from "jsonwebtoken";
-import cookie from "cookie";
-import { useEffect, useState } from "react";
+import connectToMongoDB from "@/database/db";
+import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { IconButton, useToast } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthContext";
 import CryptoJS from "crypto-js";
 
 export async function getServerSideProps(context) {
-  const { userId } = context.query; // Retrieve userId from context
+  const { userId } = context.query;
   let decryptedUserId = "";
   const bytes = CryptoJS.AES.decrypt(userId, "secret key");
   decryptedUserId = bytes.toString(CryptoJS.enc.Utf8);
   console.log(decryptedUserId);
   try {
     const db = await connectToMongoDB();
-    const user = await db.collection("users").findOne({ _id: new ObjectId(decryptedUserId) });
+    const user = await db.collection("userdemos").findOne({ _id: new ObjectId(decryptedUserId) });
     console.log(user);
 
     const uploads = user ? user.uploads.map((upload) => ({ ...upload, _id: upload._id.toString() })) : [];
@@ -50,12 +48,6 @@ function UserProfile({ uploads }) {
         },
         body: JSON.stringify({ userId, uploadId }),
       });
-
-      // {
-      //   "userId": "userId goes here",
-      //   "uploadId": "uploadId goes here"
-      // }
-
       if (response.ok) {
         console.log("uploads removed successfully");
         setuploadList(uploadList.filter((upload) => upload._id !== uploadId));

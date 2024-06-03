@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import User from "../../models/User";
+import userDemo from "@/models/User";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
-import connectToMongoDB from "../../database/db";
+import connectToMongoDB from "@/database/db";
 
 const jwtSecret = "verysecretekey";
 
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
-    const user = await User.findOne({ email }).lean();
+    const user = await userDemo.findOne({ email }).lean();
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
@@ -34,10 +34,8 @@ export default async function handler(req, res) {
 
     // Serialize the token as a cookie
     const tokenCookie = serialize("token", token, cookieOptions);
-
     // Set the cookie in the response headers
     res.setHeader("Set-Cookie", tokenCookie);
-
     // Include the user ID in the response
     return res.status(200).json({ token, userId, message: "Login successful", success: true });
   } catch (error) {

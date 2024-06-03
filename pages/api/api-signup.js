@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
-import User from "../../models/User";
-import { isValidEmail, isValidPassword, checkExistingUser } from "../../util/validations";
-import connectToMongoDB from "../../database/db";
+import userDemo from "@/models/User";
+import { isValidEmail, isValidPassword, checkExistingUser } from "@/util/validations";
+import connectToMongoDB from "@/database/db";
 
 export default async function handler(req, res) {
   try {
     await connectToMongoDB();
     const { username, email, password } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     if (!username || !email || !password) {
       return res.status(400).json({ message: "Username, email, and password are required" });
     }
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
+    const newUser = new userDemo({
       username: username,
       email: email,
       password: hashedPassword,

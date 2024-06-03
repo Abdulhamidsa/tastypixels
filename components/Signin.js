@@ -11,11 +11,10 @@ const validationSchema = Yup.object({
   password: Yup.string().required("Required"),
 });
 
-const Signin = ({ isModalOpen, onModalOpen, onModalClose, setFormType }) => {
+const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
   const router = useRouter();
   const { login } = useAuth();
   const { isLoggedIn } = useAuth();
-  // console.log("isLoggedIn", isLoggedIn);
   const [loginStatus, setLoginStatus] = useState("idle");
   const toast = useToast();
   const handleSignUpClick = () => {
@@ -88,7 +87,7 @@ const Signin = ({ isModalOpen, onModalOpen, onModalClose, setFormType }) => {
               {errors.loginError}
             </Box>
           )}
-          <Button mt={4} colorScheme="yellow" isLoading={loginStatus === "loading"} type="submit">
+          <Button mt={4} isLoading={loginStatus === "loading"} type="submit">
             {loginStatus === "success" ? (
               <>
                 <CheckCircleIcon color="green.700" />
@@ -98,7 +97,7 @@ const Signin = ({ isModalOpen, onModalOpen, onModalClose, setFormType }) => {
             )}
           </Button>
           <Text color="green.300" mt={2}>
-            {loginStatus === "success" ? "Log in successful, redirecting..." : null}{" "}
+            {loginStatus === "success" ? "Log in successful, redirecting..." : null}
           </Text>
           <Text as="span" onClick={handleSignUpClick} color="blue.500" mt={2} display="block" cursor="pointer">
             Don't have an account yet? Sign up

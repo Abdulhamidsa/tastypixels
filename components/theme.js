@@ -1,11 +1,8 @@
-// theme.js
 import { extendTheme } from "@chakra-ui/react";
-
 const config = {
   initialColorMode: "dark",
   useSystemColorMode: true,
 };
-
 const theme = extendTheme({
   config,
   styles: {
@@ -16,6 +13,18 @@ const theme = extendTheme({
         transition: "background-color 1s ease-in-out",
       },
     }),
+  },
+  components: {
+    Link: {
+      baseStyle: {
+        textTransform: "uppercase",
+        _hover: {
+          textDecoration: "none",
+          color: "blue.500",
+          bg: "transparent",
+        },
+      },
+    },
   },
 });
 

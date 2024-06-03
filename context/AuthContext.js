@@ -1,8 +1,6 @@
 ﻿import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-
 const AuthContext = createContext();
-
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,8 +16,7 @@ export const AuthProvider = ({ children }) => {
           setIsLoggedIn(true);
           setUserId(data.userId);
         }
-        console.log("data.loggedIn", data.loggedIn, data.userId);
-        // console.log(data);
+        // console.log("data.loggedIn", data.loggedIn, data.userId);
       } catch (error) {
         console.error("Error fetching login status:", error);
         setIsLoggedIn(false);

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Box, Button, FormControl, Alert, AlertIcon, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from "@chakra-ui/react";
+import { Box, useToast, Button, FormControl, Alert, AlertIcon, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthContext";
 import CardsTemplate from "@/components/CardsTemplate";
 
@@ -13,7 +13,8 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   const [tagError, setTagError] = useState("");
   const { isLoggedIn, userId } = useAuth();
   const fileInputRef = useRef(null);
-  const [uploadError, setUploadError] = useState(""); // State for upload error message
+  const toast = useToast();
+  const [uploadError, setUploadError] = useState("");
 
   const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
   const handleUpload = async (e) => {
@@ -31,12 +32,9 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
       if (!response.ok) {
         throw new Error("Failed to upload image");
       }
-
       const data = await response.json();
-
-      // Apply transformations to resize and crop the image
       const transformedImageUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${data.public_id}.${data.format}`;
-      setImageUrl(transformedImageUrl); // Save the transformed image URL
+      setImageUrl(transformedImageUrl);
     } catch (error) {
       console.error(error);
     }
@@ -64,15 +62,17 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
             throw new Error(responseData.errors ? responseData.errors.join(", ") : "Failed to save photo to database");
           }
           console.log("Photo saved to database successfully");
-          // setImageUrl("");
-          // setTitle("");
-          // setDescription("");
-          // setSelectedTags([]);
-          // setSelectedCategory("");
-          // if (fileInputRef.current) {
-          //   fileInputRef.current.value = "";
-          // }
-          // setUploadError(""); // Reset upload error if request is successful
+          onClose();
+          toast({
+            title: "Success",
+            description: "Photo uploaded successfully. Redirecting...",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
         })
         .catch((error) => {
           console.error(error);
@@ -90,8 +90,6 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
     if (tagInput.trim().length <= 5000) {
       const formattedTag = `#${tagInput.trim()}`;
       setSelectedTags([...selectedTags, formattedTag]);
-      // setTagInput("");
-      // setTagError("");
     } else {
       setTagError("Tag input cannot exceed 5000 characters");
     }
