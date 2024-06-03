@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
 const uploadSchema = new mongoose.Schema({
-  id: {
-    type: mongoose.Schema.Types.ObjectId,
-    default: () => new mongoose.Types.ObjectId(),
-  },
   imageUrl: String,
   title: String,
   description: String,

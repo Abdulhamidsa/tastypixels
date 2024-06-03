@@ -25,6 +25,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ errors: ["Uploads Limit reached! Remove some uploads from your profile to add more."] });
     }
     const newData = {
+      _id: new mongoose.Types.ObjectId(),
       imageUrl,
       title,
       description,

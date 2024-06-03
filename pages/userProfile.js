@@ -6,7 +6,7 @@ import cookie from "cookie";
 import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { IconButton, useToast } from "@chakra-ui/react";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import CryptoJS from "crypto-js";
 
 export async function getServerSideProps(context) {
@@ -20,57 +20,64 @@ export async function getServerSideProps(context) {
     const user = await db.collection("users").findOne({ _id: new ObjectId(decryptedUserId) });
     console.log(user);
 
-    const photos = user ? user.uploads.map((photo) => ({ ...photo, _id: photo._id.toString() })) : [];
-    console.log(photos);
+    const uploads = user ? user.uploads.map((upload) => ({ ...upload, _id: upload._id.toString() })) : [];
+    console.log(uploads);
 
     return {
-      props: { photos },
+      props: { uploads },
     };
   } catch (error) {
-    console.error("Error fetching photos:", error);
+    console.error("Error fetching uploads:", error);
     return {
-      props: { photos: [] },
+      props: { uploads: [] },
     };
   }
 }
 
-function UserProfile({ photos, userId }) {
-  console.log("Photos:", photos);
-  const [photoList, setPhotoList] = useState(photos);
+function UserProfile({ uploads }) {
+  const { userId } = useAuth();
+  // console.log(uploads);
+  console.log("uploads:", uploads);
+  const [uploadList, setuploadList] = useState(uploads);
   const toast = useToast();
 
-  const handleRemovePhoto = async (photoId) => {
+  const handleRemoveupload = async (uploadId) => {
     try {
       const response = await fetch("/api/api-delete-recipe", {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, photoId }),
+        body: JSON.stringify({ userId, uploadId }),
       });
 
+      // {
+      //   "userId": "userId goes here",
+      //   "uploadId": "uploadId goes here"
+      // }
+
       if (response.ok) {
-        console.log("Photos removed successfully");
-        setPhotoList(photoList.filter((photo) => photo._id !== photoId));
-        console.log(photoList.length);
+        console.log("uploads removed successfully");
+        setuploadList(uploadList.filter((upload) => upload._id !== uploadId));
+        console.log(uploadList.length);
       } else {
-        console.error("Failed to remove photos");
+        console.error("Failed to remove uploads");
       }
     } catch (error) {
-      console.error("Error removing photos:", error);
+      console.error("Error removing uploads:", error);
     }
   };
 
   return (
     <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={4}>
-      {photoList.map((photo) => (
-        <div key={photo._id} className="photo-card">
-          <img src={photo.imageUrl} alt={photo.title} className="photo-img" />
-          <div className="photo-details">
-            <h3>{photo.title}</h3>
-            <p>{photo.description}</p>
-            <p> {photo._id} </p>
-            <IconButton icon={<FaTrash />} aria-label="Delete photo" onClick={() => handleRemovePhoto(photo._id)} colorScheme="red" />
+      {uploadList.map((upload) => (
+        <div key={upload._id} className="upload-card">
+          <img src={upload.imageUrl} alt={upload.title} className="upload-img" />
+          <div className="upload-details">
+            <h3>{upload.title}</h3>
+            <p>{upload.description}</p>
+            <p> {upload._id} </p>
+            <IconButton icon={<FaTrash />} aria-label="Delete upload" onClick={() => handleRemoveupload(upload._id)} colorScheme="red" />
           </div>
         </div>
       ))}
