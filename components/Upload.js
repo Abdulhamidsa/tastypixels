@@ -41,6 +41,10 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   };
 
   const saveToDatabase = () => {
+    if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0) {
+      setUploadError("All fields are required");
+      return;
+    }
     try {
       fetch("/api/api-upload-img", {
         method: "POST",
