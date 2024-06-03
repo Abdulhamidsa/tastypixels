@@ -93,7 +93,7 @@ const Navbar = () => {
               <ChakraLink as={NextLink} href="/home">
                 Food Gallary
               </ChakraLink>
-              <ChakraLink as={NextLink} href="/userProfile" onClick={onMenuClose}>
+              <ChakraLink as={NextLink} href={{ pathname: "/userProfile", query: { userId: ciphertext } }} mr="4">
                 Profile
               </ChakraLink>
             </>
@@ -126,7 +126,7 @@ const Navbar = () => {
                       <ChakraLink as={NextLink} href="/home" onClick={onMenuClose}>
                         Food Gallary
                       </ChakraLink>
-                      <ChakraLink as={NextLink} href="/userProfile" onClick={onMenuClose}>
+                      <ChakraLink as={NextLink} href={{ pathname: "/userProfile", query: { userId: ciphertext } }} mr="4">
                         Profile
                       </ChakraLink>
                       {isSpecificPage && isLoggedIn && (
