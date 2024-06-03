@@ -6,25 +6,23 @@ import cookie from "cookie";
 import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { IconButton, useToast } from "@chakra-ui/react";
-
-const jwtSecret = "verysecretekey";
+import { useAuth } from "@/components/AuthContext";
+import CryptoJS from "crypto-js";
 
 export async function getServerSideProps(context) {
-  const cookies = cookie.parse(context.req.headers.cookie || "");
-  const token = cookies.token;
-  console.log(token);
-
+  const { userId } = context.query; // Retrieve userId from context
+  let decryptedUserId = "";
+  const bytes = CryptoJS.AES.decrypt(userId, "secret key");
+  decryptedUserId = bytes.toString(CryptoJS.enc.Utf8);
+  console.log(decryptedUserId);
   try {
-    const decoded = jwt.verify(token, jwtSecret);
-    const userId = decoded.userId;
-    console.log(userId);
-
     const db = await connectToMongoDB();
-    const data = await db
-      .collection("gs")
-      .find({ userId: new ObjectId(userId) })
-      .toArray();
-    const photos = JSON.parse(JSON.stringify(data));
+    const user = await db.collection("users").findOne({ _id: new ObjectId(decryptedUserId) });
+    console.log(user);
+
+    const photos = user ? user.uploads.map((photo) => ({ ...photo, _id: photo._id.toString() })) : [];
+    console.log(photos);
+
     return {
       props: { photos },
     };
@@ -36,26 +34,26 @@ export async function getServerSideProps(context) {
   }
 }
 
-function userProfile({ photos }) {
+function UserProfile({ photos, userId }) {
+  console.log("Photos:", photos);
   const [photoList, setPhotoList] = useState(photos);
-  console.log(photoList);
   const toast = useToast();
 
-  const handleRemovePhoto = async (userId) => {
+  const handleRemovePhoto = async (photoId) => {
     try {
       const response = await fetch("/api/api-delete-recipe", {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId, photoId }),
       });
 
       if (response.ok) {
-        // Photos removed successfully
         console.log("Photos removed successfully");
+        setPhotoList(photoList.filter((photo) => photo._id !== photoId));
+        console.log(photoList.length);
       } else {
-        // Failed to remove photos
         console.error("Failed to remove photos");
       }
     } catch (error) {
@@ -71,6 +69,7 @@ function userProfile({ photos }) {
           <div className="photo-details">
             <h3>{photo.title}</h3>
             <p>{photo.description}</p>
+            <p> {photo._id} </p>
             <IconButton icon={<FaTrash />} aria-label="Delete photo" onClick={() => handleRemovePhoto(photo._id)} colorScheme="red" />
           </div>
         </div>
@@ -79,4 +78,4 @@ function userProfile({ photos }) {
   );
 }
 
-export default userProfile;
+export default UserProfile;

@@ -42,21 +42,14 @@ const Signin = ({ isModalOpen, onModalOpen, onModalClose, setFormType }) => {
           });
 
           if (response.ok) {
-            // const data = await response.json();
-            // Store the token in sessionStorage
-            // if (data.success === true) {
-            // sessionStorage.setItem("token", data.success);
             login();
-            // }
-            // Update login status
             setLoginStatus("success");
-
-            // Reset login status after a certain time
             setTimeout(() => {
               setLoginStatus("idle");
               onModalClose();
+              location.reload();
               router.push("/");
-            }, 1000); // Reset after 3 seconds
+            }, 1000);
           } else {
             setLoginStatus("error");
             const errorData = await response.json();

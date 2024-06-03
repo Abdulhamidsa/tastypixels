@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from "@chakra-ui/react";
+import { Box, Button, FormControl, Alert, AlertIcon, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthContext";
 import CardsTemplate from "@/components/CardsTemplate";
 
@@ -13,6 +13,8 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   const [tagError, setTagError] = useState("");
   const { isLoggedIn, userId } = useAuth();
   const fileInputRef = useRef(null);
+  const [uploadError, setUploadError] = useState(""); // State for upload error message
+
   const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
   const handleUpload = async (e) => {
     try {
@@ -48,38 +50,38 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          userId,
           imageUrl,
           title,
           description,
-          userId,
           tags: selectedTags,
           category: selectedCategory,
         }),
       })
-        .then((response) => {
+        .then(async (response) => {
+          const responseData = await response.json();
           if (!response.ok) {
-            throw new Error("Failed to save photo to database");
+            throw new Error(responseData.errors ? responseData.errors.join(", ") : "Failed to save photo to database");
           }
           console.log("Photo saved to database successfully");
-          // Clear the input fields after successful save
-          setImageUrl("");
-          setTitle("");
-          setDescription("");
-          setSelectedTags([]);
-          setSelectedCategory(""); // Reset selected category
-          if (fileInputRef.current) {
-            fileInputRef.current.value = ""; // Reset the file input field
-          }
-          closeMenu();
+          // setImageUrl("");
+          // setTitle("");
+          // setDescription("");
+          // setSelectedTags([]);
+          // setSelectedCategory("");
+          // if (fileInputRef.current) {
+          //   fileInputRef.current.value = "";
+          // }
+          // setUploadError(""); // Reset upload error if request is successful
         })
         .catch((error) => {
           console.error(error);
+          setUploadError(error.message || "Failed to save photo to database");
         });
     } catch (error) {
       console.error(error);
     }
   };
-
   const handleAddTag = () => {
     if (selectedTags.length >= 5 || tagInput.trim() === "") {
       return;
@@ -88,8 +90,8 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
     if (tagInput.trim().length <= 5000) {
       const formattedTag = `#${tagInput.trim()}`;
       setSelectedTags([...selectedTags, formattedTag]);
-      setTagInput("");
-      setTagError(""); // Clear tag error if tag input is valid
+      // setTagInput("");
+      // setTagError("");
     } else {
       setTagError("Tag input cannot exceed 5000 characters");
     }
@@ -100,14 +102,14 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   const handleTagInputChange = (e) => {
     if (e.target.value.length <= 10) {
       setTagInput(e.target.value);
-      setTagError(""); // Clear tag error if input length is valid
+      setTagError("");
     } else {
       setTagError("Tag input cannot exceed 5000 characters");
     }
   };
 
   const handleCategorySelect = (e) => {
-    setSelectedCategory(e.target.value); // Set selected category
+    setSelectedCategory(e.target.value);
   };
 
   return (
@@ -149,7 +151,7 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
                     }
                   }}
                 />
-                <FormErrorMessage>{tagError}</FormErrorMessage> {/* Display tag error message */}
+                <FormErrorMessage>{tagError}</FormErrorMessage>
               </FormControl>
               <FormControl>
                 <FormLabel>Category</FormLabel>
@@ -167,6 +169,18 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
                 <Input type="file" ref={fileInputRef} onChange={handleUpload} />
               </FormControl>
               {imageUrl && <img src={imageUrl} alt="Uploaded" />}
+              {uploadError && !uploadError.includes("maximum limit of uploads") && (
+                <Alert status="error" mb={4}>
+                  <AlertIcon />
+                  {uploadError}
+                </Alert>
+              )}
+              {uploadError && uploadError.includes("maximum limit of uploads") && (
+                <Alert status="error" mb={4}>
+                  <AlertIcon />
+                  User has reached the maximum limit of uploads
+                </Alert>
+              )}
               <Button onClick={saveToDatabase}>Save to Database</Button>
             </Box>
           ) : (

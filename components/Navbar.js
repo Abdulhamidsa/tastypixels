@@ -9,9 +9,12 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
+import CryptoJS from "crypto-js";
 
 const Navbar = () => {
   const { isLoggedIn, logouts, isLoading, userId } = useAuth();
+  const ciphertext = CryptoJS.AES.encrypt(userId, "secret key").toString();
+
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -96,7 +99,7 @@ const Navbar = () => {
               <ChakraLink as={NextLink} href="/home" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
                 Gallary
               </ChakraLink>
-              <ChakraLink as={NextLink} href="/userProfile" mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
+              <ChakraLink as={NextLink} href={{ pathname: "/userProfile", query: { userId: ciphertext } }} mr="4" _hover={{ textDecoration: "none", color: "blue.500" }}>
                 Profile
               </ChakraLink>
               {/* <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} /> */}

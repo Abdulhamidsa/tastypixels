@@ -1,6 +1,15 @@
 import mongoose from "mongoose";
-
-// Define the user schema
+const uploadSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
+  },
+  imageUrl: String,
+  title: String,
+  description: String,
+  category: String,
+  tags: [String],
+});
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -20,9 +29,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "user",
     },
-    uploads: {
-      type: Array,
-      default: [],
+    uploads: [uploadSchema],
+    deletedAt: {
+      type: Date,
+      default: null,
     },
     deletedAt: {
       type: Date,
@@ -31,5 +41,4 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 export default mongoose.models.User || mongoose.model("User", userSchema);
