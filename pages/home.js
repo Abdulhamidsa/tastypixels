@@ -1,11 +1,22 @@
-import { useToast, IconButton, Box, Badge, Image, Text, Toast } from "@chakra-ui/react";
+import { useToast, IconButton, Box, Badge, Image, Text, Toast, flexbox } from "@chakra-ui/react";
 import { AiOutlineHeart, AiFillHeart, AiOutlineFlag } from "react-icons/ai";
 import { useAuth } from "@/context/AuthContext";
 import connectToMongoDB from "@/database/db";
 import CardsTemplate from "@/components/CardsTemplate";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-export default function About({ uploads }) {
+export default function About() {
+  const [uploads, setUploads] = useState([]);
+
+  useEffect(() => {
+    const fetchUploads = async () => {
+      const res = await fetch("/api/api-fetch-recipe");
+      const data = await res.json();
+      setUploads(data);
+    };
+
+    fetchUploads();
+  }, []);
   const toast = useToast();
   const { isLoggedIn } = useAuth();
   const calculateAspectRatio = (width, height) => {
@@ -30,7 +41,7 @@ export default function About({ uploads }) {
   return (
     <>
       {isLoggedIn ? (
-        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={7}>
+        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={5}>
           {uploads.map((upload) => {
             const aspectRatio = calculateAspectRatio(upload.width, upload.height);
             const height = 300 / aspectRatio;
@@ -41,27 +52,24 @@ export default function About({ uploads }) {
                 <Box width="100%" height="200px">
                   <Image src={upload.imageUrl} alt={upload.title} width="100%" height="100%" objectFit="cover" />
                 </Box>
-                <Box p="6">
+                <Box p={2}>
                   <Box d="flex" alignItems="baseline">
                     <Badge borderRadius="full" px="2" colorScheme="teal" mr="2">
                       {upload.category}
                     </Badge>
                   </Box>
-
                   <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
                     <Text fontSize="lg" fontWeight="bold">
                       Title:
                     </Text>
                     {upload.title}
                   </Box>
-
-                  <Text mt="2" color="gray.600">
+                  <Box mt="2" color="gray.600">
                     <Text fontSize="lg" fontWeight="bold">
                       Description:
                     </Text>
                     {upload.description}
-                  </Text>
-
+                  </Box>
                   <Box>
                     {upload.tags &&
                       upload.tags.map((tag, index) => (
@@ -70,14 +78,12 @@ export default function About({ uploads }) {
                         </Badge>
                       ))}
                   </Box>
-                  <Text mt={5}>
-                    Uploaded by User:
-                    <Box color="teal.500" decoration="underline">
-                      <Link href={`/user/${upload.userId}`} fontWeight="bold">
-                        {upload.username}
-                      </Link>
-                    </Box>
-                  </Text>
+                  Uploaded by User:
+                  <Box color="teal.500" decoration="underline">
+                    <Link href={`/user/${upload.userId}`} fontWeight="bold">
+                      {upload.username}
+                    </Link>
+                  </Box>
                 </Box>
               </Box>
             );
@@ -90,25 +96,25 @@ export default function About({ uploads }) {
   );
 }
 
-export async function getServerSideProps() {
-  const db = await connectToMongoDB();
-  const data = await db.collection("userdemos").find({}).toArray();
+// export async function getServerSideProps() {
+//   const db = await connectToMongoDB();
+//   const data = await db.collection("userdemos").find({}).toArray();
 
-  const uploads = [];
-  data.forEach((doc) => {
-    if (doc.uploads) {
-      doc.uploads.forEach((upload) => {
-        uploads.push({
-          ...upload,
-          _id: upload._id.toString(),
-          userId: doc._id.toString(),
-          username: doc.username,
-        });
-      });
-    }
-  });
+//   const uploads = [];
+//   data.forEach((doc) => {
+//     if (doc.uploads) {
+//       doc.uploads.forEach((upload) => {
+//         uploads.push({
+//           ...upload,
+//           _id: upload._id.toString(),
+//           userId: doc._id.toString(),
+//           username: doc.username,
+//         });
+//       });
+//     }
+//   });
 
-  return {
-    props: { uploads },
-  };
-}
+//   return {
+//     props: { uploads },
+//   };
+// }
