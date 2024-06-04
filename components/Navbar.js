@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, IconButton, useColorMode, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack } from "@chakra-ui/react";
+import { Flex, Button, IconButton, useColorMode, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack } from "@chakra-ui/react";
 import { HamburgerIcon, MoonIcon, ArrowForwardIcon, SunIcon } from "@chakra-ui/icons";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from "@chakra-ui/react";
 import SignUp from "@/components/Signup";
@@ -65,11 +65,19 @@ const Navbar = () => {
 
   return (
     <>
-      <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" justify="center" padding="1rem" backdropFilter="blur(5px)">
+      <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" justify="center" padding="3" backdropFilter="blur(5px)">
         <ChakraLink as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-          HOME
+          DEMO
         </ChakraLink>
-        <IconButton aria-label="Open menu" icon={<HamburgerIcon />} size="lg" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
+        <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
+        {isSpecificPage && isLoggedIn && (
+          <>
+            <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+            <ChakraLink pr={4} onClick={() => openUpload()}>
+              Upload
+            </ChakraLink>
+          </>
+        )}
         <Flex align="center" display={{ base: "none", md: "flex" }} p={3} gap={10}>
           {!isLoggedIn && (
             <>
@@ -81,12 +89,19 @@ const Navbar = () => {
               </ChakraLink>
             </>
           )}
-          {isLoggedIn && isSpecificPage && (
+          {/* {isSpecificPage && isLoggedIn && (
             <>
               <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
               <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
             </>
-          )}
+          )} */}
+
+          {/* {isLoggedIn && isSpecificPage && (
+            <>
+              <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+              <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
+            </>
+          )} */}
           {isLoggedIn && (
             <>
               <ChakraLink onClick={() => handleOpenModal("logout")}>Logout</ChakraLink>
@@ -98,6 +113,7 @@ const Navbar = () => {
               </ChakraLink>
             </>
           )}
+
           <Modal isOpen={isModalOpen} onClose={onModalClose}>
             <ModalOverlay />
             <ModalContent maxW={["90vw", "70vw", "50vw", "40vw"]}>
@@ -116,11 +132,11 @@ const Navbar = () => {
         </Flex>
         <Drawer isOpen={isMenuOpen} placement="right" onClose={onMenuClose} size={{ base: "full", md: "half" }}>
           <DrawerOverlay>
-            <DrawerContent>
+            <DrawerContent bg="#212121">
               <DrawerCloseButton />
-              <DrawerHeader>Navigation</DrawerHeader>
+              <DrawerHeader></DrawerHeader>
               <DrawerBody>
-                <VStack spacing="24px">
+                <VStack spacing="20px">
                   {isLoggedIn && (
                     <>
                       <ChakraLink as={NextLink} href="/home" onClick={onMenuClose}>
@@ -129,13 +145,15 @@ const Navbar = () => {
                       <ChakraLink as={NextLink} href={{ pathname: "/userProfile", query: { userId: ciphertext } }} onClick={onMenuClose}>
                         Profile
                       </ChakraLink>
-                      {isSpecificPage && isLoggedIn && (
-                        <>
-                          <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
-                          <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
-                        </>
-                      )}
-                      <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" />
+                      <Button
+                        onClick={() => {
+                          handleOpenModal("logout");
+                          onMenuClose();
+                        }}
+                      >
+                        Logout
+                      </Button>
+                      {/* <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" /> */}
                     </>
                   )}
 
@@ -145,7 +163,7 @@ const Navbar = () => {
                       <ChakraLink onClick={() => handleOpenModal("signin")}>Sign in</ChakraLink>
                     </>
                   )}
-                  <IconButton aria-label="Toggle dark mode" icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />} onClick={toggleColorMode} />
+                  {/* <IconButton aria-label="Toggle dark mode" icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />} onClick={toggleColorMode} /> */}
                 </VStack>
               </DrawerBody>
             </DrawerContent>

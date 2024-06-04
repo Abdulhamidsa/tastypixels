@@ -1,7 +1,33 @@
-import { useState, useRef } from "react";
-import { Box, useToast, Button, FormControl, Alert, AlertIcon, FormErrorMessage, FormLabel, Wrap, Input, Textarea, Select, Tag, TagLabel, TagCloseButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from "@chakra-ui/react";
+import { React, useState, useRef } from "react";
+import {
+  Box,
+  InputGroup,
+  InputRightElement,
+  IconButton,
+  useToast,
+  Button,
+  FormControl,
+  Alert,
+  AlertIcon,
+  FormErrorMessage,
+  FormLabel,
+  Wrap,
+  Input,
+  Textarea,
+  Select,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+} from "@chakra-ui/react";
+import { ArrowUpIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
-import CardsTemplate from "@/components/CardsTemplate";
 
 const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   const [imageUrl, setImageUrl] = useState("");
@@ -14,7 +40,9 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   const { isLoggedIn, userId } = useAuth();
   const fileInputRef = useRef(null);
   const toast = useToast();
+
   const [uploadError, setUploadError] = useState("");
+  const inputRef = useRef();
 
   const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
   const handleUpload = async (e) => {
@@ -86,108 +114,140 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
       console.error(error);
     }
   };
+  const handleRemoveTag = (tagToRemove) => {
+    setSelectedTags((prevTags) => {
+      const index = prevTags.indexOf(tagToRemove);
+      if (index !== -1) {
+        return [...prevTags.slice(0, index), ...prevTags.slice(index + 1)];
+      }
+      return prevTags;
+    });
+    // Set focus back to the input field
+    inputRef.current.focus();
+  };
   const handleAddTag = () => {
-    if (selectedTags.length >= 5 || tagInput.trim() === "") {
+    if (tagInput.trim() === "") {
+      setTagError("Tag input is empty");
       return;
     }
 
-    if (tagInput.trim().length <= 5000) {
+    if (selectedTags.length >= 4) {
+      setTagError("Only 4 tags are allowed");
+      return;
+    }
+
+    if (selectedTags.includes(`#${tagInput.trim()}`)) {
+      setTagError("Tag already exists");
+      return;
+    }
+
+    if (tagInput.trim().length <= 10) {
       const formattedTag = `#${tagInput.trim()}`;
       setSelectedTags([...selectedTags, formattedTag]);
+      setTagInput("");
     } else {
-      setTagError("Tag input cannot exceed 5000 characters");
+      setTagError("Tag input cannot exceed 10 characters");
     }
+    inputRef.current.focus();
   };
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
+
   const handleTagInputChange = (e) => {
     if (e.target.value.length <= 10) {
       setTagInput(e.target.value);
       setTagError("");
     } else {
-      setTagError("Tag input cannot exceed 5000 characters");
+      setTagError("Tag input cannot exceed 10 characters");
     }
   };
-
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
   const handleCategorySelect = (e) => {
     setSelectedCategory(e.target.value);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal size="lg" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Upload Photo</ModalHeader>
+        <ModalHeader>Upload Recipe</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {isLoggedIn ? (
-            <Box>
-              <FormControl>
-                <FormLabel>Title</FormLabel>
-                <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter title" />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Description</FormLabel>
-                <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description" />
-              </FormControl>
-              <FormControl isInvalid={tagError !== ""}>
-                <FormLabel>Custom Tags</FormLabel>
-                <Wrap>
-                  {selectedTags.map((tag) => (
-                    <Tag key={tag} size="md" borderRadius="full" variant="solid" colorScheme="blue" mr={1} mb={1}>
-                      <TagLabel>{tag}</TagLabel>
-                      <TagCloseButton onClick={() => handleRemoveTag(tag)} />
-                    </Tag>
-                  ))}
-                </Wrap>
-                <Input
-                  type="text"
-                  value={tagInput}
-                  onChange={handleTagInputChange}
-                  placeholder="Enter custom tags"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddTag();
-                    }
+          <FormControl>
+            <FormLabel>Title</FormLabel>
+            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Dish Title" />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Description</FormLabel>
+            <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description of your dish" />
+          </FormControl>
+          <FormControl isInvalid={tagError !== ""}>
+            <FormLabel>Custom Tags</FormLabel>
+            <Wrap>
+              {selectedTags.map((tag) => (
+                <Tag key={tag} size="md" borderRadius="full" variant="solid" colorScheme="blue" mr={1} mb={1}>
+                  <TagLabel>{tag}</TagLabel>
+                  <TagCloseButton onClick={() => handleRemoveTag(tag)} />
+                </Tag>
+              ))}
+            </Wrap>
+            <InputGroup>
+              <Input
+                ref={inputRef}
+                type="search"
+                value={tagInput}
+                onChange={handleTagInputChange}
+                placeholder="Enter custom tags"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
+              />
+              <InputRightElement>
+                <IconButton
+                  aria-label="Add tag"
+                  icon={<ArrowUpIcon />}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddTag();
                   }}
                 />
-                <FormErrorMessage>{tagError}</FormErrorMessage>
-              </FormControl>
-              <FormControl>
-                <FormLabel>Category</FormLabel>
-                <Select value={selectedCategory} onChange={handleCategorySelect}>
-                  <option value="">Select Category</option>
-                  {predefinedCategories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl>
-                <FormLabel>Image</FormLabel>
-                <Input type="file" ref={fileInputRef} onChange={handleUpload} />
-              </FormControl>
-              {imageUrl && <img src={imageUrl} alt="Uploaded" />}
-              {uploadError && !uploadError.includes("maximum limit of uploads") && (
-                <Alert status="error" mb={4}>
-                  <AlertIcon />
-                  {uploadError}
-                </Alert>
-              )}
-              {uploadError && uploadError.includes("maximum limit of uploads") && (
-                <Alert status="error" mb={4}>
-                  <AlertIcon />
-                  User has reached the maximum limit of uploads
-                </Alert>
-              )}
-              <Button onClick={saveToDatabase}>Save to Database</Button>
-            </Box>
-          ) : (
-            <CardsTemplate />
+              </InputRightElement>
+            </InputGroup>
+            <FormErrorMessage>{tagError}</FormErrorMessage>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Category</FormLabel>
+            <Select value={selectedCategory} onChange={handleCategorySelect}>
+              <option value="">Select Category</option>
+              {predefinedCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Image</FormLabel>
+            <Input p={1} type="file" ref={fileInputRef} onChange={handleUpload} />
+          </FormControl>
+          {uploadError && !uploadError.includes("maximum limit of uploads") && (
+            <Alert status="error" mb={4}>
+              <AlertIcon />
+              {uploadError}
+            </Alert>
           )}
+          {uploadError && uploadError.includes("maximum limit of uploads") && (
+            <Alert status="error" mb={4}>
+              <AlertIcon />
+              You have reached the maximum limit of uploads
+            </Alert>
+          )}
+          <ModalFooter>
+            <Button onClick={saveToDatabase}>UPLOAD</Button>
+          </ModalFooter>
         </ModalBody>
       </ModalContent>
     </Modal>

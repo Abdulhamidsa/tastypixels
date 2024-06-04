@@ -67,3 +67,7 @@ a {
     color-scheme: dark;
   }
 } */
+/* Add this to your global CSS or component-specific CSS */
+p {
+  font-size: calc(0.8rem + 0.5vw) !important;
+}

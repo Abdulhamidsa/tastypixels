@@ -1,8 +1,10 @@
 import { extendTheme } from "@chakra-ui/react";
+
 const config = {
   initialColorMode: "dark",
   useSystemColorMode: true,
 };
+
 const theme = extendTheme({
   config,
   styles: {
@@ -22,6 +24,28 @@ const theme = extendTheme({
           textDecoration: "none",
           color: "blue.500",
           bg: "transparent",
+        },
+      },
+    },
+    Modal: {
+      baseStyle: {
+        dialog: {
+          bg: "#212121",
+        },
+      },
+    },
+    Drawer: {
+      baseStyle: {
+        dialog: {
+          bg: "#212121",
+        },
+      },
+    },
+    Button: {
+      baseStyle: {
+        bg: "gray.900",
+        _hover: {
+          bg: "gray.700",
         },
       },
     },

@@ -41,14 +41,21 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
           });
 
           if (response.ok) {
-            login();
-            setLoginStatus("success");
-            setTimeout(() => {
-              setLoginStatus("idle");
-              onModalClose();
-              location.reload();
-              router.push("/");
-            }, 1000);
+            toast({
+              title: "Signin Successful! Redirecting To Home Page",
+              status: "success",
+              duration: 2000,
+              isClosable: true,
+              position: "middle",
+              onCloseComplete: () => {
+                setLoginStatus("idle");
+                onModalClose();
+                location.reload();
+                router.push("/");
+                login();
+                setLoginStatus("success");
+              },
+            });
           } else {
             setLoginStatus("error");
             const errorData = await response.json();
@@ -96,9 +103,6 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
               "Sign In"
             )}
           </Button>
-          <Text color="green.300" mt={2}>
-            {loginStatus === "success" ? "Log in successful, redirecting..." : null}
-          </Text>
           <Text as="span" onClick={handleSignUpClick} color="blue.500" mt={2} display="block" cursor="pointer">
             Don't have an account yet? Sign up
           </Text>

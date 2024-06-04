@@ -33,7 +33,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
       setFieldError("password", "");
       setFieldError("repeatPassword", "");
       toast({
-        title: "Signup Successful!",
+        title: "Signup Successful! redirecting to signin form",
         status: "success",
         duration: 2000,
         isClosable: true,
@@ -63,7 +63,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
   return (
     <Box display="flex" flexDirection="row">
       {/* <Box width="50%" background=""></Box> */}
-      <Box width="100%" p={8}>
+      <Box width="100%" p={0}>
         <Formik initialValues={{ username: "", email: "", password: "", repeatPassword: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ isSubmitting }) => (
             <Form>
