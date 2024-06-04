@@ -1,13 +1,41 @@
-import { useToast, IconButton, Box, Badge, Image, Text, Toast, flexbox } from "@chakra-ui/react";
-import { AiOutlineHeart, AiFillHeart, AiOutlineFlag } from "react-icons/ai";
+import { Modal, Flex, Button, Avatar, ModalOverlay, ModalContent, useToast, IconButton, Box, Badge, Image, Text, Toast, flexbox, CloseButton } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
+import { AiOutlineHeart, AiFillHeart, AiOutlineFlag, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
 import { useAuth } from "@/context/AuthContext";
-import connectToMongoDB from "@/database/db";
 import CardsTemplate from "@/components/CardsTemplate";
 import { useEffect, useState } from "react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+
 import Link from "next/link";
 export default function About() {
   const [uploads, setUploads] = useState([]);
+  const [liked, setLiked] = useState({});
+  const [reported, setReported] = useState({});
+  const [disliked, setDisliked] = useState({});
+  const [selectedImage, setSelectedImage] = useState(null);
 
+  const handleOpen = (imageUrl) => setSelectedImage(imageUrl);
+  const handleClose = () => setSelectedImage(null);
+  const handleLike = (id) => {
+    setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
+    if (disliked[id]) setDisliked((prev) => ({ ...prev, [id]: false }));
+  };
+  useEffect(() => {
+    const savedLikes = JSON.parse(localStorage.getItem("likes")) || {};
+    const savedDislikes = JSON.parse(localStorage.getItem("dislikes")) || {};
+    setLiked(savedLikes);
+    setDisliked(savedDislikes);
+  }, []);
+
+  // Save like and dislike states to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("likes", JSON.stringify(liked));
+    localStorage.setItem("dislikes", JSON.stringify(disliked));
+  }, [liked, disliked]);
+  const handleDislike = (id) => {
+    setDisliked((prev) => ({ ...prev, [id]: !prev[id] }));
+    if (liked[id]) setLiked((prev) => ({ ...prev, [id]: false }));
+  };
   useEffect(() => {
     const fetchUploads = async () => {
       const res = await fetch("/api/api-fetch-recipe");
@@ -22,12 +50,7 @@ export default function About() {
   const calculateAspectRatio = (width, height) => {
     return width / height;
   };
-  const [liked, setLiked] = useState({});
-  const [reported, setReported] = useState({});
-  const handleLike = async (id) => {
-    setLiked((prevState) => ({ ...prevState, [id]: !prevState[id] }));
-    console.log("upload with the id" + id + "is liked");
-  };
+
   const handleReport = async (id) => {
     setReported((prevState) => ({ ...prevState, [id]: !prevState[id] }));
     toast({
@@ -41,50 +64,70 @@ export default function About() {
   return (
     <>
       {isLoggedIn ? (
-        <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={5}>
+        <Box m="auto" maxW="400px" display="grid" gap={5}>
           {uploads.map((upload) => {
             const aspectRatio = calculateAspectRatio(upload.width, upload.height);
-            const height = 300 / aspectRatio;
+            const height = 100 / aspectRatio;
             return (
-              <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" height={`${height}px`}>
-                <IconButton position="absolute" left="0" aria-label="Like photo" icon={liked[upload._id] ? <AiFillHeart /> : <AiOutlineHeart />} colorScheme={liked[upload._id] ? "red" : "gray"} onClick={() => handleLike(upload._id)} />{" "}
-                <IconButton position="absolute" right="0" bottom={0} aria-label="Report photo" icon={<AiOutlineFlag />} color="white" onClick={() => handleReport(upload._id)} />
-                <Box width="100%" height="200px">
-                  <Image src={upload.imageUrl} alt={upload.title} width="100%" height="100%" objectFit="cover" />
-                </Box>
-                <Box p={2}>
-                  <Box d="flex" alignItems="baseline">
-                    <Badge borderRadius="full" px="2" colorScheme="teal" mr="2">
-                      {upload.category}
-                    </Badge>
-                  </Box>
-                  <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
-                    <Text fontSize="lg" fontWeight="bold">
-                      Title:
-                    </Text>
-                    {upload.title}
-                  </Box>
-                  <Box mt="2" color="gray.600">
-                    <Text fontSize="lg" fontWeight="bold">
-                      Description:
-                    </Text>
-                    {upload.description}
-                  </Box>
+              <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="black">
+                <Box p="5" display="flex" alignItems="center">
+                  <Avatar name={upload.username} src={upload.userAvatar} mr="4" />
                   <Box>
+                    <Text fontWeight="bold" color="white">
+                      {upload.username}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {upload.uploadDate}
+                    </Text>
+                  </Box>
+                </Box>
+                <Box position="relative">
+                  <Image src={upload.imageUrl} alt={upload.title} width="100%" height={`${height}px`} objectFit="cover" />
+                  <Box position="absolute" bottom="0" left="0" width="100%" bg="rgba(200, 200, 200, 0.5)" p="2">
+                    <Text fontSize="lg" fontWeight="bold" color="white">
+                      {upload.title}
+                    </Text>
+                    <Text color="gray.300">{upload.description}</Text>
+                  </Box>
+                  <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="5px" right="5px" onClick={() => handleOpen(upload.imageUrl)} />
+                </Box>
+                <Flex justifyContent="space-between" alignItems="center" p="4">
+                  <Button aria-label="Like photo" leftIcon={liked[upload._id] ? <AiFillHeart /> : <AiOutlineHeart />} colorScheme={liked[upload._id] ? "red" : "gray"} onClick={() => handleLike(upload._id)}>
+                    {liked[upload._id] ? "Liked" : "Like"}
+                  </Button>
+                  <Button aria-label="Dislike photo" leftIcon={disliked[upload._id] ? <AiFillDislike /> : <AiOutlineDislike />} colorScheme={disliked[upload._id] ? "red" : "gray"} onClick={() => handleDislike(upload._id)}>
+                    {disliked[upload._id] ? "Disliked" : "Dislike"}
+                  </Button>
+                  <Button aria-label="Report photo" leftIcon={<AiOutlineFlag />} colorScheme="gray" onClick={() => handleReport(upload._id)}>
+                    Report
+                  </Button>
+                </Flex>
+                <Box p="4">
+                  <Badge borderRadius="full" px="2" colorScheme="teal" mb="2">
+                    {upload.category}
+                  </Badge>
+                  <Box display="flex" flexWrap="wrap">
                     {upload.tags &&
                       upload.tags.map((tag, index) => (
-                        <Badge key={`${tag}-${index}`} borderRadius="full" px="2" colorScheme="blue" mt="2" mr="2">
+                        <Badge key={`${tag}-${index}`} borderRadius="full" px="2" colorScheme="blue" mr="2" mb="2">
                           {tag}
                         </Badge>
                       ))}
                   </Box>
-                  Uploaded by User:
-                  <Box color="teal.500" decoration="underline">
-                    <Link href={`/user/${upload.userId}`} fontWeight="bold">
-                      {upload.username}
-                    </Link>
-                  </Box>
                 </Box>
+                <Modal isOpen={selectedImage !== null} onClose={handleClose} size="full">
+                  <ModalOverlay />
+                  <ModalContent bg="transparent" boxShadow="none">
+                    <CloseButton onClick={handleClose} position="absolute" top="5px" right="5px" />
+                    <Box m="auto">
+                      <TransformWrapper>
+                        <TransformComponent>
+                          <Image src={selectedImage} alt="" maxW="90%" maxH="90vh" m="auto" objectFit="contain" />
+                        </TransformComponent>
+                      </TransformWrapper>
+                    </Box>
+                  </ModalContent>
+                </Modal>
               </Box>
             );
           })}
