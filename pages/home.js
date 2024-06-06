@@ -1,5 +1,5 @@
-import { Modal, Flex, Button, Avatar, ModalOverlay, ModalContent, useToast, IconButton, Box, Badge, Image, Text, Toast, flexbox, CloseButton } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { Modal, Divider, Flex, Button, Avatar, ModalOverlay, ModalContent, useToast, IconButton, Box, Badge, Image, Text, Toast, flexbox, CloseButton } from "@chakra-ui/react";
+import { SearchIcon, WarningIcon } from "@chakra-ui/icons";
 import { AiOutlineHeart, AiFillHeart, AiOutlineFlag, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
 import { useAuth } from "@/context/AuthContext";
 import CardsTemplate from "@/components/CardsTemplate";
@@ -64,57 +64,54 @@ export default function About() {
   return (
     <>
       {isLoggedIn ? (
-        <Box m="auto" maxW="400px" display="grid" gap={5}>
+        <Box p={5} m="auto" maxW="420px" display="grid" gap="10">
           {uploads.map((upload) => {
-            const aspectRatio = calculateAspectRatio(upload.width, upload.height);
-            const height = 100 / aspectRatio;
             return (
-              <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="black">
-                <Box p="5" display="flex" alignItems="center">
-                  <Avatar name={upload.username} src={upload.userAvatar} mr="4" />
-                  <Box>
-                    <Text fontWeight="bold" color="white">
-                      {upload.username}
-                    </Text>
-                    <Text fontSize="sm" color="gray.500">
-                      {upload.uploadDate}
-                    </Text>
+              <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
+                <Box bg="white" p="4" pb="0" display="flex" alignItems="center">
+                  <Avatar w="45px" height="45px" name={upload.username} src={upload.userAvatar} mr="4" />
+                  <Box position="relative" color="black">
+                    <Text fontWeight="bold">{upload.username}</Text>
+                    <Text fontSize="sm">{upload.uploadDate}</Text>
                   </Box>
                 </Box>
-                <Box position="relative">
-                  <Image src={upload.imageUrl} alt={upload.title} width="100%" height={`${height}px`} objectFit="cover" />
-                  <Box position="absolute" bottom="0" left="0" width="100%" bg="rgba(200, 200, 200, 0.5)" p="2">
-                    <Text fontSize="lg" fontWeight="bold" color="white">
-                      {upload.title}
-                    </Text>
-                    <Text color="gray.300">{upload.description}</Text>
+                <Box position="relative" p={3} bg="white" color="black">
+                  <Text fontWeight="bold" fontSize="lg">
+                    {upload.title}.
+                  </Text>
+
+                  <Text>{upload.description}.</Text>
+                  <Box zIndex={1} bg="red" position="relative">
+                    <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100" colorScheme="gray" />
                   </Box>
-                  <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="5px" right="5px" onClick={() => handleOpen(upload.imageUrl)} />
+                  <Image position="relative" src={upload.imageUrl} alt={upload.title} width="100%" height="auto" objectFit="cover" />
                 </Box>
-                <Flex justifyContent="space-between" alignItems="center" p="4">
-                  <Button aria-label="Like photo" leftIcon={liked[upload._id] ? <AiFillHeart /> : <AiOutlineHeart />} colorScheme={liked[upload._id] ? "red" : "gray"} onClick={() => handleLike(upload._id)}>
-                    {liked[upload._id] ? "Liked" : "Like"}
-                  </Button>
-                  <Button aria-label="Dislike photo" leftIcon={disliked[upload._id] ? <AiFillDislike /> : <AiOutlineDislike />} colorScheme={disliked[upload._id] ? "red" : "gray"} onClick={() => handleDislike(upload._id)}>
-                    {disliked[upload._id] ? "Disliked" : "Dislike"}
-                  </Button>
-                  <Button aria-label="Report photo" leftIcon={<AiOutlineFlag />} colorScheme="gray" onClick={() => handleReport(upload._id)}>
-                    Report
-                  </Button>
-                </Flex>
-                <Box p="4">
-                  <Badge borderRadius="full" px="2" colorScheme="teal" mb="2">
-                    {upload.category}
-                  </Badge>
-                  <Box display="flex" flexWrap="wrap">
-                    {upload.tags &&
-                      upload.tags.map((tag, index) => (
-                        <Badge key={`${tag}-${index}`} borderRadius="full" px="2" colorScheme="blue" mr="2" mb="2">
-                          {tag}
-                        </Badge>
-                      ))}
+                <Box position="relative" bg="black" p="4">
+                  <Flex justifyContent="center" gap={5} alignItems="center" p="">
+                    <Button aria-label="Like photo" leftIcon={liked[upload._id] ? <AiFillHeart /> : <AiOutlineHeart />} colorScheme={liked[upload._id] ? "blue" : "gray"} onClick={() => handleLike(upload._id)}>
+                      {liked[upload._id] ? "Liked" : "Like"}
+                    </Button>
+                    <Button aria-label="Dislike photo" leftIcon={disliked[upload._id] ? <AiFillDislike /> : <AiOutlineDislike />} colorScheme={disliked[upload._id] ? "red" : "gray"} onClick={() => handleDislike(upload._id)}>
+                      {disliked[upload._id] ? "Disliked" : "Dislike"}
+                    </Button>
+                    <WarningIcon cursor="pointer" onClick={() => handleReport(upload._id)} ml="auto" boxSize="6" />
+                  </Flex>
+                  <Divider my={4} />
+                  <Box pl="">
+                    <Badge borderRadius="3" p="2" colorScheme="blue" mb="2">
+                      {upload.category}
+                    </Badge>
+                    <Box display="flex" flexWrap="wrap">
+                      {upload.tags &&
+                        upload.tags.map((tag, index) => (
+                          <Badge key={`${tag}-${index}`} borderRadius="3" borderColor="red" border="" px="2" colorScheme="green" mr="2" mb="2">
+                            {tag}
+                          </Badge>
+                        ))}
+                    </Box>
                   </Box>
                 </Box>
+
                 <Modal isOpen={selectedImage !== null} onClose={handleClose} size="full">
                   <ModalOverlay />
                   <ModalContent bg="transparent" boxShadow="none">
