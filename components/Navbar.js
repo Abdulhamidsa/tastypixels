@@ -95,7 +95,7 @@ const Navbar = () => {
               <ChakraLink as={NextLink} href="/home">
                 Food Gallary
               </ChakraLink>
-              <ChakraLink as={NextLink} href={`/userProfile/${ciphertext}`}>
+              <ChakraLink as={NextLink} href={`/userProfile/${encodeURIComponent(ciphertext)}`} onClick={onMenuClose}>
                 Profile
               </ChakraLink>
             </>
@@ -113,9 +113,10 @@ const Navbar = () => {
                       <ChakraLink as={NextLink} href="/home" onClick={onMenuClose}>
                         Food Gallary
                       </ChakraLink>
-                      <ChakraLink as={NextLink} href={`/userProfile/${ciphertext}`} onClick={onMenuClose}>
+                      <ChakraLink as={NextLink} href={`/userProfile/${encodeURIComponent(ciphertext)}`} onClick={onMenuClose}>
                         Profile
                       </ChakraLink>
+
                       <Button
                         onClick={() => {
                           handleOpenModal("logout");
