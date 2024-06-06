@@ -46,34 +46,33 @@ function UserProfile({ uploads }) {
     }
   }, [isLoggedIn]);
 
-  const handleRemoveUpload = async (id) => {
-    const newUploadList = uploadList.filter((upload) => upload._id !== id);
-    setUploadList(newUploadList);
+  const handleRemoveUpload = async (Id) => {
     try {
       const response = await fetch("/api/api-delete-recipe", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, id }),
+        body: JSON.stringify({ userId, Id }),
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        console.log("Upload removed successfully");
+        setUploadList(uploadList.filter((upload) => upload._id !== Id));
+        toast({
+          title: "Upload deleted.",
+          description: "The upload has been successfully deleted.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
         const errorData = await response.json();
         console.error("Failed to remove upload:", errorData.error);
         toast({
           title: "Error",
           description: errorData.error,
           status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-        setUploadList(uploads);
-      } else {
-        toast({
-          title: "Upload deleted.",
-          description: "The upload has been successfully deleted.",
-          status: "success",
           duration: 9000,
           isClosable: true,
         });
@@ -87,7 +86,6 @@ function UserProfile({ uploads }) {
         duration: 9000,
         isClosable: true,
       });
-      setUploadList(uploads);
     }
     onClose();
   };
