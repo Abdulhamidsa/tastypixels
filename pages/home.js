@@ -1,4 +1,4 @@
-import { Modal, Divider, Flex, Button, Avatar, ModalOverlay, ModalContent, useToast, IconButton, Box, Badge, Image, Text, Toast, flexbox, CloseButton } from "@chakra-ui/react";
+import { Modal, Divider, Flex, Button, Avatar, ModalOverlay, ModalContent, useToast, IconButton, Box, Badge, Image, Text, Toast, flexbox, CloseButton, Heading } from "@chakra-ui/react";
 import { SearchIcon, WarningIcon } from "@chakra-ui/icons";
 import { AiOutlineHeart, AiFillHeart, AiOutlineFlag, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
 import { useAuth } from "@/context/AuthContext";
@@ -68,10 +68,12 @@ export default function About() {
           {uploads.map((upload) => {
             return (
               <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
-                <Box bg="white" p="4" pb="0" display="flex" alignItems="center">
+                <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
                   <Avatar w="45px" height="45px" name={upload.username} src={upload.userAvatar} mr="4" />
                   <Box position="relative" color="black">
-                    <Text fontWeight="bold">{upload.username}</Text>
+                    <Heading fontSize="25" fontWeight="bold">
+                      {upload.username}
+                    </Heading>
                     <Text fontSize="sm">{upload.uploadDate}</Text>
                   </Box>
                 </Box>
@@ -80,7 +82,7 @@ export default function About() {
                     {upload.title}.
                   </Text>
 
-                  <Text>{upload.description}.</Text>
+                  <Text pb={2}>{upload.description}.</Text>
                   <Box zIndex={1} bg="red" position="relative">
                     <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100" colorScheme="gray" />
                   </Box>

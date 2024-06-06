@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, Textarea, Tooltip, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Text, Button } from "@chakra-ui/react";
+import { IconButton, Textarea, Tooltip, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Text, Button, Box } from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useState } from "react";
