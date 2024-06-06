@@ -89,46 +89,17 @@ const Navbar = () => {
               </ChakraLink>
             </>
           )}
-          {/* {isSpecificPage && isLoggedIn && (
-            <>
-              <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
-              <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
-            </>
-          )} */}
-
-          {/* {isLoggedIn && isSpecificPage && (
-            <>
-              <Upload isOpen={isUploadOpen} cloeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
-              <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
-            </>
-          )} */}
           {isLoggedIn && (
             <>
               <ChakraLink onClick={() => handleOpenModal("logout")}>Logout</ChakraLink>
               <ChakraLink as={NextLink} href="/home">
                 Food Gallary
               </ChakraLink>
-              <ChakraLink as={NextLink} href={{ pathname: "/userProfile", query: { userId: ciphertext } }}>
+              <ChakraLink as={NextLink} href={`/userProfile/${ciphertext}`}>
                 Profile
               </ChakraLink>
             </>
           )}
-
-          <Modal isOpen={isModalOpen} onClose={onModalClose}>
-            <ModalOverlay />
-            <ModalContent maxW={["90vw", "70vw", "50vw", "40vw"]}>
-              <ModalHeader>{formType === "logout" ? "Logout" : formType === "signup" ? "Sign Up" : "Sign In"}</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                {formType === "signup" ? (
-                  <SignUp isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
-                ) : formType === "signin" ? (
-                  <Signin isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
-                ) : null}
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-          {/* <IconButton aPria-label="Toggle dark mode" icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />} onClick={toggleColorMode} /> */}
         </Flex>
         <Drawer isOpen={isMenuOpen} placement="right" onClose={onMenuClose} size={{ base: "full", md: "half" }}>
           <DrawerOverlay>
@@ -142,7 +113,7 @@ const Navbar = () => {
                       <ChakraLink as={NextLink} href="/home" onClick={onMenuClose}>
                         Food Gallary
                       </ChakraLink>
-                      <ChakraLink as={NextLink} href={{ pathname: "/userProfile", query: { userId: ciphertext } }} onClick={onMenuClose}>
+                      <ChakraLink as={NextLink} href={`/userProfile/${ciphertext}`} onClick={onMenuClose}>
                         Profile
                       </ChakraLink>
                       <Button
@@ -153,7 +124,6 @@ const Navbar = () => {
                       >
                         Logout
                       </Button>
-                      {/* <IconButton icon={<ArrowForwardIcon />} onClick={() => handleOpenModal("logout")} variant="outline" /> */}
                     </>
                   )}
 
@@ -163,13 +133,27 @@ const Navbar = () => {
                       <ChakraLink onClick={() => handleOpenModal("signin")}>Sign in</ChakraLink>
                     </>
                   )}
-                  {/* <IconButton aria-label="Toggle dark mode" icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />} onClick={toggleColorMode} /> */}
                 </VStack>
               </DrawerBody>
             </DrawerContent>
           </DrawerOverlay>
         </Drawer>
       </Flex>
+
+      <Modal isOpen={isModalOpen} onClose={onModalClose}>
+        <ModalOverlay />
+        <ModalContent maxW={["90vw", "70vw", "50vw", "40vw"]}>
+          <ModalHeader>{formType === "logout" ? "Logout" : formType === "signup" ? "Sign Up" : "Sign In"}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {formType === "signup" ? (
+              <SignUp isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
+            ) : formType === "signin" ? (
+              <Signin isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
+            ) : null}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

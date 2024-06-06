@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export async function getServerSideProps(context) {
-  const { userId } = context.query;
+  const { userId } = context.params;
   const bytes = CryptoJS.AES.decrypt(userId, "secret key");
   const decryptedUserId = bytes.toString(CryptoJS.enc.Utf8);
 
