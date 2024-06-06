@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const { userId, uploadId } = req.body;
-  console.log(userId, uploadId);
+  const { userId, Id } = req.body;
+  console.log(userId, Id);
 
   try {
     await connectToMongoDB();
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ errors: ["User not found"] });
     }
 
-    user.uploads = user.uploads.filter((upload) => upload._id.toString() !== uploadId);
+    user.uploads = user.uploads.filter((upload) => upload._id.toString() !== Id);
 
     await user.save();
 
