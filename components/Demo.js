@@ -53,7 +53,7 @@ function Demo() {
   return (
     <>
       <Tooltip label="Demo Info" fontSize="md">
-        <IconButton pl={3} bg="red.500" color="" size="lg" aria-label="About this demo" icon={<InfoIcon />} onClick={onOpen} position="fixed" left="-4" _hover={{ left: "0px" }} top="200%" transform="translateY(-50%)" borderRadius="0%" transition="all 0.2s ease-in-out" />
+        <IconButton pl={3} bg="red.500" color="" size="lg" aria-label="About this demo" icon={<InfoIcon />} top={150} onClick={onOpen} position="fixed" left="-4" _hover={{ left: "0px" }} transform="translateY(-50%)" borderRadius="0%" transition="all 0.2s ease-in-out" />
       </Tooltip>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

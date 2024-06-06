@@ -10,7 +10,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
 import CryptoJS from "crypto-js";
-import Demo from "./Demo";
 
 const Navbar = () => {
   const { isLoggedIn, logouts, isLoading, userId } = useAuth();
@@ -67,8 +66,6 @@ const Navbar = () => {
   return (
     <>
       <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" justify="center" padding="3" backdropFilter="blur(5px)">
-        <Demo />
-
         <ChakraLink as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
           DEMO
         </ChakraLink>
@@ -143,7 +140,6 @@ const Navbar = () => {
           </DrawerOverlay>
         </Drawer>
       </Flex>
-
       <Modal isOpen={isModalOpen} onClose={onModalClose}>
         <ModalOverlay />
         <ModalContent maxW={["90vw", "70vw", "50vw", "40vw"]}>
