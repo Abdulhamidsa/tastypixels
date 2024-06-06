@@ -65,10 +65,10 @@ function Demo() {
               Welcome to our Food Dish Sharing Community!
             </Text>
             <Text mb={2}>This demo website allows you to share your favorite dishes with the community. You can:</Text>
+            <Text>• Sign up to create an account and log in to manage your uploads.</Text>
             <Text>• Upload your favorite dishes along with images, titles, and descriptions.</Text>
             <Text>• View your uploads on your profile page.</Text>
             <Text>• Delete any of your uploads if you change your mind.</Text>
-            <Text>• Sign up to create an account and log in to manage your uploads.</Text>
             <Text mt={4}>We hope you enjoy sharing and discovering delicious dishes!</Text>
             <Text mt={4} fontWeight="bold">
               Note: This is only a demo, so everything is just a prototype. All features and content will be finalized in the final version.
