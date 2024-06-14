@@ -121,7 +121,7 @@ export default function About() {
                     <Box m="auto">
                       <TransformWrapper>
                         <TransformComponent>
-                          <Image src={selectedImage} alt="" maxW="90%" maxH="90vh" m="auto" objectFit="contain" />
+                          <Image src={selectedImage} alt="" maxW="91%" maxH="90vh" m="auto" objectFit="contain" />
                         </TransformComponent>
                       </TransformWrapper>
                     </Box>
