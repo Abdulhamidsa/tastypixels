@@ -1,5 +1,6 @@
-import { Button, Flex, Avatar, Text, Box, Badge, Image, Heading, Divider, IconButton, useToast } from "@chakra-ui/react";
+import { Modal, CloseButton, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, Flex, Avatar, Text, Box, Badge, Image, Heading, Divider, IconButton, useToast } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import CardsTemplate from "@/components/CardsTemplate";
@@ -10,7 +11,6 @@ export default function About() {
   const [uploads, setUploads] = useState([]);
   const { isLoggedIn, userId } = useAuth();
   const [selectedImage, setSelectedImage] = useState(null);
-
   const toast = useToast();
 
   useEffect(() => {
@@ -61,14 +61,14 @@ export default function About() {
     }
   }, [isLoggedIn, userId, toast]);
 
-  const handleLike = async (uploadId) => {
+  const handleVote = async (uploadId, action) => {
     try {
       const response = await fetch("/api/api-update-likes-dislikes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, uploadId, action: "like" }),
+        body: JSON.stringify({ userId, uploadId, action }),
       });
 
       if (!response.ok) {
@@ -81,42 +81,8 @@ export default function About() {
         upload._id === uploadId
           ? {
               ...upload,
-              isLiked: !upload.isLiked,
-              isDisliked: false,
-              likes: data.upload.likes,
-              dislikes: data.upload.dislikes,
-            }
-          : upload
-      );
-
-      setUploads(updatedUploads);
-    } catch (error) {
-      console.error("Error updating likes/dislikes:", error);
-    }
-  };
-
-  const handleDislike = async (uploadId) => {
-    try {
-      const response = await fetch("/api/api-update-likes-dislikes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, uploadId, action: "dislike" }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update likes/dislikes");
-      }
-
-      const data = await response.json();
-
-      const updatedUploads = uploads.map((upload) =>
-        upload._id === uploadId
-          ? {
-              ...upload,
-              isLiked: false,
-              isDisliked: !upload.isDisliked,
+              isLiked: action === "like" ? !upload.isLiked : false,
+              isDisliked: action === "dislike" ? !upload.isDisliked : false,
               likes: data.upload.likes,
               dislikes: data.upload.dislikes,
             }
@@ -130,66 +96,80 @@ export default function About() {
   };
   const handleOpen = (imageUrl) => setSelectedImage(imageUrl);
   const handleClose = () => setSelectedImage(null);
-
   return (
     <>
       {isLoggedIn ? (
-        <Box p={5} m="auto" maxW="420px" display="grid" gap="10">
-          {uploads.map((upload) => (
-            <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
-              <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
-                <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="4" />
-                <Box color="black">
+        <>
+          <Box p={5} m="auto" maxW="420px" display="grid" gap="10">
+            {uploads.map((upload) => (
+              <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
+                <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
+                  <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="4" />
+                  <Box color="black">
+                    <Heading fontSize="lg" fontWeight="bold">
+                      {upload.username}
+                    </Heading>
+                    <Text fontSize="sm">{upload.uploadDate}</Text>
+                  </Box>
+                </Box>
+
+                <Box p={3} bg="white" color="black">
                   <Heading fontSize="lg" fontWeight="bold">
-                    {upload.username}
+                    {upload.title}
                   </Heading>
-                  <Text fontSize="sm">{upload.uploadDate}</Text>
-                </Box>
-              </Box>
-
-              <Box p={3} bg="white" color="black">
-                <Heading fontSize="lg" fontWeight="bold">
-                  {upload.title}
-                </Heading>
-                <Text pb={2}>{upload.description}</Text>
-                <Box position="relative">
-                  <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="gray" />
-                </Box>
-                <Image src={upload.imageUrl} alt={upload.title} width="100%" height="auto" objectFit="cover" />
-              </Box>
-
-              <Flex direction="row" justify="flex-start" p={4} gap={3}>
-                <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                  <Button aria-label="Upvote" onClick={() => handleLike(upload._id)} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
-                    <FaArrowUp />
-                  </Button>
-                  <Text color="green.700">{upload.likes}</Text>
+                  <Text pb={2}>{upload.description}</Text>
+                  <Box position="relative">
+                    <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="gray" />
+                  </Box>
+                  <Image src={upload.imageUrl} alt={upload.title} width="100%" height="auto" objectFit="cover" />
                 </Box>
 
-                <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                  <Button aria-label="Downvote" onClick={() => handleDislike(upload._id)} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
-                    <FaArrowDown />
-                  </Button>
-                  <Text color="red.700">{upload.dislikes}</Text>
-                </Box>
-              </Flex>
-              <Box bg="black" p="4">
-                <Divider my={4} />
-                <Badge borderRadius="3" p="2" colorScheme="blue" mb="2">
-                  {upload.category}
-                </Badge>
-                <Box display="flex" flexWrap="wrap">
-                  {upload.tags &&
-                    upload.tags.map((tag, index) => (
-                      <Badge key={`${tag}-${index}`} borderRadius="3" borderColor="red" border="" px="2" colorScheme="green" mr="2" mb="2">
-                        {tag}
-                      </Badge>
-                    ))}
+                <Flex direction="row" justify="flex-start" p={4} gap={3}>
+                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                    <Button aria-label="Upvote" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
+                      <FaArrowUp />
+                    </Button>
+                    <Text color="green.700">{upload.likes}</Text>
+                  </Box>
+
+                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                    <Button aria-label="Downvote" onClick={() => handleVote(upload._id, "dislike")} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
+                      <FaArrowDown />
+                    </Button>
+                    <Text color="red.700">{upload.dislikes}</Text>
+                  </Box>
+                </Flex>
+                <Box bg="black" p="4">
+                  <Divider my={4} />
+                  <Badge borderRadius="3" p="2" colorScheme="blue" mb="2">
+                    {upload.category}
+                  </Badge>
+                  <Box display="flex" flexWrap="wrap">
+                    {upload.tags &&
+                      upload.tags.map((tag, index) => (
+                        <Badge key={`${tag}-${index}`} borderRadius="3" borderColor="red" border="" px="2" colorScheme="green" mr="2" mb="2">
+                          {tag}
+                        </Badge>
+                      ))}
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          ))}
-        </Box>
+            ))}
+          </Box>
+          <Modal isOpen={selectedImage !== null} onClose={handleClose} size="full">
+            <ModalOverlay />
+            <ModalContent bg="transparent" boxShadow="none">
+              <CloseButton onClick={handleClose} position="absolute" top="5px" right="5px" />
+              <Box m="auto">
+                <TransformWrapper>
+                  <TransformComponent>
+                    <Image src={selectedImage} alt="" maxW="91%" maxH="90vh" m="auto" objectFit="contain" />
+                  </TransformComponent>
+                </TransformWrapper>
+              </Box>
+            </ModalContent>
+          </Modal>
+        </>
       ) : (
         <CardsTemplate />
       )}
