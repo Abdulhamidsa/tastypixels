@@ -67,7 +67,7 @@ const Navbar = () => {
     <>
       <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" justify="center" padding="3" backdropFilter="blur(5px)">
         <ChakraLink as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-          DEMO
+          TASTY PIXELS
         </ChakraLink>
         <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
         {isSpecificPage && isLoggedIn && (

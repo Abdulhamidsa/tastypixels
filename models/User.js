@@ -5,6 +5,8 @@ const uploadSchema = new mongoose.Schema({
   description: String,
   category: String,
   tags: [String],
+  likes: { type: Number, default: 0 },
+  dislikes: { type: Number, default: 0 },
 });
 const userSchema = new mongoose.Schema(
   {
@@ -26,6 +28,18 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     uploads: [uploadSchema],
+    likedPosts: [
+      {
+        uploadId: mongoose.Schema.Types.ObjectId,
+        liked: Boolean,
+      },
+    ],
+    dislikedPosts: [
+      {
+        uploadId: mongoose.Schema.Types.ObjectId,
+        disliked: Boolean,
+      },
+    ],
     deletedAt: {
       type: Date,
       default: null,
@@ -37,4 +51,4 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-export default mongoose.models.userDemo || mongoose.model("userDemo", userSchema);
+export default mongoose.models.User || mongoose.model("User", userSchema);

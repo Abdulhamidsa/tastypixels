@@ -7,13 +7,19 @@ export default async function handler(req, res) {
 
     try {
       const db = await connectToMongoDB();
-      const user = await db.collection("userdemos").findOne({ _id: new ObjectId(userId) });
+      const user = await db.collection("users").findOne({ _id: new ObjectId(userId) });
 
-      const uploads = user ? user.uploads.map((upload) => ({ ...upload, _id: upload._id.toString() })) : [];
-      res.status(200).json({ uploads });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Optionally modify user data here if needed before sending it to the client
+      // For example, you can map certain fields or manipulate data structures
+
+      res.status(200).json({ user });
     } catch (error) {
-      console.error("Error fetching uploads:", error);
-      res.status(500).json({ error: "Failed to fetch uploads" });
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Failed to fetch user" });
     }
   } else {
     res.status(405).json({ error: "Method not allowed" });

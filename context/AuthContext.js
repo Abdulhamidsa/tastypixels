@@ -5,6 +5,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [LikedPosts, setLikedPosts] = useState([]);
 
   useEffect(() => {
     const fetchLoginStatus = async () => {
