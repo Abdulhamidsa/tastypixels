@@ -1,4 +1,4 @@
-import { Modal, CloseButton, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, Flex, Avatar, Text, Box, Badge, Image, Heading, Divider, IconButton, useToast } from "@chakra-ui/react";
+import { Modal, Spinner, CloseButton, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, Flex, Avatar, Text, Box, Badge, Image, Heading, Divider, IconButton, useToast } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useAuth } from "@/context/AuthContext";
@@ -10,7 +10,10 @@ import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 export default function About() {
   const [uploads, setUploads] = useState([]);
   const { isLoggedIn, userId } = useAuth();
+  const [loading, setLoading] = useState({ like: false, dislike: false });
+
   const [selectedImage, setSelectedImage] = useState(null);
+
   const toast = useToast();
 
   useEffect(() => {
@@ -62,7 +65,10 @@ export default function About() {
   }, [isLoggedIn, userId, toast]);
 
   const handleVote = async (uploadId, action) => {
+    setLoading((prev) => ({ ...prev, [action]: true }));
+
     try {
+      setLoading(true);
       const response = await fetch("/api/api-update-likes-dislikes", {
         method: "POST",
         headers: {
@@ -90,6 +96,7 @@ export default function About() {
       );
 
       setUploads(updatedUploads);
+      setLoading((prev) => ({ ...prev, [action]: false }));
     } catch (error) {
       console.error("Error updating likes/dislikes:", error);
     }
@@ -126,16 +133,24 @@ export default function About() {
 
                 <Flex direction="row" justify="flex-start" p={4} gap={3}>
                   <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                    <Button aria-label="Upvote" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
-                      <FaArrowUp />
-                    </Button>
+                    {loading.like ? (
+                      <Spinner />
+                    ) : (
+                      <Button aria-label="Upvote" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
+                        <FaArrowUp />
+                      </Button>
+                    )}
                     <Text color="green.700">{upload.likes}</Text>
                   </Box>
 
                   <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                    <Button aria-label="Downvote" onClick={() => handleVote(upload._id, "dislike")} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
-                      <FaArrowDown />
-                    </Button>
+                    {loading.dislike ? (
+                      <Spinner />
+                    ) : (
+                      <Button aria-label="Downvote" onClick={() => handleVote(upload._id, "dislike")} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
+                        <FaArrowDown />
+                      </Button>
+                    )}
                     <Text color="red.700">{upload.dislikes}</Text>
                   </Box>
                 </Flex>
