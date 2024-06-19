@@ -1,47 +1,59 @@
-// pages/userProfile/[userId].js
-import { Box, Image, Heading, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, Button, IconButton, useToast, Spinner, Center } from "@chakra-ui/react";
-import { useRef, useState, useEffect } from "react";
-import { FaTrash } from "react-icons/fa";
+import { Box, Avatar, AlertDialog, AlertDialogBody, AlertDialogFooter, Button, AlertDialogHeader, AlertDialogOverlay, AlertDialogContent, Image, Heading, IconButton, useToast, Spinner, Center, Badge, Flex, Text } from "@chakra-ui/react";
+import { useState, useEffect, useRef } from "react";
+import { FaTrash, FaEdit, FaArrowUp, FaArrowDown, FaComment, FaFlag } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import CryptoJS from "crypto-js";
 import { useRouter } from "next/router";
+import Upload from "@/components/Upload";
 
 function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedUploadId, setSelectedUploadId] = useState(null);
-  const { userId, isLoggedIn } = useAuth();
-  const onClose = () => setIsOpen(false);
   const [uploadList, setUploadList] = useState([]);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
-  const cancelRef = useRef();
   const router = useRouter();
+  const cancelRef = useRef();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const decryptedUserId = useRef(null);
+
+  const onClose = () => {
+    setIsDeleteOpen(false);
+    setIsEditOpen(false);
+  };
+  const { userId, isLoggedIn } = useAuth();
   const { userId: encryptedUserId } = router.query;
 
   useEffect(() => {
     if (!isLoggedIn) {
       router.push("/");
-    } else {
-      fetchUserData();
+    } else if (encryptedUserId && !decryptedUserId.current) {
+      // Decrypt userId if it's not already decrypted
+      try {
+        const bytes = CryptoJS.AES.decrypt(decodeURIComponent(encryptedUserId), "secret key");
+        decryptedUserId.current = bytes.toString(CryptoJS.enc.Utf8);
+        fetchUserData(decryptedUserId.current);
+      } catch (error) {
+        console.error("Error decrypting userId:", error);
+      }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, encryptedUserId]);
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (userId) => {
+    setLoading(true);
     try {
-      const bytes = CryptoJS.AES.decrypt(decodeURIComponent(encryptedUserId), "secret key");
-      const decryptedUserId = bytes.toString(CryptoJS.enc.Utf8);
-
       const response = await fetch(`/api/getUserUploads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: decryptedUserId }),
+        body: JSON.stringify({ userId }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setUploadList(data.uploads);
+        setUploadList(data.user.uploads);
       } else {
         console.error("Failed to fetch uploads");
       }
@@ -50,6 +62,60 @@ function UserProfile() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveEdit = async (editedUpload) => {
+    try {
+      const response = await fetch("/api/api-update-recipe", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, editedUpload }),
+      });
+
+      if (response.ok) {
+        const updatedUploadList = uploadList.map((upload) => (upload._id === editedUpload._id ? { ...upload, title: editedUpload.title, description: editedUpload.description, tags: editedUpload.tags, category: editedUpload.category } : upload));
+        setUploadList(updatedUploadList);
+        setIsOpen(false);
+        toast({
+          title: "Upload updated.",
+          description: "The upload has been successfully updated.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to update upload:", errorData.error);
+        toast({
+          title: "Error",
+          description: errorData.error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating upload:", error);
+      toast({
+        title: "Error",
+        description: "An error occurred while updating the upload.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleEditUpload = (upload) => {
+    setIsEditOpen(true);
+    setSelectedUploadId(upload._id);
+  };
+
+  const handleCloseEdit = () => {
+    setIsEditOpen(false);
+    setSelectedUploadId(null);
   };
 
   const handleRemoveUpload = async (Id) => {
@@ -106,34 +172,63 @@ function UserProfile() {
             </Center>
           ) : (
             uploadList.map((upload) => (
-              <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
-                <Box position="relative" p={3} bg="white" color="black">
-                  <Image src={upload.imageUrl} alt={upload.title} layout="fill" objectFit="cover" />
-                </Box>
-                <Box display="flex" flexDirection="column" p="6">
-                  <Box d="flex" alignItems="baseline">
-                    <Heading size="xl">{upload.title}</Heading>
+              <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
+                <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
+                  <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
+                  <Box color="black">
+                    <Heading fontSize="lg" fontWeight="bold">
+                      {upload.username}
+                    </Heading>
                   </Box>
-                  <Box mt="1" mb="4" fontWeight="semibold" as="h4" lineHeight="tight">
-                    {upload.description}
-                  </Box>
-                  <IconButton
-                    width="10%"
-                    icon={<FaTrash />}
-                    aria-label="Delete upload"
-                    onClick={() => {
-                      setIsOpen(true);
-                      setSelectedUploadId(upload._id);
-                    }}
-                    colorScheme="black"
-                    color="red.500"
-                    bg="white"
-                  />
                 </Box>
+
+                <Box p={3} bg="white" color="black">
+                  <Heading fontSize="xl" mb={3}>
+                    {upload.title}
+                  </Heading>
+                  <Text fontSize="md">{upload.description}</Text>
+                  <Box position="relative" display="flex" gap={1}>
+                    {upload.tags.map((tag, index) => (
+                      <Text fontSize="sm" color="gray.600" pb="2" key={`${tag}-${index}`}>
+                        {tag}
+                      </Text>
+                    ))}
+                  </Box>
+                </Box>
+
+                <Box position="relative" overflow="hidden">
+                  <Image src={upload.imageUrl} alt={upload.title} width={500} height={300} objectFit="cover" />
+                </Box>
+
+                <Badge width="100px" textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
+                  {upload.category}
+                </Badge>
+                <Flex p={4} gap={3}>
+                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                    <IconButton
+                      aria-label="Delete upload"
+                      icon={<FaTrash />}
+                      onClick={() => {
+                        setIsDeleteOpen(true);
+                        setSelectedUploadId(upload._id);
+                      }}
+                      colorScheme="black"
+                      color="red.500"
+                      bg="white"
+                      position=""
+                    />
+                  </Box>
+                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                    <IconButton aria-label="Edit upload" icon={<FaEdit />} onClick={() => handleEditUpload(upload)} colorScheme="black" color="blue.500" bg="white" />
+                  </Box>
+                </Flex>
               </Box>
             ))
           )}
-          <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+
+          <Upload isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} editedUpload={uploadList.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={handleCloseEdit} />
+
+          <AlertDialog isOpen={isDeleteOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">

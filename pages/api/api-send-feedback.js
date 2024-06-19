@@ -1,4 +1,3 @@
-// pages/api/send-feedback.js
 import connectToMongoDB from "@/database/db";
 import Feedback from "@/models/Feedback";
 

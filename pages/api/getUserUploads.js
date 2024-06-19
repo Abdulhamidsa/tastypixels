@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const { userId } = req.body;
+    console.log(userId);
 
     try {
       const db = await connectToMongoDB();

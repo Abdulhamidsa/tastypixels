@@ -1,10 +1,43 @@
-import { Modal, SkeletonCircle, Spinner, CloseButton, ModalOverlay, ModalContent, Box, Avatar, Text, Badge, Image, Heading, Divider, IconButton, Button, Flex, useToast, Skeleton, SkeletonText } from "@chakra-ui/react";
+import {
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  useDisclosure,
+  VStack,
+  Checkbox,
+  Button,
+  SkeletonCircle,
+  Spinner,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  CloseButton,
+  Box,
+  Avatar,
+  Text,
+  Badge,
+  Heading,
+  Divider,
+  IconButton,
+  Flex,
+  useToast,
+  Skeleton,
+  SkeletonText,
+  Textarea,
+  Collapse,
+} from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import CardsTemplate from "@/components/CardsTemplate";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaComment, FaFlag, FaThumbsUp, FaThumbsDown, FaHeart, FaTimes } from "react-icons/fa";
+import Image from "next/image";
 
 export default function About() {
   const [uploads, setUploads] = useState([]);
@@ -12,8 +45,29 @@ export default function About() {
   const [loading, setLoading] = useState(true);
   const [loadingVote, setLoadingVote] = useState({ like: false, dislike: false });
   const [selectedImage, setSelectedImage] = useState(null);
+  const [comments, setComments] = useState({});
+  const [newComment, setNewComment] = useState({});
+  const [showComments, setShowComments] = useState({});
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [filterOptions, setFilterOptions] = useState({
+    showLikes: false,
+    showDislikes: false,
+    showComments: false,
+  });
+  // Filter uploads by most liked
+  const filterMostLiked = () => {
+    const sortedUploads = [...uploads].sort((a, b) => b.likes - a.likes);
+    setUploads(sortedUploads);
+    onClose(); // Close filter drawer after applying filter
+  };
 
+  // Filter uploads by most disliked
+  const filterMostDisliked = () => {
+    const sortedUploads = [...uploads].sort((a, b) => b.dislikes - a.dislikes);
+    setUploads(sortedUploads);
+    onClose(); // Close filter drawer after applying filter
+  };
   useEffect(() => {
     const fetchUserAndUploads = async () => {
       try {
@@ -67,7 +121,7 @@ export default function About() {
   const handleVote = async (uploadId, action) => {
     setLoadingVote((prev) => ({ ...prev, [action]: true }));
 
-    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 300));
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 100));
 
     try {
       const responsePromise = fetch("/api/api-update-likes-dislikes", {
@@ -108,6 +162,39 @@ export default function About() {
 
   const handleOpen = (imageUrl) => setSelectedImage(imageUrl);
   const handleClose = () => setSelectedImage(null);
+
+  const handleComments = (uploadId) => {
+    const isShowing = showComments[uploadId];
+    setShowComments({ ...showComments, [uploadId]: !isShowing });
+
+    if (!isShowing) {
+      setComments({
+        ...comments,
+        [uploadId]: [
+          { id: 1, username: "JohnDoe", text: "Great dish!" },
+          { id: 2, username: "JaneDoe", text: "Looks delicious!" },
+        ],
+      });
+      setNewComment({ ...newComment, [uploadId]: "" });
+    }
+  };
+
+  const handleAddComment = (uploadId) => {
+    if (newComment[uploadId]?.trim()) {
+      const newCommentData = {
+        id: comments[uploadId]?.length + 1 || 1,
+        username: "CurrentUser",
+        text: newComment[uploadId],
+      };
+
+      setComments({
+        ...comments,
+        [uploadId]: [...(comments[uploadId] || []), newCommentData],
+      });
+
+      setNewComment({ ...newComment, [uploadId]: "" });
+    }
+  };
 
   return (
     <>
@@ -153,59 +240,82 @@ export default function About() {
                   </Box>
                 ))
               : uploads.map((upload) => (
-                  <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
+                  <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
                     <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
-                      <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="4" />
+                      <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
                       <Box color="black">
                         <Heading fontSize="lg" fontWeight="bold">
                           {upload.username}
                         </Heading>
-                        <Text fontSize="sm">{upload.uploadDate}</Text>
+                        <Text fontSize="sm">Last seen: {upload.lastSeen} 06/19/2024 </Text>
                       </Box>
                     </Box>
 
                     <Box p={3} bg="white" color="black">
-                      <Heading fontSize="lg" fontWeight="bold">
+                      <Heading fontSize="xl" mb={3}>
                         {upload.title}
                       </Heading>
-                      <Text pb={2}>{upload.description}</Text>
-                      <Box position="relative">
-                        <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="gray" />
+                      <Text fontSize="md">{upload.description}</Text>
+                      <Box position="relative" display="flex" gap={1}>
+                        {upload.tags.map((tag, index) => (
+                          <Text fontSize="sm" color="gray.600" pb="2" key={`${tag}-${index}`}>
+                            {tag}
+                          </Text>
+                        ))}
                       </Box>
-                      <Skeleton height="100%" isLoaded={!loading} fadeDuration={0.2}>
-                        <Image src={upload.imageUrl} alt={upload.title} width="100%" height="auto" objectFit="cover" />
-                      </Skeleton>
-                      {/* <Image src={upload.imageUrl} alt={upload.title} width="100%" height="auto" objectFit="cover" /> */}
                     </Box>
 
-                    <Flex direction="row" justify="flex-start" p={4} gap={3}>
+                    <Box position="relative" overflow="hidden">
+                      <Image src={upload.imageUrl} alt={upload.title} width={400} height={300} />
+                      <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
+                    </Box>
+                    <Badge width="100px" textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
+                      {upload.category}
+                    </Badge>
+                    <Flex p={4} gap={3}>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
                         <Button aria-label="Upvote" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
                           {loadingVote.like ? <Spinner size="sm" /> : <FaArrowUp />}
                         </Button>
-                        <Text color="green.700">{upload.likes}</Text>
                       </Box>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
                         <Button aria-label="Downvote" onClick={() => handleVote(upload._id, "dislike")} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
                           {loadingVote.dislike ? <Spinner size="sm" /> : <FaArrowDown />}
                         </Button>
-                        <Text color="red.700">{upload.dislikes}</Text>
+                      </Box>
+                      <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                        <Button aria-label="Comments" onClick={() => handleComments(upload._id)} colorScheme={showComments[upload._id] ? "blue" : "gray"} variant="outline" isActive={showComments[upload._id]}>
+                          <FaComment />
+                        </Button>
+                      </Box>
+                      <Box ml="auto" display="flex" flexDirection="column" alignItems="center" gap={1}>
+                        <Button aria-label="Report" onClick={() => handleReport(upload._id)} colorScheme="yellow" variant="outline">
+                          <FaFlag />
+                        </Button>
                       </Box>
                     </Flex>
-                    <Box bg="black" p="4">
-                      <Divider my={4} />
-                      <Badge borderRadius="3" p="2" colorScheme="blue" mb="2">
-                        {upload.category}
-                      </Badge>
-                      <Box display="flex" flexWrap="wrap">
-                        {upload.tags &&
-                          upload.tags.map((tag, index) => (
-                            <Badge key={`${tag}-${index}`} borderRadius="3" borderColor="red" border="" px="2" colorScheme="green" mr="2" mb="2">
-                              {tag}
-                            </Badge>
-                          ))}
+
+                    <Collapse in={showComments[upload._id]} animateOpacity>
+                      <Box p={5} bg="gray.700" borderTop="1px solid gray">
+                        <Heading size="md" mb={4}>
+                          Comments
+                        </Heading>
+                        <Divider mb={4} />
+                        {comments[upload._id]?.map((comment) => (
+                          <Box key={comment.id} mb={4}>
+                            <Text fontWeight="bold">{comment.username}</Text>
+                            <Text>{comment.text}</Text>
+                            <Divider mt={2} />
+                          </Box>
+                        ))}
+                        <Box mt={4}>
+                          <Textarea placeholder="Add a comment" value={newComment[upload._id] || ""} onChange={(e) => setNewComment({ ...newComment, [upload._id]: e.target.value })} mb={3} />
+                          <Button onClick={() => handleAddComment(upload._id)} colorScheme="blue">
+                            Submit
+                          </Button>
+                        </Box>
                       </Box>
-                    </Box>
+                    </Collapse>
                   </Box>
                 ))}
           </Box>
@@ -215,15 +325,42 @@ export default function About() {
               <Box m="auto" position="relative">
                 <Box style={{ display: "flex", justifyContent: "flex-end" }}>
                   <CloseButton onClick={handleClose} size="lg" color="white" />
-                </Box>{" "}
+                </Box>
                 <TransformWrapper>
                   <TransformComponent>
-                    <Image src={selectedImage} alt="" maxW="100%" maxH="85dvh" m="auto" objectFit="contain" />
+                    <Image src={selectedImage} alt="" width={500} height={400} />
                   </TransformComponent>
                 </TransformWrapper>
               </Box>
             </ModalContent>
           </Modal>
+          <IconButton aria-label="Filter" icon={<SearchIcon />} onClick={onOpen} position="fixed" top="150px" left="20px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
+          <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+            <DrawerOverlay>
+              <DrawerContent bg="gray.800" color="white">
+                <DrawerCloseButton />
+                <DrawerHeader>Filter Options</DrawerHeader>
+
+                <DrawerBody>
+                  <VStack spacing={4} align="stretch">
+                    <Checkbox isChecked={filterOptions.showLikes} onChange={(e) => setFilterOptions({ ...filterOptions, showLikes: e.target.checked })}>
+                      Show Most Liked
+                    </Checkbox>
+                    <Checkbox isChecked={filterOptions.showDislikes} onChange={(e) => setFilterOptions({ ...filterOptions, showDislikes: e.target.checked })}>
+                      Show Most Disliked
+                    </Checkbox>
+                  </VStack>
+
+                  <Button mt={4} colorScheme="blue" onClick={filterMostLiked}>
+                    Apply Most Liked
+                  </Button>
+                  <Button mt={2} colorScheme="red" onClick={filterMostDisliked}>
+                    Apply Most Disliked
+                  </Button>
+                </DrawerBody>
+              </DrawerContent>
+            </DrawerOverlay>
+          </Drawer>
         </>
       ) : (
         <CardsTemplate />

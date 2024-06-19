@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const uploadSchema = new mongoose.Schema({
   imageUrl: String,
   title: String,
@@ -7,7 +8,9 @@ const uploadSchema = new mongoose.Schema({
   tags: [String],
   likes: { type: Number, default: 0 },
   dislikes: { type: Number, default: 0 },
+  countryOfOrigin: String, // New field for country of origin
 });
+
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -44,11 +47,8 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    deletedAt: {
-      type: Date,
-      default: null,
-    },
   },
   { timestamps: true }
 );
+
 export default mongoose.models.User || mongoose.model("User", userSchema);

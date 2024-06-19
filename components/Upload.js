@@ -1,4 +1,4 @@
-import { React, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   InputGroup,
@@ -14,7 +14,7 @@ import {
   Wrap,
   Input,
   Textarea,
-  Select,
+  Select as ChakraSelect,
   Tag,
   TagLabel,
   TagCloseButton,
@@ -25,29 +25,46 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalFooter,
+  Spinner,
 } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
+import countryList from "react-select-country-list";
 
-const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
-  const [imageUrl, setImageUrl] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+const Upload = ({ isOpen, onClose, editedUpload }) => {
+  const { isLoggedIn, userId } = useAuth();
+  const [imageUrl, setImageUrl] = useState(editedUpload ? editedUpload.imageUrl : "");
+  const [title, setTitle] = useState(editedUpload ? editedUpload.title : "");
+  const [description, setDescription] = useState(editedUpload ? editedUpload.description : "");
+  const [selectedTags, setSelectedTags] = useState(editedUpload ? editedUpload.tags : []);
+  const [selectedCategory, setSelectedCategory] = useState(editedUpload ? editedUpload.category : "");
   const [tagInput, setTagInput] = useState("");
   const [tagError, setTagError] = useState("");
-  const { isLoggedIn, userId } = useAuth();
-  const fileInputRef = useRef(null);
-  const toast = useToast();
-
+  const [isFileLoading, setIsFileLoading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const fileInputRef = useRef(null);
   const inputRef = useRef();
-
+  const toast = useToast();
   const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
+  const options = countryList().getData();
+
+  useEffect(() => {
+    if (editedUpload) {
+      // If in edit mode, populate the form fields with existing data
+      setImageUrl(editedUpload.imageUrl);
+      setTitle(editedUpload.title);
+      setDescription(editedUpload.description);
+      setSelectedTags(editedUpload.tags);
+      setSelectedCategory(editedUpload.category);
+    }
+  }, [editedUpload]);
+
   const handleUpload = async (e) => {
     try {
+      setIsFileLoading(true);
       const file = e.target.files[0];
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME);
@@ -65,28 +82,47 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
       setImageUrl(transformedImageUrl);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsFileLoading(false);
     }
   };
 
   const saveToDatabase = () => {
-    if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0) {
-      setUploadError("All fields are required");
-      return;
+    if (!editedUpload) {
+      // Validate all fields for new upload
+      if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0) {
+        setUploadError("All fields are required");
+        return;
+      }
     }
+
+    const uploadData = {
+      userId,
+      ...(imageUrl && { imageUrl }), // Include field only if it's provided
+      ...(title && { title }),
+      ...(description && { description }),
+      ...(selectedTags.length > 0 && { tags: selectedTags }),
+      ...(selectedCategory && { category: selectedCategory }),
+      ...(selectedCountry && { country: selectedCountry.label }), // Include selected country
+    };
+
+    let url = "/api/api-upload-img";
+    let method = "POST";
+
+    if (editedUpload) {
+      // If editing, update the existing item
+      uploadData.uploadId = editedUpload._id;
+      url = "/api/api-update-recipe";
+      method = "PUT";
+    }
+
     try {
-      fetch("/api/api-upload-img", {
-        method: "POST",
+      fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId,
-          imageUrl,
-          title,
-          description,
-          tags: selectedTags,
-          category: selectedCategory,
-        }),
+        body: JSON.stringify(uploadData),
       })
         .then(async (response) => {
           const responseData = await response.json();
@@ -97,7 +133,7 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
           onClose();
           toast({
             title: "Success",
-            description: "Photo uploaded successfully. Redirecting...",
+            description: editedUpload ? "Recipe updated successfully." : "Recipe uploaded successfully.",
             status: "success",
             duration: 3000,
             isClosable: true,
@@ -112,19 +148,15 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
         });
     } catch (error) {
       console.error(error);
+      setUploadError("Failed to save photo to database");
     }
   };
+
   const handleRemoveTag = (tagToRemove) => {
-    setSelectedTags((prevTags) => {
-      const index = prevTags.indexOf(tagToRemove);
-      if (index !== -1) {
-        return [...prevTags.slice(0, index), ...prevTags.slice(index + 1)];
-      }
-      return prevTags;
-    });
-    // Set focus back to the input field
+    setSelectedTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
     inputRef.current.focus();
   };
+
   const handleAddTag = () => {
     if (tagInput.trim() === "") {
       setTagError("Tag input is empty");
@@ -159,9 +191,11 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
       setTagError("Tag input cannot exceed 10 characters");
     }
   };
+
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
+
   const handleCategorySelect = (e) => {
     setSelectedCategory(e.target.value);
   };
@@ -170,7 +204,7 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
     <Modal size="lg" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Upload Recipe</ModalHeader>
+        <ModalHeader>{editedUpload ? "Edit Recipe" : "Upload Recipe"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
@@ -219,19 +253,30 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
             <FormErrorMessage>{tagError}</FormErrorMessage>
           </FormControl>
           <FormControl>
+            <FormLabel>Country Origin</FormLabel>
+            <ChakraSelect value={selectedCountry} onChange={(e) => setSelectedCountry(e.target.value)} placeholder="Select Country">
+              {options.map((country) => (
+                <option key={country.value} value={country.value}>
+                  {country.label}
+                </option>
+              ))}
+            </ChakraSelect>
+          </FormControl>
+          <FormControl>
             <FormLabel>Category</FormLabel>
-            <Select value={selectedCategory} onChange={handleCategorySelect}>
+            <ChakraSelect value={selectedCategory} onChange={handleCategorySelect}>
               <option value="">Select Category</option>
               {predefinedCategories.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
               ))}
-            </Select>
+            </ChakraSelect>
           </FormControl>
-          <FormControl>
+          <FormControl position="relative">
             <FormLabel>Image</FormLabel>
-            <Input p={1} type="file" ref={fileInputRef} onChange={handleUpload} />
+            <Input p={1} type="file" accept="image/*" ref={fileInputRef} onChange={handleUpload} />
+            {isFileLoading && <Spinner position="absolute" top="55%" right="5%" transform="translate(-50%, -50%)" />}
           </FormControl>
           {uploadError && !uploadError.includes("maximum limit of uploads") && (
             <Alert status="error" mb={4}>
@@ -246,7 +291,7 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
             </Alert>
           )}
           <ModalFooter>
-            <Button onClick={saveToDatabase}>UPLOAD</Button>
+            <Button onClick={saveToDatabase}>{editedUpload ? "SAVE CHANGES" : "UPLOAD"}</Button>
           </ModalFooter>
         </ModalBody>
       </ModalContent>
@@ -254,4 +299,4 @@ const UploadPopup = ({ isOpen, onClose, closeMenu }) => {
   );
 };
 
-export default UploadPopup;
+export default Upload;

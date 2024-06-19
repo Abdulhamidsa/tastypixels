@@ -11,7 +11,6 @@ export default async function handler(req, res) {
 
   try {
     await connectToMongoDB();
-
     const userIdObj = new mongoose.Types.ObjectId(userId);
     const uploadIdObj = new mongoose.Types.ObjectId(uploadId);
 

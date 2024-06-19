@@ -69,5 +69,5 @@ a {
 } */
 /* Add this to your global CSS or component-specific CSS */
 p {
-  font-size: calc(0.5rem + 0.5vw) !important;
+  /* font-size: calc(0.7rem + 0.6vw) !important; */
 }
