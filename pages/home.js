@@ -7,6 +7,10 @@ import {
   DrawerBody,
   useDisclosure,
   VStack,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
   Checkbox,
   Button,
   SkeletonCircle,
@@ -31,13 +35,14 @@ import {
   Textarea,
   Collapse,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon, ChevronDownIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import CardsTemplate from "@/components/CardsTemplate";
 import { FaArrowUp, FaArrowDown, FaComment, FaFlag, FaThumbsUp, FaThumbsDown, FaHeart, FaTimes } from "react-icons/fa";
 import Image from "next/image";
+import { MdFilterList } from "react-icons/md";
 
 export default function About() {
   const [uploads, setUploads] = useState([]);
@@ -55,18 +60,16 @@ export default function About() {
     showDislikes: false,
     showComments: false,
   });
-  // Filter uploads by most liked
   const filterMostLiked = () => {
     const sortedUploads = [...uploads].sort((a, b) => b.likes - a.likes);
     setUploads(sortedUploads);
-    onClose(); // Close filter drawer after applying filter
+    onClose();
   };
 
-  // Filter uploads by most disliked
   const filterMostDisliked = () => {
     const sortedUploads = [...uploads].sort((a, b) => b.dislikes - a.dislikes);
     setUploads(sortedUploads);
-    onClose(); // Close filter drawer after applying filter
+    onClose();
   };
   useEffect(() => {
     const fetchUserAndUploads = async () => {
@@ -162,38 +165,51 @@ export default function About() {
 
   const handleOpen = (imageUrl) => setSelectedImage(imageUrl);
   const handleClose = () => setSelectedImage(null);
+  const handleCommentChange = (e, uploadId) => {
+    setNewComment((prevNewComment) => ({
+      ...prevNewComment,
+      [uploadId]: e.target.value,
+    }));
+  };
 
-  const handleComments = (uploadId) => {
-    const isShowing = showComments[uploadId];
-    setShowComments({ ...showComments, [uploadId]: !isShowing });
+  const handleAddComment = async (uploadId) => {
+    const commentText = newComment[uploadId]?.trim();
+    if (!commentText) return;
 
-    if (!isShowing) {
-      setComments({
-        ...comments,
-        [uploadId]: [
-          { id: 1, username: "JohnDoe", text: "Great dish!" },
-          { id: 2, username: "JaneDoe", text: "Looks delicious!" },
-        ],
+    try {
+      const response = await fetch("/api/api-add-comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, uploadId, text: commentText }),
       });
-      setNewComment({ ...newComment, [uploadId]: "" });
+
+      if (!response.ok) {
+        throw new Error("Failed to add comment");
+      }
+
+      const { comment } = await response.json();
+
+      setComments((prevComments) => ({
+        ...prevComments,
+        [uploadId]: [...(prevComments[uploadId] || []), comment],
+      }));
+
+      setNewComment((prevNewComment) => ({
+        ...prevNewComment,
+        [uploadId]: "",
+      }));
+    } catch (error) {
+      console.error("Error adding comment:", error);
     }
   };
 
-  const handleAddComment = (uploadId) => {
-    if (newComment[uploadId]?.trim()) {
-      const newCommentData = {
-        id: comments[uploadId]?.length + 1 || 1,
-        username: "CurrentUser",
-        text: newComment[uploadId],
-      };
-
-      setComments({
-        ...comments,
-        [uploadId]: [...(comments[uploadId] || []), newCommentData],
-      });
-
-      setNewComment({ ...newComment, [uploadId]: "" });
-    }
+  const handleToggleComments = (uploadId) => {
+    setShowComments((prevShowComments) => ({
+      ...prevShowComments,
+      [uploadId]: !prevShowComments[uploadId],
+    }));
   };
 
   return (
@@ -240,7 +256,7 @@ export default function About() {
                   </Box>
                 ))
               : uploads.map((upload) => (
-                  <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
+                  <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
                     <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
                       <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
                       <Box color="black">
@@ -277,16 +293,17 @@ export default function About() {
                         <Button aria-label="Upvote" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
                           {loadingVote.like ? <Spinner size="sm" /> : <FaArrowUp />}
                         </Button>
+                        <Text mx={2}>{upload.likes}</Text>
                       </Box>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
                         <Button aria-label="Downvote" onClick={() => handleVote(upload._id, "dislike")} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
                           {loadingVote.dislike ? <Spinner size="sm" /> : <FaArrowDown />}
                         </Button>
+                        <Text mx={2}>{upload.dislikes}</Text>
                       </Box>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <Button aria-label="Comments" onClick={() => handleComments(upload._id)} colorScheme={showComments[upload._id] ? "blue" : "gray"} variant="outline" isActive={showComments[upload._id]}>
-                          <FaComment />
-                        </Button>
+                        <IconButton aria-label="Comments" icon={<FaComment />} onClick={() => handleToggleComments(upload._id)} colorScheme="teal" mr={2} />
+                        <Text>{upload.comments ? `${upload.comments.length} ` : null}</Text>
                       </Box>
                       <Box ml="auto" display="flex" flexDirection="column" alignItems="center" gap={1}>
                         <Button aria-label="Report" onClick={() => handleReport(upload._id)} colorScheme="yellow" variant="outline">
@@ -294,27 +311,32 @@ export default function About() {
                         </Button>
                       </Box>
                     </Flex>
-
                     <Collapse in={showComments[upload._id]} animateOpacity>
-                      <Box p={5} bg="gray.700" borderTop="1px solid gray">
-                        <Heading size="md" mb={4}>
-                          Comments
-                        </Heading>
-                        <Divider mb={4} />
-                        {comments[upload._id]?.map((comment) => (
-                          <Box key={comment.id} mb={4}>
-                            <Text fontWeight="bold">{comment.username}</Text>
+                      <VStack spacing={2} align="start">
+                        {comments[upload._id]?.map((comment, index) => (
+                          <Box key={index} p={2} borderWidth="1px" borderRadius="md" w="100%">
+                            <Flex alignItems="center" mb={1}>
+                              <Avatar size="xs" name={comment.username} />
+                              <Text bg="red" ml={2}>
+                                {comment.username}
+                              </Text>
+                            </Flex>
                             <Text>{comment.text}</Text>
-                            <Divider mt={2} />
                           </Box>
                         ))}
-                        <Box mt={4}>
-                          <Textarea placeholder="Add a comment" value={newComment[upload._id] || ""} onChange={(e) => setNewComment({ ...newComment, [upload._id]: e.target.value })} mb={3} />
-                          <Button onClick={() => handleAddComment(upload._id)} colorScheme="blue">
-                            Submit
-                          </Button>
-                        </Box>
-                      </Box>
+                        {upload.comments &&
+                          upload.comments.map((comment, index) => (
+                            <Box key={index}>
+                              <Flex alignItems="center" mb={1}>
+                                {/* <Avatar size="xs" name={comment.username} /> */}
+                                <Text ml={2}>{comment.username}ss</Text>
+                              </Flex>
+                              <Text>{comment.text}</Text>
+                            </Box>
+                          ))}
+                        <Textarea value={newComment[upload._id] || ""} onChange={(e) => handleCommentChange(e, upload._id)} placeholder="Add a comment" />
+                        <Button onClick={() => handleAddComment(upload._id)}>Submit Comment</Button>
+                      </VStack>
                     </Collapse>
                   </Box>
                 ))}
@@ -334,7 +356,7 @@ export default function About() {
               </Box>
             </ModalContent>
           </Modal>
-          <IconButton aria-label="Filter" icon={<SearchIcon />} onClick={onOpen} position="fixed" top="150px" left="20px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
+          <IconButton aria-label="Filter" icon={<MdFilterList />} onClick={onOpen} position="fixed" top="100px" left="20px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay>
               <DrawerContent bg="gray.800" color="white">
@@ -342,21 +364,15 @@ export default function About() {
                 <DrawerHeader>Filter Options</DrawerHeader>
 
                 <DrawerBody>
-                  <VStack spacing={4} align="stretch">
-                    <Checkbox isChecked={filterOptions.showLikes} onChange={(e) => setFilterOptions({ ...filterOptions, showLikes: e.target.checked })}>
-                      Show Most Liked
-                    </Checkbox>
-                    <Checkbox isChecked={filterOptions.showDislikes} onChange={(e) => setFilterOptions({ ...filterOptions, showDislikes: e.target.checked })}>
-                      Show Most Disliked
-                    </Checkbox>
-                  </VStack>
-
-                  <Button mt={4} colorScheme="blue" onClick={filterMostLiked}>
-                    Apply Most Liked
-                  </Button>
-                  <Button mt={2} colorScheme="red" onClick={filterMostDisliked}>
-                    Apply Most Disliked
-                  </Button>
+                  <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="blue">
+                      Apply Filter
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem onClick={filterMostLiked}>Most Liked</MenuItem>
+                      <MenuItem onClick={filterMostDisliked}>Most Disliked</MenuItem>
+                    </MenuList>
+                  </Menu>
                 </DrawerBody>
               </DrawerContent>
             </DrawerOverlay>
