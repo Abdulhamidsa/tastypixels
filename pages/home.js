@@ -104,7 +104,7 @@ export default function About() {
           title: "Error",
           description: "Failed to fetch user data or recipes",
           status: "error",
-          duration: 5000,
+          duration: 3000,
           isClosable: true,
         });
       } finally {
@@ -263,7 +263,7 @@ export default function About() {
         title: "Error",
         description: "Failed to add comment. Please try again later.",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       });
     }
@@ -314,11 +314,45 @@ export default function About() {
         title: "Error",
         description: "Failed to delete comment. Please try again later.",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       });
     } finally {
-      setDeletingCommentId(null); // Reset deleting state
+      setDeletingCommentId(null);
+    }
+  };
+  const handleReport = async (uploadId) => {
+    try {
+      const response = await fetch("/api/api-report-upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, uploadId }), // Ensure userId and uploadId are correctly defined
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to report upload");
+      }
+
+      // Handle success
+      toast({
+        title: "Upload Reported",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Optionally, trigger state update or UI changes
+    } catch (error) {
+      console.error("Error reporting upload:", error);
+      toast({
+        title: "Error",
+        description: "Failed to report upload. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -410,36 +444,46 @@ export default function About() {
                         <Text mx={2}>{upload.dislikes}</Text>
                       </Box>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <IconButton aria-label="Comments" icon={<FaComment />} onClick={() => handleToggleComments(upload._id)} colorScheme="teal" mr={2} />
-                        <Text>{comments[upload._id]?.length ?? 0}</Text>
+                        <Button aria-label="Comments" onClick={() => handleToggleComments(upload._id)} colorScheme={showComments[upload._id] ? "teal" : "gray"} variant="outline">
+                          <FaComment />
+                        </Button>
+                        <Text>{comments[upload._id]?.length ?? upload.comments.length}</Text>
                       </Box>
                       <Box ml="auto" display="flex" flexDirection="column" alignItems="center" gap={1}>
                         <Button aria-label="Report" onClick={() => handleReport(upload._id)} colorScheme="yellow" variant="outline">
-                          <FaFlag />
+                          <FaFlag /> Report
                         </Button>
                       </Box>
                     </Flex>
                     <Collapse in={showComments[upload._id]} animateOpacity>
                       {comments[upload._id]?.map((comment) => (
-                        <Box key={comment._id} p={2} borderWidth="1px" borderRadius="md" w="100%">
+                        <Box key={comment._id} p={2} borderWidth="1px" w="100%">
                           <Flex alignItems="center" mb={1}>
                             <Avatar size="xs" name={comment.username} />
                             <Text ml={2} fontWeight="bold">
                               {comment.username}
                             </Text>
                           </Flex>
-                          <Text>{comment.text}</Text>
-                          {deletingCommentId === comment._id ? (
-                            <Spinner size="sm" />
-                          ) : (
-                            // Only render delete button if the comment belongs to the logged-in user
-                            comment.userId === userId && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => handleDeleteComment(upload._id, comment._id)} colorScheme="red" size="xs" />
-                          )}
+                          <Flex justifyContent="space-between">
+                            <Text>{comment.text}</Text>
+                            {deletingCommentId === comment._id ? <Spinner size="sm" /> : comment.userId === userId && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => handleDeleteComment(upload._id, comment._id)} size="xs" />}
+                          </Flex>
                         </Box>
                       ))}
 
-                      <Box p={3} bg="black" color="black">
-                        <Textarea placeholder="Add a comment..." size="sm" value={newComment[upload._id] || ""} onChange={(e) => handleCommentChange(e, upload._id)} />
+                      <Box p={3}>
+                        <Textarea
+                          placeholder="Add a comment..."
+                          size="sm"
+                          value={newComment[upload._id] || ""}
+                          onChange={(e) => handleCommentChange(e, upload._id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                              e.preventDefault(); // Prevent the default action to avoid newline
+                              handleAddComment(upload._id);
+                            }
+                          }}
+                        />
                         <Button mt={2} size="sm" onClick={() => handleAddComment(upload._id)}>
                           Add Comment
                         </Button>

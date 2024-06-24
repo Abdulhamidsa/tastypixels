@@ -17,6 +17,7 @@ const uploadSchema = new mongoose.Schema({
   dislikes: { type: Number, default: 0 },
   countryOfOrigin: String,
   comments: [commentSchema],
+  reports: { type: Number, default: 0 }, // Counter for reports
 });
 
 const userSchema = new mongoose.Schema(
