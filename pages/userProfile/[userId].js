@@ -17,7 +17,6 @@ function UserProfile() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const decryptedUserId = useRef(null);
-
   const onClose = () => {
     setIsDeleteOpen(false);
     setIsEditOpen(false);

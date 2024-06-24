@@ -7,10 +7,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const { userId, uploadId, text } = req.body;
+  const { userId, uploadId, text, username } = req.body; // Step 1: Accept username
   console.log("Request Body:", req.body);
 
-  if (!userId || !uploadId || !text) {
+  if (!userId || !uploadId || !text || !username) {
+    // Adjusted to check for username
     return res.status(400).json({ errors: ["Missing required fields"] });
   }
 
@@ -22,12 +23,6 @@ export default async function handler(req, res) {
     await connectToMongoDB();
     const userIdObj = new mongoose.Types.ObjectId(userId);
     const uploadIdObj = new mongoose.Types.ObjectId(uploadId);
-
-    const user = await User.findById(userIdObj);
-    if (!user) {
-      return res.status(404).json({ errors: ["User not found"] });
-    }
-
     const userWithUpload = await User.findOne({ "uploads._id": uploadIdObj });
     if (!userWithUpload) {
       return res.status(404).json({ errors: ["User not found for the upload"] });
@@ -37,20 +32,17 @@ export default async function handler(req, res) {
     if (!upload) {
       return res.status(404).json({ errors: ["Upload not found"] });
     }
-
     const newComment = {
       userId: userIdObj,
-      username: user.username,
-      avatar: user.avatar,
+      username,
       text,
-      createdAt: new Date(),
+      created: new Date(),
     };
 
     upload.comments.push(newComment);
-    user.comments.push({ uploadId: uploadIdObj, text });
-
     await userWithUpload.save();
-    await user.save();
+
+    console.log(newComment);
 
     return res.status(200).json({
       message: "Comment added successfully",

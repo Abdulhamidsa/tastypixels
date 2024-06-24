@@ -42,7 +42,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
   const [tagError, setTagError] = useState("");
   const [isFileLoading, setIsFileLoading] = useState(false);
   const [uploadError, setUploadError] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(editedUpload ? editedUpload.countryOfOrigin : null);
   const fileInputRef = useRef(null);
   const inputRef = useRef();
   const toast = useToast();
@@ -51,12 +51,12 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
 
   useEffect(() => {
     if (editedUpload) {
-      // If in edit mode, populate the form fields with existing data
       setImageUrl(editedUpload.imageUrl);
       setTitle(editedUpload.title);
       setDescription(editedUpload.description);
       setSelectedTags(editedUpload.tags);
       setSelectedCategory(editedUpload.category);
+      setSelectedCountry(editedUpload.countryOfOrigin);
     }
   }, [editedUpload]);
 
@@ -89,8 +89,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
 
   const saveToDatabase = () => {
     if (!editedUpload) {
-      // Validate all fields for new upload
-      if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0) {
+      if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0 || !selectedCountry) {
         setUploadError("All fields are required");
         return;
       }
@@ -98,19 +97,18 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
 
     const uploadData = {
       userId,
-      ...(imageUrl && { imageUrl }), // Include field only if it's provided
+      ...(imageUrl && { imageUrl }),
       ...(title && { title }),
       ...(description && { description }),
       ...(selectedTags.length > 0 && { tags: selectedTags }),
       ...(selectedCategory && { category: selectedCategory }),
-      ...(selectedCountry && { country: selectedCountry.label }), // Include selected country
+      ...(selectedCountry && { countryOfOrigin: selectedCountry.label }),
     };
 
     let url = "/api/api-upload-img";
     let method = "POST";
 
     if (editedUpload) {
-      // If editing, update the existing item
       uploadData.uploadId = editedUpload._id;
       url = "/api/api-update-recipe";
       method = "PUT";

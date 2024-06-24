@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const commentSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+  username: { type: String, required: true }, // Make sure it's here
+  createdt: { type: Date, default: Date.now },
 });
 
 const uploadSchema = new mongoose.Schema({
@@ -65,4 +66,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.User || mongoose.model("User", userSchema);
+export default mongoose.models.U || mongoose.model("U", userSchema);

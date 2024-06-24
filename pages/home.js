@@ -14,6 +14,7 @@ import {
   Checkbox,
   Button,
   SkeletonCircle,
+  ModalHeader,
   Spinner,
   Modal,
   ModalBody,
@@ -38,7 +39,7 @@ import {
 import { SearchIcon, ChevronDownIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CardsTemplate from "@/components/CardsTemplate";
 import { FaArrowUp, FaArrowDown, FaComment, FaFlag, FaThumbsUp, FaThumbsDown, FaHeart, FaTimes } from "react-icons/fa";
 import Image from "next/image";
@@ -50,27 +51,23 @@ export default function About() {
   const [loading, setLoading] = useState(true);
   const [loadingVote, setLoadingVote] = useState({ like: false, dislike: false });
   const [selectedImage, setSelectedImage] = useState(null);
-  const [comments, setComments] = useState({});
-  const [newComment, setNewComment] = useState({});
-  const [showComments, setShowComments] = useState({});
+  const [comments, setComments] = useState({}); // Store comments by uploadId
+  const [newComment, setNewComment] = useState({}); // Store new comment text by uploadId
+  const [showComments, setShowComments] = useState({}); // Toggle show/hide comments by uploadId
   const toast = useToast();
+  const [loadingComments, setLoadingComments] = useState({});
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
+
+  const containerRef = useRef(null); // Ref for the comments container
+
+  const [userData, setUserData] = useState({});
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [filterOptions, setFilterOptions] = useState({
     showLikes: false,
     showDislikes: false,
     showComments: false,
   });
-  const filterMostLiked = () => {
-    const sortedUploads = [...uploads].sort((a, b) => b.likes - a.likes);
-    setUploads(sortedUploads);
-    onClose();
-  };
 
-  const filterMostDisliked = () => {
-    const sortedUploads = [...uploads].sort((a, b) => b.dislikes - a.dislikes);
-    setUploads(sortedUploads);
-    onClose();
-  };
   useEffect(() => {
     const fetchUserAndUploads = async () => {
       try {
@@ -85,10 +82,9 @@ export default function About() {
         if (!userResponse.ok) {
           throw new Error("Failed to fetch user data");
         }
-
         const userData = await userResponse.json();
+        setUserData(userData);
         const { likedPosts, dislikedPosts, uploads: userUploads } = userData.user;
-
         const recipesResponse = await fetch("/api/api-fetch-recipe");
         if (!recipesResponse.ok) {
           throw new Error("Failed to fetch recipes");
@@ -108,7 +104,7 @@ export default function About() {
           title: "Error",
           description: "Failed to fetch user data or recipes",
           status: "error",
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
         });
       } finally {
@@ -123,9 +119,7 @@ export default function About() {
 
   const handleVote = async (uploadId, action) => {
     setLoadingVote((prev) => ({ ...prev, [action]: true }));
-
     const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 100));
-
     try {
       const responsePromise = fetch("/api/api-update-likes-dislikes", {
         method: "POST",
@@ -134,15 +128,11 @@ export default function About() {
         },
         body: JSON.stringify({ userId, uploadId, action }),
       });
-
       const [response] = await Promise.all([responsePromise, timeoutPromise]);
-
       if (!response.ok) {
         throw new Error("Failed to update likes/dislikes");
       }
-
       const data = await response.json();
-
       const updatedUploads = uploads.map((upload) =>
         upload._id === uploadId
           ? {
@@ -165,11 +155,76 @@ export default function About() {
 
   const handleOpen = (imageUrl) => setSelectedImage(imageUrl);
   const handleClose = () => setSelectedImage(null);
+
   const handleCommentChange = (e, uploadId) => {
     setNewComment((prevNewComment) => ({
       ...prevNewComment,
       [uploadId]: e.target.value,
     }));
+  };
+
+  const handleToggleComments = async (uploadId) => {
+    setShowComments((prevShowComments) => ({
+      ...prevShowComments,
+      [uploadId]: !prevShowComments[uploadId],
+    }));
+
+    if (!showComments[uploadId]) {
+      try {
+        setLoadingComments((prevLoadingComments) => ({
+          ...prevLoadingComments,
+          [uploadId]: true,
+        }));
+
+        const response = await fetch(`/api/api-fetch-comments?uploadId=${uploadId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch comments");
+        }
+
+        const fetchedComments = await response.json();
+        setComments((prevComments) => ({
+          ...prevComments,
+          [uploadId]: fetchedComments,
+        }));
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setLoadingComments((prevLoadingComments) => ({
+          ...prevLoadingComments,
+          [uploadId]: false,
+        }));
+      }
+    }
+  };
+
+  const fetchComments = async (uploadId) => {
+    setLoadingComments((prevLoadingComments) => ({
+      ...prevLoadingComments,
+      [uploadId]: true,
+    }));
+
+    try {
+      const response = await fetch(`/api/api-fetch-comments?uploadId=${uploadId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch comments");
+      }
+      const comments = await response.json();
+      const commentsLength = comments.length; // Get the length of comments array
+      console.log(commentsLength);
+      setComments((prevComments) => ({
+        ...prevComments,
+        [uploadId]: comments,
+      }));
+      return commentsLength; // Return the length of comments array
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      return 0; // Return 0 or handle error as per your requirement
+    } finally {
+      setLoadingComments((prevLoadingComments) => ({
+        ...prevLoadingComments,
+        [uploadId]: false,
+      }));
+    }
   };
 
   const handleAddComment = async (uploadId) => {
@@ -182,34 +237,89 @@ export default function About() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, uploadId, text: commentText }),
+        body: JSON.stringify({ userId, uploadId, text: commentText, username: userData.user.username }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to add comment");
       }
 
-      const { comment } = await response.json();
-
-      setComments((prevComments) => ({
-        ...prevComments,
-        [uploadId]: [...(prevComments[uploadId] || []), comment],
-      }));
+      await fetchComments(uploadId); // Fetch comments after adding
 
       setNewComment((prevNewComment) => ({
         ...prevNewComment,
         [uploadId]: "",
       }));
+
+      toast({
+        title: "Comment added",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
       console.error("Error adding comment:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add comment. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
-  const handleToggleComments = (uploadId) => {
-    setShowComments((prevShowComments) => ({
-      ...prevShowComments,
-      [uploadId]: !prevShowComments[uploadId],
-    }));
+  const handleDeleteComment = async (uploadId, commentId) => {
+    try {
+      const commentToDelete = comments[uploadId]?.find((comment) => comment._id === commentId);
+      if (!commentToDelete) {
+        console.error("Comment not found");
+        return;
+      }
+
+      if (commentToDelete.userId !== userId) {
+        console.error("You can only delete your own comments");
+        return;
+      }
+
+      setDeletingCommentId(commentId);
+
+      const response = await fetch("/api/api-delete-comment", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          commentId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete comment");
+      }
+
+      // Update comments state after successful deletion
+      await fetchComments(uploadId);
+
+      toast({
+        title: "Comment deleted",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete comment. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setDeletingCommentId(null); // Reset deleting state
+    }
   };
 
   return (
@@ -228,31 +338,29 @@ export default function About() {
                       </Box>
                     </Box>
 
-                    <Box p={3} bg="white" color="black">
-                      <SkeletonText mt="2" noOfLines={1} width="200px" />
-                      <SkeletonText mt="2" noOfLines={3} spacing="4" />
-                      <Skeleton mt="4" height="200px" />
+                    <Box p={3} mb="5" bg="white" color="black">
+                      <SkeletonText mt="2" mb="8" noOfLines={1} width="200px" />
+                      <SkeletonText mt="2" noOfLines={2} spacing="4" />
+                      <Skeleton mt="4" height="300px" />
                     </Box>
 
                     <Flex direction="row" justify="flex-start" p={4} gap={3}>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <SkeletonCircle size="8" />
+                        <SkeletonCircle size="9" />
                         <SkeletonText mt="2" noOfLines={1} width="30px" />
                       </Box>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <SkeletonCircle size="8" />
+                        <SkeletonCircle size="9" />
                         <SkeletonText mt="2" noOfLines={1} width="30px" />
                       </Box>
-                    </Flex>
-                    <Box bg="black" p="4">
-                      <Divider my={4} />
-                      <SkeletonText mt="2" noOfLines={1} width="80px" />
-                      <Box display="flex" flexWrap="wrap">
-                        {Array.from({ length: 3 }).map((_, idx) => (
-                          <Skeleton key={idx} borderRadius="3" height="20px" width="50px" mr="2" mb="2" />
-                        ))}
+                      <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                        <SkeletonCircle size="9" />
+                        <SkeletonText mt="2" noOfLines={1} width="30px" />
                       </Box>
-                    </Box>
+                      <Box ml="auto" display="flex" flexDirection="column" alignItems="center" gap={1}>
+                        <SkeletonCircle size="9" />
+                      </Box>
+                    </Flex>
                   </Box>
                 ))
               : uploads.map((upload) => (
@@ -303,7 +411,7 @@ export default function About() {
                       </Box>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
                         <IconButton aria-label="Comments" icon={<FaComment />} onClick={() => handleToggleComments(upload._id)} colorScheme="teal" mr={2} />
-                        <Text>{upload.comments ? `${upload.comments.length} ` : null}</Text>
+                        <Text>{comments[upload._id]?.length ?? 0}</Text>
                       </Box>
                       <Box ml="auto" display="flex" flexDirection="column" alignItems="center" gap={1}>
                         <Button aria-label="Report" onClick={() => handleReport(upload._id)} colorScheme="yellow" variant="outline">
@@ -312,31 +420,30 @@ export default function About() {
                       </Box>
                     </Flex>
                     <Collapse in={showComments[upload._id]} animateOpacity>
-                      <VStack spacing={2} align="start">
-                        {comments[upload._id]?.map((comment, index) => (
-                          <Box key={index} p={2} borderWidth="1px" borderRadius="md" w="100%">
-                            <Flex alignItems="center" mb={1}>
-                              <Avatar size="xs" name={comment.username} />
-                              <Text bg="red" ml={2}>
-                                {comment.username}
-                              </Text>
-                            </Flex>
-                            <Text>{comment.text}</Text>
-                          </Box>
-                        ))}
-                        {upload.comments &&
-                          upload.comments.map((comment, index) => (
-                            <Box key={index}>
-                              <Flex alignItems="center" mb={1}>
-                                {/* <Avatar size="xs" name={comment.username} /> */}
-                                <Text ml={2}>{comment.username}ss</Text>
-                              </Flex>
-                              <Text>{comment.text}</Text>
-                            </Box>
-                          ))}
-                        <Textarea value={newComment[upload._id] || ""} onChange={(e) => handleCommentChange(e, upload._id)} placeholder="Add a comment" />
-                        <Button onClick={() => handleAddComment(upload._id)}>Submit Comment</Button>
-                      </VStack>
+                      {comments[upload._id]?.map((comment) => (
+                        <Box key={comment._id} p={2} borderWidth="1px" borderRadius="md" w="100%">
+                          <Flex alignItems="center" mb={1}>
+                            <Avatar size="xs" name={comment.username} />
+                            <Text ml={2} fontWeight="bold">
+                              {comment.username}
+                            </Text>
+                          </Flex>
+                          <Text>{comment.text}</Text>
+                          {deletingCommentId === comment._id ? (
+                            <Spinner size="sm" />
+                          ) : (
+                            // Only render delete button if the comment belongs to the logged-in user
+                            comment.userId === userId && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => handleDeleteComment(upload._id, comment._id)} colorScheme="red" size="xs" />
+                          )}
+                        </Box>
+                      ))}
+
+                      <Box p={3} bg="black" color="black">
+                        <Textarea placeholder="Add a comment..." size="sm" value={newComment[upload._id] || ""} onChange={(e) => handleCommentChange(e, upload._id)} />
+                        <Button mt={2} size="sm" onClick={() => handleAddComment(upload._id)}>
+                          Add Comment
+                        </Button>
+                      </Box>
                     </Collapse>
                   </Box>
                 ))}
@@ -369,8 +476,8 @@ export default function About() {
                       Apply Filter
                     </MenuButton>
                     <MenuList>
-                      <MenuItem onClick={filterMostLiked}>Most Liked</MenuItem>
-                      <MenuItem onClick={filterMostDisliked}>Most Disliked</MenuItem>
+                      {/* <MenuItem onClick={filterMostLiked}>Most Liked</MenuItem> */}
+                      {/* <MenuItem onClick={filterMostDisliked}>Most Disliked</MenuItem> */}
                     </MenuList>
                   </Menu>
                 </DrawerBody>

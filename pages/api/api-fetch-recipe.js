@@ -3,7 +3,7 @@ import connectToMongoDB from "@/database/db";
 export default async function handler(req, res) {
   try {
     const db = await connectToMongoDB();
-    const usersData = await db.collection("users").find({}).toArray();
+    const usersData = await db.collection("us").find({}).toArray();
 
     // Array to store enhanced uploads data
     const enhancedUploads = [];
