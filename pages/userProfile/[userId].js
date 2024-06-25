@@ -187,9 +187,7 @@ function UserProfile() {
                 </Box>
 
                 <Box p={3} bg="white" color="black">
-                  <Heading fontSize="xl" mb={3}>
-                    {upload.title}
-                  </Heading>
+                  <Heading fontSize="xl">{upload.title}</Heading>
                   <Text fontSize="md" mb={3}>
                     {upload.description}
                   </Text>
@@ -206,7 +204,7 @@ function UserProfile() {
                   <Image src={upload.imageUrl} alt={upload.title} width={500} height={300} objectFit="cover" />
                 </Box>
 
-                <Badge width="100px" textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
+                <Badge textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
                   {upload.category}
                 </Badge>
                 <Flex p={4} gap={3}>
