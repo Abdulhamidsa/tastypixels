@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
 
 function UserProfile() {
+  const [uploadListVersion, setUploadListVersion] = useState(0); // New state variable to track upload list changes
+
   const [isOpen, setIsOpen] = useState(false);
   const [selectedUploadId, setSelectedUploadId] = useState(null);
   const [uploadList, setUploadList] = useState([]);
@@ -131,11 +133,13 @@ function UserProfile() {
       if (response.ok) {
         console.log("Upload removed successfully");
         setUploadList(uploadList.filter((upload) => upload._id !== Id));
+        setUploadListVersion((prevVersion) => prevVersion + 1);
+
         toast({
           title: "Upload deleted.",
           description: "The upload has been successfully deleted.",
           status: "success",
-          duration: 9000,
+          duration: 3000,
           isClosable: true,
         });
       } else {
@@ -145,7 +149,7 @@ function UserProfile() {
           title: "Error",
           description: errorData.error,
           status: "error",
-          duration: 9000,
+          duration: 3000,
           isClosable: true,
         });
       }
@@ -155,7 +159,7 @@ function UserProfile() {
         title: "Error",
         description: "An error occurred while deleting the upload.",
         status: "error",
-        duration: 9000,
+        duration: 3000,
         isClosable: true,
       });
     }
