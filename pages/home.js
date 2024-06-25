@@ -462,6 +462,7 @@ export default function About() {
                     </Box>
                     <Box position="relative" overflow="hidden">
                       <Image
+                        alt={upload.imageUrl}
                         src={upload.imageUrl}
                         sizes="100vw"
                         width={200}
