@@ -41,8 +41,9 @@ import {
   SkeletonText,
   Textarea,
   Collapse,
+  DrawerFooter,
 } from "@chakra-ui/react";
-import { SearchIcon, SettingsIcon, ChevronDownIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { SearchIcon, ChevronDownIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState, useRef } from "react";
@@ -66,7 +67,8 @@ export default function About() {
   const toast = useToast();
   const [loadingComments, setLoadingComments] = useState({});
   const [deletingCommentId, setDeletingCommentId] = useState(null);
-  const [sortOrder, setSortOrder] = useState("a-z"); // default sort order
+  const [sortOrder, setSortOrder] = useState("a-z");
+  const [currentFilter, setCurrentFilter] = useState("Filter by");
 
   const containerRef = useRef(null);
 
@@ -373,31 +375,31 @@ export default function About() {
       toast({
         title: "Post is already reported",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     }
   };
+  const filterMostLiked = () => {
+    const sortedUploads = [...uploads].sort((a, b) => b.likes - a.likes);
+    setUploads(sortedUploads);
+    setCurrentFilter("Most Liked");
+  };
 
+  const filterMostDisliked = () => {
+    setCurrentFilter("Most Disliked");
+    const sortedUploads = [...uploads].sort((a, b) => b.dislikes - a.dislikes);
+    setUploads(sortedUploads);
+  };
+  const saveFilterAndCloseDrawer = () => {
+    console.log("Filter options saved");
+    onClose();
+  };
   return (
     <>
       {isLoggedIn ? (
         <>
           <Box p={5} m="auto" maxW="420px" display="grid" gap="10">
-            <Box position="fixed" left="0px" top="310px">
-              <Menu>
-                <Button zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }}>
-                  <MenuButton>
-                    <SettingsIcon />
-                  </MenuButton>
-                </Button>
-                <MenuList>
-                  <MenuItem onClick={() => handleSortChange("a-z")}>A-Z</MenuItem>
-                  <MenuItem onClick={() => handleSortChange("z-a")}>Z-A</MenuItem>
-                </MenuList>
-              </Menu>
-            </Box>
-
             {loading
               ? Array.from({ length: 5 }).map((_, index) => (
                   <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
@@ -589,14 +591,26 @@ export default function About() {
 
                 <DrawerBody>
                   <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="blue">
-                      Apply Filter
+                    <MenuButton mb={3} as={Button} rightIcon={<ChevronDownIcon />} colorScheme="red" variant="outline">
+                      Sort by Username: {sortOrder === "a-z" ? "A-Z" : "Z-A"}
                     </MenuButton>
                     <MenuList>
-                      {/* <MenuItem onClick={filterMostLiked}>Most Liked</MenuItem> */}
-                      {/* <MenuItem onClick={filterMostDisliked}>Most Disliked</MenuItem> */}
+                      <MenuItem onClick={() => handleSortChange("a-z")}>A-Z</MenuItem>
+                      <MenuItem onClick={() => handleSortChange("z-a")}>Z-A</MenuItem>
                     </MenuList>
                   </Menu>
+                  <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="red" variant="outline">
+                      {currentFilter}
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem onClick={filterMostLiked}>Most Liked</MenuItem>
+                      <MenuItem onClick={filterMostDisliked}>Most Disliked</MenuItem>
+                    </MenuList>
+                  </Menu>
+                  <Button pos="absolute" bottom="20px" right="20px" colorScheme="orange" onClick={saveFilterAndCloseDrawer}>
+                    Save options
+                  </Button>
                 </DrawerBody>
               </DrawerContent>
             </DrawerOverlay>
