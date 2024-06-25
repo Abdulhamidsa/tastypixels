@@ -151,7 +151,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
           onClose();
           toast({
             title: "Success",
-            description: editedUpload ? "Recipe updated successfully." : "Recipe uploaded successfully.",
+            description: editedUpload ? "Post updated successfully." : "Post uploaded successfully Redirecting...",
             status: "success",
             duration: 3000,
             isClosable: true,
@@ -222,7 +222,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
     <Modal size="lg" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{editedUpload ? "Edit Recipe" : "Upload Recipe"}</ModalHeader>
+        <ModalHeader>{editedUpload ? "Edit Post" : "Upload Post"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl>

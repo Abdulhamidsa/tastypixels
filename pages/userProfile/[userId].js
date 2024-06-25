@@ -1,14 +1,12 @@
 import { Box, Avatar, AlertDialog, AlertDialogBody, AlertDialogFooter, Button, AlertDialogHeader, AlertDialogOverlay, AlertDialogContent, Image, Heading, IconButton, useToast, Skeleton, Center, Badge, Flex, Text } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
-import { FaTrash, FaEdit, FaArrowUp, FaArrowDown, FaComment, FaFlag } from "react-icons/fa";
+import { FaTrash, FaEdit } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import CryptoJS from "crypto-js";
 import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
 
 function UserProfile() {
-  const [uploadListVersion, setUploadListVersion] = useState(0); // New state variable to track upload list changes
-
   const [isOpen, setIsOpen] = useState(false);
   const [selectedUploadId, setSelectedUploadId] = useState(null);
   const [uploadList, setUploadList] = useState([]);
@@ -56,6 +54,7 @@ function UserProfile() {
       if (response.ok) {
         const data = await response.json();
         setUserData(data.user);
+        setUploadList(data.user.uploads);
       } else {
         console.error("Failed to fetch uploads");
       }
@@ -131,9 +130,7 @@ function UserProfile() {
       });
 
       if (response.ok) {
-        console.log("Upload removed successfully");
         setUploadList(uploadList.filter((upload) => upload._id !== Id));
-        setUploadListVersion((prevVersion) => prevVersion + 1);
 
         toast({
           title: "Upload deleted.",
@@ -177,7 +174,7 @@ function UserProfile() {
               <Skeleton height="20px" mb="3" startColor="gray.300" endColor="gray.800" />
             </Center>
           ) : userData ? (
-            userData.uploads.map((upload) => (
+            uploadList.map((upload) => (
               <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
                 <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
                   <Avatar w="45px" h="45px" name={userData.username} src={userData.userAvatar} mr="3" />
@@ -193,7 +190,9 @@ function UserProfile() {
                   <Heading fontSize="xl" mb={3}>
                     {upload.title}
                   </Heading>
-                  <Text fontSize="md">{upload.description}</Text>
+                  <Text fontSize="md" mb={3}>
+                    {upload.description}
+                  </Text>
                   <Box position="relative" display="flex" gap={1}>
                     {upload.tags.map((tag, index) => (
                       <Text fontSize="sm" color="gray.600" pb="2" key={`${tag}-${index}`}>

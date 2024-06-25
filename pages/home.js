@@ -415,10 +415,10 @@ export default function About() {
                     </Box>
 
                     <Box p={3} bg="white" color="black">
-                      <Heading fontSize="xl" mb={3}>
-                        {upload.title}
-                      </Heading>
-                      <Text fontSize="md">{upload.description}</Text>
+                      <Heading fontSize="xl">{upload.title}</Heading>
+                      <Text fontSize="md" mb={5}>
+                        {upload.description}
+                      </Text>
                       <Box position="relative" display="flex" gap={1}>
                         {upload.tags.map((tag, index) => (
                           <Text fontSize="sm" color="gray.600" pb="2" key={`${tag}-${index}`}>
@@ -427,12 +427,11 @@ export default function About() {
                         ))}
                       </Box>
                     </Box>
-
                     <Box position="relative" overflow="hidden">
-                      <Image src={upload.imageUrl} alt={upload.title} width={400} height={300} quality={75} />
+                      <Image src={upload.imageUrl} alt={upload.title} width={500} height={300} quality={75} />
                       <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
                     </Box>
-                    <Badge width="100px" textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
+                    <Badge textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
                       {upload.category}
                     </Badge>
                     <Flex p={4} gap={3}>
