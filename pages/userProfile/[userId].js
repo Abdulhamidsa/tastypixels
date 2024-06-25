@@ -11,6 +11,7 @@ function UserProfile() {
   const [selectedUploadId, setSelectedUploadId] = useState(null);
   const [uploadList, setUploadList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
   const toast = useToast();
   const router = useRouter();
   const cancelRef = useRef();
@@ -52,7 +53,7 @@ function UserProfile() {
 
       if (response.ok) {
         const data = await response.json();
-        setUploadList(data.user.uploads);
+        setUserData(data.user);
       } else {
         console.error("Failed to fetch uploads");
       }
@@ -169,15 +170,18 @@ function UserProfile() {
             <Center>
               <Spinner />
             </Center>
-          ) : (
-            uploadList.map((upload) => (
+          ) : userData ? (
+            userData.uploads.map((upload) => (
               <Box key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
                 <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
-                  <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
+                  <Avatar w="45px" h="45px" name={userData.username} src={userData.userAvatar} mr="3" />
                   <Box color="black">
                     <Heading fontSize="lg" fontWeight="bold">
-                      {upload.username}
+                      {userData.username}
                     </Heading>
+                    <Text fontSize="sm" color="gray.600">
+                      Posted at: {new Date(upload.postedAt).toLocaleString()}
+                    </Text>
                   </Box>
                 </Box>
 
@@ -223,13 +227,17 @@ function UserProfile() {
                 </Flex>
               </Box>
             ))
+          ) : (
+            <Center>
+              <Spinner />
+            </Center>
           )}
 
-          <Upload isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} editedUpload={uploadList.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={handleCloseEdit} />
+          <Upload isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} editedUpload={userData.uploads.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={handleCloseEdit} />
 
           <AlertDialog isOpen={isDeleteOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
             <AlertDialogOverlay>
-              <AlertDialogContent>
+              <AlertDialogContent margin="auto">
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
                   Delete Upload
                 </AlertDialogHeader>

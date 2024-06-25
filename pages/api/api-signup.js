@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import userDemo from "@/models/User";
+import Member from "@/models/User";
 import { isValidEmail, isValidPassword, checkExistingUser } from "@/util/validations";
 import connectToMongoDB from "@/database/db";
 
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new userDemo({
+    const newUser = new Member({
       username: username,
       email: email,
       password: hashedPassword,

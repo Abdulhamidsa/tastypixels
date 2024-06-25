@@ -9,38 +9,38 @@ export default async function handler(req, res) {
 
   const { userId, uploadId } = req.body;
 
-  // Validate request body
   if (!userId || !uploadId || !mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(uploadId)) {
     return res.status(400).json({ errors: ["User ID and Upload ID are required and must be valid"] });
   }
 
   try {
-    // Connect to MongoDB
     await connectToMongoDB();
 
-    // Check if the user exists
-    const user = await User.findById(userId);
+    // Find the user who owns the upload
+    const user = await User.findOne({ "uploads._id": uploadId });
     if (!user) {
-      return res.status(404).json({ errors: ["User not found"] });
+      return res.status(404).json({ errors: ["Upload not found"] });
     }
 
-    // Find the upload by its ID within the user's uploads
-    const existingUpload = user.uploads.find((upload) => upload._id.equals(new mongoose.Types.ObjectId(uploadId)));
+    // Find the specific upload within the user's uploads
+    const existingUpload = user.uploads.id(uploadId);
     if (!existingUpload) {
       return res.status(404).json({ errors: ["Upload not found"] });
     }
 
-    // Check if the user has already reported this upload
+    // Ensure the reports array is initialized
     existingUpload.reports = existingUpload.reports || [];
+
+    // Check if the upload has already been reported by this user
     if (existingUpload.reports.some((report) => report.userId.equals(new mongoose.Types.ObjectId(userId)))) {
       return res.status(400).json({ errors: ["Upload already reported by this user"] });
     }
 
-    // Add new report
+    // Add the report and increment the reports count
     existingUpload.reports.push({ userId: new mongoose.Types.ObjectId(userId) });
-    existingUpload.reportsCount += 1; // Increment reports count
+    existingUpload.reportsCount += 1;
 
-    // Save the updated user document
+    // Save the changes
     await user.save();
 
     return res.status(200).json({ message: "Upload reported successfully" });

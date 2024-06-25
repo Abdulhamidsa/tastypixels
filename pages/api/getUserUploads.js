@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     try {
       const db = await connectToMongoDB();
-      const user = await db.collection("us").findOne({ _id: new ObjectId(userId) });
+      const user = await db.collection("members").findOne({ _id: new ObjectId(userId) });
 
       if (!user) {
         return res.status(404).json({ error: "User not found" });

@@ -42,8 +42,8 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
   const [tagError, setTagError] = useState("");
   const [isFileLoading, setIsFileLoading] = useState(false);
   const [uploadError, setUploadError] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState(editedUpload ? editedUpload.countryOfOrigin : null);
-  const fileInputRef = useRef(null);
+  const [selectedCountry, setSelectedCountry] = useState(editedUpload ? editedUpload.countryOfOrigin : undefined);
+  const fileInputRef = useRef(undefined);
   const inputRef = useRef();
   const toast = useToast();
   const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
@@ -127,7 +127,6 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
           if (!response.ok) {
             throw new Error(responseData.errors ? responseData.errors.join(", ") : "Failed to save photo to database");
           }
-          console.log("Photo saved to database successfully");
           onClose();
           toast({
             title: "Success",

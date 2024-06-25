@@ -16,6 +16,12 @@ import {
   SkeletonCircle,
   ModalHeader,
   Spinner,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -43,10 +49,15 @@ import { useEffect, useState, useRef } from "react";
 import CardsTemplate from "@/components/CardsTemplate";
 import { FaArrowUp, FaArrowDown, FaComment, FaFlag, FaThumbsUp, FaThumbsDown, FaHeart, FaTimes } from "react-icons/fa";
 import Image from "next/image";
+
 import { MdFilterList } from "react-icons/md";
 
 export default function About() {
   const [uploads, setUploads] = useState([]);
+  const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
+  const cancelRef = useRef();
+  const [selectedUploadId, setSelectedUploadId] = useState(null);
+
   const { isLoggedIn, userId } = useAuth();
   const [loading, setLoading] = useState(true);
   const [loadingVote, setLoadingVote] = useState({ like: false, dislike: false });
@@ -215,10 +226,10 @@ export default function About() {
         ...prevComments,
         [uploadId]: comments,
       }));
-      return commentsLength; // Return the length of comments array
+      return commentsLength;
     } catch (error) {
       console.error("Error fetching comments:", error);
-      return 0; // Return 0 or handle error as per your requirement
+      return 0;
     } finally {
       setLoadingComments((prevLoadingComments) => ({
         ...prevLoadingComments,
@@ -244,7 +255,7 @@ export default function About() {
         throw new Error("Failed to add comment");
       }
 
-      await fetchComments(uploadId); // Fetch comments after adding
+      await fetchComments(uploadId);
 
       setNewComment((prevNewComment) => ({
         ...prevNewComment,
@@ -283,7 +294,8 @@ export default function About() {
       }
 
       setDeletingCommentId(commentId);
-
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      await delay(1000);
       const response = await fetch("/api/api-delete-comment", {
         method: "DELETE",
         headers: {
@@ -298,12 +310,10 @@ export default function About() {
       if (!response.ok) {
         throw new Error("Failed to delete comment");
       }
-
-      // Update comments state after successful deletion
       await fetchComments(uploadId);
 
       toast({
-        title: "Comment deleted",
+        title: "Your comment has been deleted",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -321,40 +331,38 @@ export default function About() {
       setDeletingCommentId(null);
     }
   };
-  const handleReport = async (uploadId) => {
+  const confirmReport = async (uploadId) => {
+    onReportClose(); // Close the confirmation dialog
     try {
       const response = await fetch("/api/api-report-upload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, uploadId }), // Ensure userId and uploadId are correctly defined
+        body: JSON.stringify({ userId, uploadId }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to report upload");
+        const data = await response.json();
+        throw new Error(data.errors ? data.errors.join(", ") : "Failed to report this post");
       }
-
-      // Handle success
       toast({
-        title: "Upload Reported",
+        title: "Post is reported successfully, Thank you for making our community safe!",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
-
-      // Optionally, trigger state update or UI changes
     } catch (error) {
       console.error("Error reporting upload:", error);
       toast({
-        title: "Error",
-        description: "Failed to report upload. Please try again later.",
+        title: "Post is already reported",
         status: "error",
         duration: 5000,
         isClosable: true,
       });
     }
   };
+  console.log(uploads);
 
   return (
     <>
@@ -405,7 +413,7 @@ export default function About() {
                         <Heading fontSize="lg" fontWeight="bold">
                           {upload.username}
                         </Heading>
-                        <Text fontSize="sm">Last seen: {upload.lastSeen} 06/19/2024 </Text>
+                        Posted at: {new Date(upload.postedAt).toLocaleString()}
                       </Box>
                     </Box>
 
@@ -424,7 +432,7 @@ export default function About() {
                     </Box>
 
                     <Box position="relative" overflow="hidden">
-                      <Image src={upload.imageUrl} alt={upload.title} width={400} height={300} />
+                      <Image src={upload.imageUrl} alt={upload.title} width={400} height={300} quality={75} />
                       <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
                     </Box>
                     <Badge width="100px" textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
@@ -449,11 +457,37 @@ export default function About() {
                         </Button>
                         <Text>{comments[upload._id]?.length ?? upload.comments.length}</Text>
                       </Box>
-                      <Box ml="auto" display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <Button aria-label="Report" onClick={() => handleReport(upload._id)} colorScheme="yellow" variant="outline">
-                          <FaFlag /> Report
-                        </Button>
-                      </Box>
+                      <Button
+                        ml="auto"
+                        aria-label="Report"
+                        onClick={() => {
+                          setSelectedUploadId(upload._id);
+                          onReportOpen();
+                        }}
+                        colorScheme="yellow"
+                        variant="outline"
+                      >
+                        <FaFlag />
+                      </Button>
+
+                      <AlertDialog isOpen={isReportOpen} leastDestructiveRef={cancelRef} onClose={onReportClose}>
+                        <AlertDialogOverlay>
+                          <AlertDialogContent margin="auto">
+                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                              Report Upload
+                            </AlertDialogHeader>
+                            <AlertDialogBody>Are you sure you want to report this post?</AlertDialogBody>
+                            <AlertDialogFooter>
+                              <Button ref={cancelRef} onClick={onReportClose}>
+                                Cancel
+                              </Button>
+                              <Button colorScheme="orange" onClick={() => confirmReport(selectedUploadId)} ml={3}>
+                                Report
+                              </Button>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialogOverlay>
+                      </AlertDialog>
                     </Flex>
                     <Collapse in={showComments[upload._id]} animateOpacity>
                       {comments[upload._id]?.map((comment) => (
@@ -501,13 +535,13 @@ export default function About() {
                 </Box>
                 <TransformWrapper>
                   <TransformComponent>
-                    <Image src={selectedImage} alt="" width={500} height={400} />
+                    <Image src={selectedImage} alt="dish image" width={500} height={500} quality={80} />
                   </TransformComponent>
                 </TransformWrapper>
               </Box>
             </ModalContent>
           </Modal>
-          <IconButton aria-label="Filter" icon={<MdFilterList />} onClick={onOpen} position="fixed" top="100px" left="20px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
+          <IconButton aria-label="Filter" icon={<MdFilterList />} onClick={onOpen} position="fixed" top="130px" left="50px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay>
               <DrawerContent bg="gray.800" color="white">

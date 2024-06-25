@@ -16,30 +16,31 @@ export default async function handler(req, res) {
   try {
     await connectToMongoDB();
 
-    // Find the user and validate if the comment belongs to the user
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ errors: ["User not found"] });
+    let commentDeleted = false;
+
+    // Search through all users
+    const users = await User.find();
+    for (let user of users) {
+      // Find the upload containing the comment
+      const uploadWithComment = user.uploads.find((upload) => {
+        return upload.comments.some((comment) => comment._id.toString() === commentId);
+      });
+
+      if (uploadWithComment) {
+        // Find and remove the comment
+        const commentIndex = uploadWithComment.comments.findIndex((comment) => comment._id.toString() === commentId);
+        if (commentIndex !== -1) {
+          uploadWithComment.comments.splice(commentIndex, 1); // Remove the comment from the array
+          await user.save(); // Save the user object with the updated comments array
+          commentDeleted = true;
+          break; // Exit the loop once the comment is found and deleted
+        }
+      }
     }
 
-    // Find the upload containing the comment
-    const uploadWithComment = user.uploads.find((upload) => {
-      return upload.comments.some((comment) => comment._id.toString() === commentId);
-    });
-
-    if (!uploadWithComment) {
+    if (!commentDeleted) {
       return res.status(404).json({ errors: ["Comment not found"] });
     }
-
-    // Find and remove the comment
-    const commentIndex = uploadWithComment.comments.findIndex((comment) => comment._id.toString() === commentId);
-    if (commentIndex === -1) {
-      return res.status(404).json({ errors: ["Comment not found"] });
-    }
-
-    uploadWithComment.comments.splice(commentIndex, 1); // Remove the comment from the array
-
-    await user.save(); // Save the user object with the updated comments array
 
     return res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {

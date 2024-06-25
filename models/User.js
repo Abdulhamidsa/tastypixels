@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "Member", required: true },
   text: { type: String, required: true },
-  username: { type: String, required: true }, // Make sure it's here
-  createdt: { type: Date, default: Date.now },
+  username: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const reportSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "Member", required: true },
 });
 
 const uploadSchema = new mongoose.Schema({
@@ -17,10 +21,12 @@ const uploadSchema = new mongoose.Schema({
   dislikes: { type: Number, default: 0 },
   countryOfOrigin: String,
   comments: [commentSchema],
-  reports: { type: Number, default: 0 }, // Counter for reports
+  reports: [reportSchema],
+  reportsCount: { type: Number, default: 0 },
+  postedAt: { type: Date, default: Date.now }, // New field for posted date
 });
 
-const userSchema = new mongoose.Schema(
+const memberSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -63,8 +69,13 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );
+const UserModel = mongoose.models.Member || mongoose.model("Member", memberSchema);
 
-export default mongoose.models.U || mongoose.model("U", userSchema);
+export default UserModel;
