@@ -46,7 +46,28 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
   const fileInputRef = useRef(undefined);
   const inputRef = useRef();
   const toast = useToast();
-  const predefinedCategories = ["Vegetarian", "Vegan", "Gluten-Free", "Low-Carb", "High-Protein"];
+  const predefinedCategories = [
+    "Appetizers & Snacks",
+    "Main Courses",
+    "Desserts",
+    "Salads",
+    "Soups & Stews",
+    "Beverages",
+    "Breads & Baked Goods",
+    "Pasta & Noodles",
+    "Rice & Grains",
+    "Vegetarian",
+    "Vegan",
+    "Gluten-Free",
+    "Low-Carb",
+    "High-Protein",
+    "International Cuisine",
+    "Holiday Specials",
+    "Healthy Choices",
+    "Quick & Easy",
+    "Comfort Food",
+    "Kids Favorites",
+  ];
   const options = countryList().getData();
 
   useEffect(() => {
@@ -249,7 +270,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
             </InputGroup>
             <FormErrorMessage>{tagError}</FormErrorMessage>
           </FormControl>
-          <FormControl>
+          {/* <FormControl>
             <FormLabel>Country Origin</FormLabel>
             <ChakraSelect value={selectedCountry} onChange={(e) => setSelectedCountry(e.target.value)} placeholder="Select Country">
               {options.map((country) => (
@@ -258,7 +279,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
                 </option>
               ))}
             </ChakraSelect>
-          </FormControl>
+          </FormControl> */}
           <FormControl>
             <FormLabel>Category</FormLabel>
             <ChakraSelect value={selectedCategory} onChange={handleCategorySelect}>

@@ -49,9 +49,7 @@ import { useEffect, useState, useRef } from "react";
 import CardsTemplate from "@/components/CardsTemplate";
 import { FaArrowUp, FaArrowDown, FaComment, FaFlag, FaThumbsUp, FaThumbsDown, FaHeart, FaTimes } from "react-icons/fa";
 import Image from "next/image";
-
 import { MdFilterList } from "react-icons/md";
-
 export default function About() {
   const [uploads, setUploads] = useState([]);
   const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
@@ -62,14 +60,14 @@ export default function About() {
   const [loading, setLoading] = useState(true);
   const [loadingVote, setLoadingVote] = useState({ like: false, dislike: false });
   const [selectedImage, setSelectedImage] = useState(null);
-  const [comments, setComments] = useState({}); // Store comments by uploadId
-  const [newComment, setNewComment] = useState({}); // Store new comment text by uploadId
-  const [showComments, setShowComments] = useState({}); // Toggle show/hide comments by uploadId
+  const [comments, setComments] = useState({});
+  const [newComment, setNewComment] = useState({});
+  const [showComments, setShowComments] = useState({});
   const toast = useToast();
   const [loadingComments, setLoadingComments] = useState({});
   const [deletingCommentId, setDeletingCommentId] = useState(null);
 
-  const containerRef = useRef(null); // Ref for the comments container
+  const containerRef = useRef(null);
 
   const [userData, setUserData] = useState({});
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -362,7 +360,6 @@ export default function About() {
       });
     }
   };
-  console.log(uploads);
 
   return (
     <>
@@ -413,7 +410,7 @@ export default function About() {
                         <Heading fontSize="lg" fontWeight="bold">
                           {upload.username}
                         </Heading>
-                        Posted at: {new Date(upload.postedAt).toLocaleString()}
+                        <Text fontSize="sm"> Posted at: {new Date(upload.postedAt).toLocaleString()}</Text>
                       </Box>
                     </Box>
 
@@ -541,7 +538,7 @@ export default function About() {
               </Box>
             </ModalContent>
           </Modal>
-          <IconButton aria-label="Filter" icon={<MdFilterList />} onClick={onOpen} position="fixed" top="130px" left="50px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
+          <IconButton aria-label="Filter" icon={<MdFilterList />} onClick={onOpen} position="fixed" top="250px" left="0px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
           <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
             <DrawerOverlay>
               <DrawerContent bg="gray.800" color="white">

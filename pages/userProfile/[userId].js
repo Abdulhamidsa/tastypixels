@@ -1,4 +1,4 @@
-import { Box, Avatar, AlertDialog, AlertDialogBody, AlertDialogFooter, Button, AlertDialogHeader, AlertDialogOverlay, AlertDialogContent, Image, Heading, IconButton, useToast, Spinner, Center, Badge, Flex, Text } from "@chakra-ui/react";
+import { Box, Avatar, AlertDialog, AlertDialogBody, AlertDialogFooter, Button, AlertDialogHeader, AlertDialogOverlay, AlertDialogContent, Image, Heading, IconButton, useToast, Skeleton, Center, Badge, Flex, Text } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import { FaTrash, FaEdit, FaArrowUp, FaArrowDown, FaComment, FaFlag } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
@@ -82,7 +82,7 @@ function UserProfile() {
           title: "Upload updated.",
           description: "The upload has been successfully updated.",
           status: "success",
-          duration: 9000,
+          duration: 2000,
           isClosable: true,
         });
       } else {
@@ -92,7 +92,7 @@ function UserProfile() {
           title: "Error",
           description: errorData.error,
           status: "error",
-          duration: 9000,
+          duration: 2000,
           isClosable: true,
         });
       }
@@ -168,7 +168,9 @@ function UserProfile() {
         <Box p={5} m="auto" maxW="420px" display="grid" gap="10">
           {loading ? (
             <Center>
-              <Spinner />
+              <Skeleton height="20px" mb="3" startColor="gray.300" endColor="gray.800" />
+              <Skeleton height="20px" mb="3" startColor="gray.300" endColor="gray.800" />
+              <Skeleton height="20px" mb="3" startColor="gray.300" endColor="gray.800" />
             </Center>
           ) : userData ? (
             userData.uploads.map((upload) => (
@@ -179,9 +181,7 @@ function UserProfile() {
                     <Heading fontSize="lg" fontWeight="bold">
                       {userData.username}
                     </Heading>
-                    <Text fontSize="sm" color="gray.600">
-                      Posted at: {new Date(upload.postedAt).toLocaleString()}
-                    </Text>
+                    <Text fontSize="sm"> Posted at: {new Date(upload.postedAt).toLocaleString()}</Text>
                   </Box>
                 </Box>
 
@@ -229,11 +229,13 @@ function UserProfile() {
             ))
           ) : (
             <Center>
-              <Spinner />
+              <Skeleton height="20px" mb="3" startColor="gray.300" endColor="gray.800" />
+              <Skeleton height="20px" mb="3" startColor="gray.300" endColor="gray.800" />
+              <Skeleton height="20px" mb="3" startColor="gray.300" endColor="gray.800" />
             </Center>
           )}
 
-          <Upload isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} editedUpload={userData.uploads.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={handleCloseEdit} />
+          <Upload isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} editedUpload={userData && userData.uploads.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={handleCloseEdit} />
 
           <AlertDialog isOpen={isDeleteOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
             <AlertDialogOverlay>
