@@ -113,7 +113,7 @@ export default function About() {
           title: "Error",
           description: "Failed to fetch user data or recipes",
           status: "error",
-          duration: 3000,
+          // duration: 1000,
           isClosable: true,
         });
       } finally {
@@ -428,7 +428,16 @@ export default function About() {
                       </Box>
                     </Box>
                     <Box position="relative" overflow="hidden">
-                      <Image src={upload.imageUrl} alt={upload.title} width={500} height={300} quality={75} />
+                      <Image
+                        src={upload.imageUrl}
+                        sizes="100vw"
+                        width={200}
+                        height={200}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                        }}
+                      />
                       <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
                     </Box>
                     <Badge textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
@@ -531,7 +540,7 @@ export default function About() {
                 </Box>
                 <TransformWrapper>
                   <TransformComponent>
-                    <Image src={selectedImage} alt="dish image" width={500} height={500} quality={80} />
+                    <Image src={selectedImage} alt="dish image" width={500} height={500} />
                   </TransformComponent>
                 </TransformWrapper>
               </Box>

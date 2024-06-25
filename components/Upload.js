@@ -41,6 +41,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
   const [tagInput, setTagInput] = useState("");
   const [tagError, setTagError] = useState("");
   const [isFileLoading, setIsFileLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(editedUpload ? editedUpload.countryOfOrigin : undefined);
   const fileInputRef = useRef(undefined);
@@ -108,7 +109,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
     }
   };
 
-  const saveToDatabase = () => {
+  const saveToDatabase = async () => {
     if (!editedUpload) {
       if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0) {
         setUploadError("All fields are required");
@@ -136,37 +137,38 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
     }
 
     try {
-      fetch(url, {
+      setIsUploading(true);
+      const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(uploadData),
-      })
-        .then(async (response) => {
-          const responseData = await response.json();
-          if (!response.ok) {
-            throw new Error(responseData.errors ? responseData.errors.join(", ") : "Failed to save photo to database");
-          }
-          onClose();
-          toast({
-            title: "Success",
-            description: editedUpload ? "Post updated successfully." : "Post uploaded successfully Redirecting...",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000);
-        })
-        .catch((error) => {
-          console.error(error);
-          setUploadError(error.message || "Failed to save photo to database");
-        });
+      });
+
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error(responseData.errors ? responseData.errors.join(", ") : "Failed to save photo to database");
+      }
+
+      toast({
+        title: "Success",
+        description: editedUpload ? "Post updated successfully." : "Post uploaded successfully. Redirecting...",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      onClose();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       console.error(error);
-      setUploadError("Failed to save photo to database");
+      setUploadError(error.message || "Failed to save photo to database");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -227,11 +229,11 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
         <ModalBody>
           <FormControl>
             <FormLabel>Title</FormLabel>
-            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Dish Title" />
+            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Dish Title" disabled={isUploading} />
           </FormControl>
           <FormControl>
             <FormLabel>Description</FormLabel>
-            <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description of your dish" />
+            <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description of your dish" disabled={isUploading} />
           </FormControl>
           <FormControl isInvalid={tagError !== ""}>
             <FormLabel>Custom Tags</FormLabel>
@@ -256,6 +258,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
                     handleAddTag();
                   }
                 }}
+                disabled={isUploading}
               />
               <InputRightElement>
                 <IconButton
@@ -265,6 +268,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
                     e.preventDefault();
                     handleAddTag();
                   }}
+                  disabled={isUploading}
                 />
               </InputRightElement>
             </InputGroup>
@@ -272,7 +276,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
           </FormControl>
           {/* <FormControl>
             <FormLabel>Country Origin</FormLabel>
-            <ChakraSelect value={selectedCountry} onChange={(e) => setSelectedCountry(e.target.value)} placeholder="Select Country">
+            <ChakraSelect value={selectedCountry} onChange={(e) => setSelectedCountry(e.target.value)} placeholder="Select Country" disabled={isUploading}>
               {options.map((country) => (
                 <option key={country.value} value={country.value}>
                   {country.label}
@@ -282,7 +286,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
           </FormControl> */}
           <FormControl>
             <FormLabel>Category</FormLabel>
-            <ChakraSelect value={selectedCategory} onChange={handleCategorySelect}>
+            <ChakraSelect value={selectedCategory} onChange={handleCategorySelect} disabled={isUploading}>
               <option value="">Select Category</option>
               {predefinedCategories.map((category) => (
                 <option key={category} value={category}>
@@ -293,7 +297,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
           </FormControl>
           <FormControl position="relative">
             <FormLabel>Image</FormLabel>
-            <Input p={1} type="file" accept="image/*" ref={fileInputRef} onChange={handleUpload} />
+            <Input p={1} type="file" accept="image/*" ref={fileInputRef} onChange={handleUpload} disabled={isUploading} />
             {isFileLoading && <Spinner position="absolute" top="55%" right="5%" transform="translate(-50%, -50%)" />}
           </FormControl>
           {uploadError && !uploadError.includes("maximum limit of uploads") && (
@@ -309,7 +313,9 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
             </Alert>
           )}
           <ModalFooter>
-            <Button onClick={saveToDatabase}>{editedUpload ? "SAVE CHANGES" : "UPLOAD"}</Button>
+            <Button onClick={saveToDatabase} isLoading={isUploading} loadingText="Uploading" disabled={isUploading}>
+              {editedUpload ? "SAVE CHANGES" : "UPLOAD"}
+            </Button>
           </ModalFooter>
         </ModalBody>
       </ModalContent>

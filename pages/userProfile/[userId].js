@@ -201,7 +201,16 @@ function UserProfile() {
                 </Box>
 
                 <Box position="relative" overflow="hidden">
-                  <Image src={upload.imageUrl} alt={upload.title} width={500} height={300} objectFit="cover" />
+                  <Image
+                    src={upload.imageUrl}
+                    sizes="100vw"
+                    width={200}
+                    height={200}
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                    }}
+                  />
                 </Box>
 
                 <Badge textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
