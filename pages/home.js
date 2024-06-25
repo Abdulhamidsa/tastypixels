@@ -42,7 +42,7 @@ import {
   Textarea,
   Collapse,
 } from "@chakra-ui/react";
-import { SearchIcon, ChevronDownIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { SearchIcon, SettingsIcon, ChevronDownIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState, useRef } from "react";
@@ -66,6 +66,7 @@ export default function About() {
   const toast = useToast();
   const [loadingComments, setLoadingComments] = useState({});
   const [deletingCommentId, setDeletingCommentId] = useState(null);
+  const [sortOrder, setSortOrder] = useState("a-z"); // default sort order
 
   const containerRef = useRef(null);
 
@@ -76,9 +77,26 @@ export default function About() {
     showDislikes: false,
     showComments: false,
   });
+  const sortUploads = (order) => {
+    const sortedUploads = [...uploads].sort((a, b) => {
+      if (order === "a-z") {
+        return a.username.localeCompare(b.username);
+      } else {
+        return b.username.localeCompare(a.username);
+      }
+    });
+    setUploads(sortedUploads);
+  };
+
+  const handleSortChange = (order) => {
+    setSortOrder(order);
+    sortUploads(order);
+  };
 
   useEffect(() => {
     const fetchUserAndUploads = async () => {
+      sortUploads(sortOrder);
+
       try {
         const userResponse = await fetch("/api/getUserUploads", {
           method: "POST",
@@ -355,7 +373,7 @@ export default function About() {
       toast({
         title: "Post is already reported",
         status: "error",
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       });
     }
@@ -366,6 +384,20 @@ export default function About() {
       {isLoggedIn ? (
         <>
           <Box p={5} m="auto" maxW="420px" display="grid" gap="10">
+            <Box position="fixed" left="0px" top="310px">
+              <Menu>
+                <Button zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }}>
+                  <MenuButton>
+                    <SettingsIcon />
+                  </MenuButton>
+                </Button>
+                <MenuList>
+                  <MenuItem onClick={() => handleSortChange("a-z")}>A-Z</MenuItem>
+                  <MenuItem onClick={() => handleSortChange("z-a")}>Z-A</MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
+
             {loading
               ? Array.from({ length: 5 }).map((_, index) => (
                   <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
@@ -531,6 +563,7 @@ export default function About() {
                   </Box>
                 ))}
           </Box>
+
           <Modal isOpen={selectedImage !== null} onClose={handleClose} size="full">
             <ModalOverlay bg="rgba(0, 0, 0, 0.9)" />
             <ModalContent bg="transparent" boxShadow="none">
@@ -551,6 +584,7 @@ export default function About() {
             <DrawerOverlay>
               <DrawerContent bg="gray.800" color="white">
                 <DrawerCloseButton />
+
                 <DrawerHeader>Filter Options</DrawerHeader>
 
                 <DrawerBody>
