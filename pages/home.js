@@ -239,7 +239,7 @@ export default function About() {
       }
       const comments = await response.json();
       const commentsLength = comments.length;
-      console.log(commentsLength);
+      // console.log(commentsLength);
       setComments((prevComments) => ({
         ...prevComments,
         [uploadId]: comments,
@@ -297,30 +297,40 @@ export default function About() {
     }
   };
 
-  const handleDeleteComment = async (commentId, uploadId) => {
+  const handleDeleteComment = async (uploadId, commentId) => {
     try {
-      setDeletingCommentId(commentId);
+      const commentToDelete = comments[uploadId]?.find((comment) => comment._id === commentId);
+      if (!commentToDelete) {
+        console.error("Comment not found");
+        return;
+      }
 
+      if (commentToDelete.userId !== userId) {
+        console.error("You can only delete your own comments");
+        return;
+      }
+
+      setDeletingCommentId(commentId);
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      await delay(1000);
       const response = await fetch("/api/api-delete-comment", {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, commentId, uploadId }),
+        body: JSON.stringify({
+          userId,
+          commentId,
+        }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to delete comment");
       }
-
-      const data = await response.json();
-      setComments((prevComments) => ({
-        ...prevComments,
-        [uploadId]: data.updatedComments,
-      }));
+      await fetchComments(uploadId);
 
       toast({
-        title: "Comment deleted",
+        title: "Your comment has been deleted",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -329,8 +339,9 @@ export default function About() {
       console.error("Error deleting comment:", error);
       toast({
         title: "Error",
-        description: "Failed to delete comment",
+        description: "Failed to delete comment. Please try again later.",
         status: "error",
+        duration: 3000,
         isClosable: true,
       });
     } finally {
@@ -387,7 +398,7 @@ export default function About() {
     setUploads(sortedUploads);
   };
   const saveFilterAndCloseDrawer = () => {
-    console.log("Filter options saved");
+    // console.log("Filter options saved");
     onClose();
   };
   return (
