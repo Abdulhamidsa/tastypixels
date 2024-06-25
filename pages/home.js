@@ -51,6 +51,7 @@ import CardsTemplate from "@/components/CardsTemplate";
 import { FaArrowUp, FaArrowDown, FaComment, FaFlag, FaThumbsUp, FaThumbsDown, FaHeart, FaTimes } from "react-icons/fa";
 import Image from "next/image";
 import { MdFilterList } from "react-icons/md";
+
 export default function About() {
   const [uploads, setUploads] = useState([]);
   const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
@@ -58,7 +59,7 @@ export default function About() {
   const [selectedUploadId, setSelectedUploadId] = useState(null);
   const { isLoggedIn, userId } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [loadingVote, setLoadingVote] = useState({ like: false, dislike: false });
+  const [loadingVote, setLoadingVote] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState({});
@@ -78,6 +79,7 @@ export default function About() {
     showDislikes: false,
     showComments: false,
   });
+
   const sortUploads = (order) => {
     const sortedUploads = [...uploads].sort((a, b) => {
       if (order === "a-z") {
@@ -132,7 +134,6 @@ export default function About() {
           title: "Error",
           description: "Failed to fetch user data or recipes",
           status: "error",
-          // duration: 1000,
           isClosable: true,
         });
       } finally {
@@ -146,7 +147,7 @@ export default function About() {
   }, [isLoggedIn, userId, toast]);
 
   const handleVote = async (uploadId, action) => {
-    setLoadingVote((prev) => ({ ...prev, [action]: true }));
+    setLoadingVote((prev) => ({ ...prev, [uploadId]: action }));
     const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 100));
     try {
       const responsePromise = fetch("/api/api-update-likes-dislikes", {
@@ -177,7 +178,7 @@ export default function About() {
     } catch (error) {
       console.error("Error updating likes/dislikes:", error);
     } finally {
-      setLoadingVote((prev) => ({ ...prev, [action]: false }));
+      setLoadingVote((prev) => ({ ...prev, [uploadId]: null }));
     }
   };
 
@@ -237,7 +238,7 @@ export default function About() {
         throw new Error("Failed to fetch comments");
       }
       const comments = await response.json();
-      const commentsLength = comments.length; // Get the length of comments array
+      const commentsLength = comments.length;
       console.log(commentsLength);
       setComments((prevComments) => ({
         ...prevComments,
@@ -289,48 +290,37 @@ export default function About() {
       console.error("Error adding comment:", error);
       toast({
         title: "Error",
-        description: "Failed to add comment. Please try again later.",
+        description: "Failed to add comment",
         status: "error",
-        duration: 3000,
         isClosable: true,
       });
     }
   };
 
-  const handleDeleteComment = async (uploadId, commentId) => {
+  const handleDeleteComment = async (commentId, uploadId) => {
     try {
-      const commentToDelete = comments[uploadId]?.find((comment) => comment._id === commentId);
-      if (!commentToDelete) {
-        console.error("Comment not found");
-        return;
-      }
-
-      if (commentToDelete.userId !== userId) {
-        console.error("You can only delete your own comments");
-        return;
-      }
-
       setDeletingCommentId(commentId);
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-      await delay(1000);
+
       const response = await fetch("/api/api-delete-comment", {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId,
-          commentId,
-        }),
+        body: JSON.stringify({ userId, commentId, uploadId }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to delete comment");
       }
-      await fetchComments(uploadId);
+
+      const data = await response.json();
+      setComments((prevComments) => ({
+        ...prevComments,
+        [uploadId]: data.updatedComments,
+      }));
 
       toast({
-        title: "Your comment has been deleted",
+        title: "Comment deleted",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -339,42 +329,48 @@ export default function About() {
       console.error("Error deleting comment:", error);
       toast({
         title: "Error",
-        description: "Failed to delete comment. Please try again later.",
+        description: "Failed to delete comment",
         status: "error",
-        duration: 3000,
         isClosable: true,
       });
     } finally {
       setDeletingCommentId(null);
     }
   };
-  const confirmReport = async (uploadId) => {
-    onReportClose(); // Close the confirmation dialog
+
+  const handleReportClick = (uploadId) => {
+    setSelectedUploadId(uploadId);
+    onReportOpen();
+  };
+
+  const handleReportSubmit = async (reportText) => {
     try {
       const response = await fetch("/api/api-report-upload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, uploadId }),
+        body: JSON.stringify({ uploadId: selectedUploadId, reportText }),
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.errors ? data.errors.join(", ") : "Failed to report this post");
+        throw new Error("Failed to submit report");
       }
+
       toast({
-        title: "Post is reported successfully, Thank you for making our community safe!",
+        title: "Report submitted",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
+
+      onReportClose();
     } catch (error) {
-      console.error("Error reporting upload:", error);
+      console.error("Error submitting report:", error);
       toast({
-        title: "Post is already reported",
+        title: "Error",
+        description: "Failed to submit report",
         status: "error",
-        duration: 5000,
         isClosable: true,
       });
     }
@@ -479,14 +475,15 @@ export default function About() {
                     </Badge>
                     <Flex p={4} gap={3}>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <Button aria-label="Upvote" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
-                          {loadingVote.like ? <Spinner size="sm" /> : <FaArrowUp />}
+                        <Button aria-label="Like" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"}>
+                          {loadingVote[upload._id] === "like" ? <Spinner size="sm" /> : <FaArrowUp />}
                         </Button>
                         <Text mx={2}>{upload.likes}</Text>
                       </Box>
+
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <Button aria-label="Downvote" onClick={() => handleVote(upload._id, "dislike")} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
-                          {loadingVote.dislike ? <Spinner size="sm" /> : <FaArrowDown />}
+                        <Button aria-label="Dislike" onClick={() => handleVote(upload._id, "dislike")} colorScheme={upload.isDisliked ? "red" : "gray"} variant="outline">
+                          {loadingVote[upload._id] === "dislike" ? <Spinner size="sm" /> : <FaArrowDown />}
                         </Button>
                         <Text mx={2}>{upload.dislikes}</Text>
                       </Box>
