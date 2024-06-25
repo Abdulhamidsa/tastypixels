@@ -486,7 +486,7 @@ export default function About() {
                     </Badge>
                     <Flex p={4} gap={3}>
                       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        <Button aria-label="Like" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"}>
+                        <Button aria-label="Like" onClick={() => handleVote(upload._id, "like")} colorScheme={upload.isLiked ? "green" : "gray"} variant="outline">
                           {loadingVote[upload._id] === "like" ? <Spinner size="sm" /> : <FaArrowUp />}
                         </Button>
                         <Text mx={2}>{upload.likes}</Text>
