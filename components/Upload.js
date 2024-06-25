@@ -77,7 +77,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
       setDescription(editedUpload.description);
       setSelectedTags(editedUpload.tags);
       setSelectedCategory(editedUpload.category);
-      setSelectedCountry(editedUpload.countryOfOrigin);
+      // setSelectedCountry(editedUpload.countryOfOrigin);
     }
   }, [editedUpload]);
 
@@ -110,7 +110,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
 
   const saveToDatabase = () => {
     if (!editedUpload) {
-      if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0 || !selectedCountry) {
+      if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0) {
         setUploadError("All fields are required");
         return;
       }
@@ -123,7 +123,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
       ...(description && { description }),
       ...(selectedTags.length > 0 && { tags: selectedTags }),
       ...(selectedCategory && { category: selectedCategory }),
-      ...(selectedCountry && { countryOfOrigin: selectedCountry.label }),
+      // ...(selectedCountry && { countryOfOrigin: selectedCountry.label }),
     };
 
     let url = "/api/api-upload-img";
