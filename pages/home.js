@@ -56,7 +56,6 @@ export default function About() {
   const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
   const cancelRef = useRef();
   const [selectedUploadId, setSelectedUploadId] = useState(null);
-
   const { isLoggedIn, userId } = useAuth();
   const [loading, setLoading] = useState(true);
   const [loadingVote, setLoadingVote] = useState({ like: false, dislike: false });
@@ -536,6 +535,11 @@ export default function About() {
                             <Text ml={2} fontWeight="bold">
                               {comment.username}
                             </Text>
+                            {userData.user.userRole === "Admin" && (
+                              <Badge ml={2} colorScheme="green" variant="solid">
+                                admin
+                              </Badge>
+                            )}
                           </Flex>
                           <Flex justifyContent="space-between">
                             <Text>{comment.text}</Text>
