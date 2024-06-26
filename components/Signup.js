@@ -1,6 +1,6 @@
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { FormControl, Text, FormLabel, Input, FormErrorMessage, Button, Box, useToast } from "@chakra-ui/react";
+import { FormControl, FormHelperText, Text, FormLabel, Input, FormErrorMessage, Button, Box, useToast } from "@chakra-ui/react";
 import axios from "axios";
 
 const validationSchema = Yup.object({
@@ -85,11 +85,11 @@ const Signup = ({ onModalOpen, setFormType }) => {
                       Email Address
                     </FormLabel>
                     <Input {...field} id="email" placeholder="Email" />
+                    <FormHelperText color="gray.300">You don't have to use your real email, anything as long as the format is correct.</FormHelperText>
                     <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
-
               <Field name="password">
                 {({ field, form }) => (
                   <FormControl isInvalid={form.errors.password && form.touched.password}>
