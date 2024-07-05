@@ -6,6 +6,7 @@ import {
   DrawerHeader,
   DrawerBody,
   useDisclosure,
+  ModalFooter,
   VStack,
   Menu,
   MenuButton,
@@ -348,21 +349,27 @@ export default function About() {
       setDeletingCommentId(null);
     }
   };
-
-  const handleReportClick = (uploadId) => {
-    setSelectedUploadId(uploadId);
-    onReportOpen();
-  };
-
-  const handleReportSubmit = async (reportText) => {
+  const handleReportSubmit = async () => {
     try {
       const response = await fetch("/api/api-report-upload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ uploadId: selectedUploadId, reportText }),
+        body: JSON.stringify({ userId, uploadId: selectedUploadId }),
       });
+
+      if (response.status === 402) {
+        toast({
+          title: "Already reported",
+          description: "You have already reported this post",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        onReportClose();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Failed to submit report");
@@ -386,6 +393,11 @@ export default function About() {
       });
     }
   };
+
+  const confirmReport = () => {
+    handleReportSubmit();
+  };
+
   const filterMostLiked = () => {
     const sortedUploads = [...uploads].sort((a, b) => b.likes - a.likes);
     setUploads(sortedUploads);
@@ -516,25 +528,20 @@ export default function About() {
                       >
                         <FaFlag />
                       </Button>
-
-                      <AlertDialog isOpen={isReportOpen} leastDestructiveRef={cancelRef} onClose={onReportClose}>
-                        <AlertDialogOverlay>
-                          <AlertDialogContent margin="auto">
-                            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                              Report Upload
-                            </AlertDialogHeader>
-                            <AlertDialogBody>Are you sure you want to report this post?</AlertDialogBody>
-                            <AlertDialogFooter>
-                              <Button ref={cancelRef} onClick={onReportClose}>
-                                Cancel
-                              </Button>
-                              <Button colorScheme="orange" onClick={() => confirmReport(selectedUploadId)} ml={3}>
-                                Report
-                              </Button>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialogOverlay>
-                      </AlertDialog>
+                      <Modal isOpen={isReportOpen} onClose={onReportClose}>
+                        <ModalOverlay />
+                        <ModalContent>
+                          <ModalHeader>Report Upload</ModalHeader>
+                          <ModalCloseButton />
+                          <ModalBody>Are you sure you want to report this post?</ModalBody>
+                          <ModalFooter>
+                            {/* <Button onClose={onReportClose}>Cancel</Button> */}
+                            <Button colorScheme="orange" onClick={confirmReport} ml={3}>
+                              Report
+                            </Button>
+                          </ModalFooter>
+                        </ModalContent>
+                      </Modal>
                     </Flex>
                     <Collapse in={showComments[upload._id]} animateOpacity>
                       {comments[upload._id]?.map((comment) => (

@@ -33,7 +33,7 @@ export default async function handler(req, res) {
 
     // Check if the upload has already been reported by this user
     if (existingUpload.reports.some((report) => report.userId.equals(new mongoose.Types.ObjectId(userId)))) {
-      return res.status(400).json({ errors: ["Upload already reported by this user"] });
+      return res.status(402).json({ errors: ["Upload already reported by this user"] });
     }
 
     // Add the report and increment the reports count
