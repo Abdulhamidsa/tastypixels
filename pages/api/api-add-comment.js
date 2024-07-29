@@ -7,11 +7,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const { userId, uploadId, text, username } = req.body; // Step 1: Accept username
+  const { userId, uploadId, text, username } = req.body;
   console.log("Request Body:", req.body);
 
   if (!userId || !uploadId || !text || !username) {
-    // Adjusted to check for username
     return res.status(400).json({ errors: ["Missing required fields"] });
   }
 

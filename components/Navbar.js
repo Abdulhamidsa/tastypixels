@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Flex, Button, IconButton, useColorMode, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack } from "@chakra-ui/react";
-import { HamburgerIcon, MoonIcon, ArrowForwardIcon, SunIcon } from "@chakra-ui/icons";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
 import SignUp from "@/components/Signup";
 import NextLink from "next/link";
 import Signin from "@/components/Signin";
@@ -10,14 +10,12 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
 import CryptoJS from "crypto-js";
-
 const Navbar = () => {
-  const { isLoggedIn, logouts, isLoading, userId } = useAuth();
+  const { isLoggedIn, logouts, userId } = useAuth();
   const ciphertext = CryptoJS.AES.encrypt(userId, "secret key").toString();
-
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode();
+  // const { colorMode, toggleColorMode } = useColorMode();
   const [formType, setFormType] = useState(null);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const router = useRouter();
@@ -95,7 +93,7 @@ const Navbar = () => {
               <ChakraLink as={NextLink} href="/home">
                 Food Gallary
               </ChakraLink>
-              <ChakraLink as={NextLink} href={`/userProfile/${encodeURIComponent(ciphertext)}`} onClick={onMenuClose}>
+              <ChakraLink as={NextLink} href={`/tp/${encodeURIComponent(ciphertext)}`} onClick={onMenuClose}>
                 Profile
               </ChakraLink>
             </>

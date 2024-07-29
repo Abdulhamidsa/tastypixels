@@ -1,5 +1,4 @@
-import { Box, Text, Tooltip, Button, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from "@chakra-ui/react";
-import { InfoIcon } from "@chakra-ui/icons";
+import { Box } from "@chakra-ui/react";
 import Navbar from "@/components/Navbar";
 import { createContext } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -9,7 +8,7 @@ import Demo from "./Demo";
 export const LoginContext = createContext();
 
 export default function Layout({ children }) {
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return <Loading />;

@@ -29,7 +29,6 @@ function UserProfile() {
     if (!isLoggedIn) {
       router.push("/");
     } else if (encryptedUserId && !decryptedUserId.current) {
-      // Decrypt userId if it's not already decrypted
       try {
         const bytes = CryptoJS.AES.decrypt(decodeURIComponent(encryptedUserId), "secret key");
         decryptedUserId.current = bytes.toString(CryptoJS.enc.Utf8);
@@ -247,7 +246,7 @@ function UserProfile() {
 
           <Upload isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} editedUpload={userData && userData.uploads.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={handleCloseEdit} />
 
-          <AlertDialog isOpen={isDeleteOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+          <AlertDialog isOpen={isDeleteOpen} onClose={onClose}>
             <AlertDialogOverlay>
               <AlertDialogContent margin="auto">
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -255,9 +254,7 @@ function UserProfile() {
                 </AlertDialogHeader>
                 <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
                 <AlertDialogFooter>
-                  <Button ref={cancelRef} onClick={onClose}>
-                    Cancel
-                  </Button>
+                  <Button onClick={onClose}>Cancel</Button>
                   <Button colorScheme="red" onClick={() => handleRemoveUpload(selectedUploadId)} ml={3}>
                     Delete
                   </Button>
