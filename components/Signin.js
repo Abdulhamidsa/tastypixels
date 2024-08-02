@@ -5,6 +5,7 @@ import { FormControl, Link as ChakraLink, Text, FormLabel, Input, FormErrorMessa
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
+import { setAccessToken } from "@/util/auth";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Required"),
@@ -12,14 +13,60 @@ const validationSchema = Yup.object({
 });
 
 const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
-  const router = useRouter();
-  const { login } = useAuth();
-  const { isLoggedIn } = useAuth();
+  const { dispatch } = useAuth();
+
+  // const { login } = useAuth();
+  // const { isLoggedIn } = useAuth();
   const [loginStatus, setLoginStatus] = useState("idle");
   const toast = useToast();
+
   const handleSignUpClick = () => {
     setFormType("signup");
     onModalOpen();
+  };
+
+  const handleLogin = async (values, setErrors) => {
+    setLoginStatus("loading");
+
+    try {
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+        credentials: "include",
+      });
+
+      const data = await response.json(); // Parse the response
+
+      if (response.ok) {
+        // localStorage.setItem("accessToken", data.accessToken); // Store accessToken in localStorage
+        toast({
+          title: "Signin Successful! Redirecting To Home Page",
+          status: "success",
+          duration: 1000,
+          isClosable: true,
+          position: "middle",
+          onCloseComplete: () => {
+            setLoginStatus("idle");
+            onModalClose();
+            // login();
+            setAccessToken(data.accessToken);
+            dispatch({ type: "LOGIN", payload: { accessToken: data.accessToken } });
+            // history.push("/home");
+            setLoginStatus("success");
+            console.log(data.message);
+          },
+        });
+      } else {
+        setLoginStatus("error");
+        setErrors({ loginError: data.message }); // Use parsed response data
+      }
+    } catch (error) {
+      console.error("Sign in error:", error);
+      setLoginStatus("error");
+    }
   };
 
   return (
@@ -29,44 +76,8 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
       validateOnBlur={true}
       validateOnChange={false}
       onSubmit={async (values, { setSubmitting, setErrors }) => {
-        setLoginStatus("loading");
-
-        try {
-          const response = await fetch("/api/api-login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          });
-
-          if (response.ok) {
-            toast({
-              title: "Signin Successful! Redirecting To Home Page",
-              status: "success",
-              duration: 2000,
-              isClosable: true,
-              position: "middle",
-              onCloseComplete: () => {
-                setLoginStatus("idle");
-                onModalClose();
-                location.reload();
-                router.push("/");
-                login();
-                setLoginStatus("success");
-              },
-            });
-          } else {
-            setLoginStatus("error");
-            const errorData = await response.json();
-            setErrors({ loginError: errorData.message });
-          }
-        } catch (error) {
-          console.error("Sign in error:", error);
-          setLoginStatus("error");
-        } finally {
-          setSubmitting(false);
-        }
+        await handleLogin(values, setErrors);
+        setSubmitting(false);
       }}
     >
       {({ isSubmitting, errors }) => (

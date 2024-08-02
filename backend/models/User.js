@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "Member", required: true },
@@ -23,7 +23,7 @@ const uploadSchema = new mongoose.Schema({
   comments: [commentSchema],
   reports: [reportSchema],
   reportsCount: { type: Number, default: 0 },
-  postedAt: { type: Date, default: Date.now }, // New field for posted date
+  postedAt: { type: Date, default: Date.now },
 });
 
 const memberSchema = new mongoose.Schema(
@@ -78,4 +78,4 @@ const memberSchema = new mongoose.Schema(
 );
 const UserModel = mongoose.models.Member || mongoose.model("Member", memberSchema);
 
-export default UserModel;
+module.exports = UserModel;

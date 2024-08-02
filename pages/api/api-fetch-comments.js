@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import connectToMongoDB from "@/database/db";
-import User from "@/models/User";
+import connectToMongoDB from "@/backend/database/db";
+import User from "@/backend/models/User";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

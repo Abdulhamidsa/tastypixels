@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "dev:server": "nodemon server.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -14,22 +15,27 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@sentry/nextjs": "^8.20.0",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
     "cloudinary": "^2.0.3",
     "cookie": "^0.6.0",
     "cookie-parser": "^1.4.6",
     "cookies": "^0.9.1",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "formidable": "^3.5.1",
     "formik": "^2.4.5",
     "framer-motion": "^11.2.10",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "mongodb": "^6.5.0",
     "mongoose": "^8.2.1",
     "multer": "^1.4.5-lts.1",
@@ -50,6 +56,7 @@
   "devDependencies": {
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
-    "eslint-plugin-next": "^0.0.0"
+    "eslint-plugin-next": "^0.0.0",
+    "nodemon": "^3.1.4"
   }
 }

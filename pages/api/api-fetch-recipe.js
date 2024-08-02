@@ -1,4 +1,4 @@
-import connectToMongoDB from "@/database/db";
+import connectToMongoDB from "@/backend/database/db";
 export default async function handler(req, res) {
   try {
     const db = await connectToMongoDB();

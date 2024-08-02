@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const connectToMongoDB = async () => {
   try {
     await mongoose.connect("mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/tastypixels");
@@ -8,4 +8,4 @@ const connectToMongoDB = async () => {
     throw error;
   }
 };
-export default connectToMongoDB;
+module.exports = connectToMongoDB;

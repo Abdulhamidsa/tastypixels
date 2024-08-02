@@ -30,11 +30,11 @@ const CommentsSection = ({ uploadId, userId, userData, comments, fetchComments, 
                 <Text ml={2} fontWeight="bold">
                   {comment.username}
                 </Text>
-                {userData.user.userRole === "Admin" && (
+                {/* {userData.user.userRole === "Admin" && (
                   <Badge ml={2} colorScheme="green" variant="solid">
                     admin
                   </Badge>
-                )}
+                )} */}
               </Flex>
               <Flex justifyContent="space-between">
                 <Text>{comment.text}</Text>

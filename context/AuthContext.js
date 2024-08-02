@@ -1,45 +1,68 @@
-﻿import React, { createContext, useContext, useState, useEffect } from "react";
-import Cookies from "js-cookie";
+﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
+import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken, decodeToken } from "@/util/auth";
+
 const AuthContext = createContext();
+
+const authReducer = (state, action) => {
+  switch (action.type) {
+    case "LOGIN":
+      return { ...state, isAuthenticated: true, token: action.payload, loading: false };
+    case "LOGOUT":
+      return { ...state, isAuthenticated: false, token: null, loading: false };
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
+    default:
+      return state;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
+  const [state, dispatch] = useReducer(authReducer, {
+    isAuthenticated: false,
+    token: null,
+    loading: true,
+  });
 
   useEffect(() => {
-    const fetchLoginStatus = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/auth/status");
-        const data = await response.json();
-        if (data.loggedIn === true) {
-          setIsLoggedIn(true);
-          setUserId(data.userId);
+    const checkAuth = async () => {
+      let accessToken = getAccessToken();
+      if (!accessToken) {
+        try {
+          accessToken = await refreshAccessToken();
+        } catch {
+          dispatch({ type: "LOGOUT" });
+          return;
         }
-        // console.log("data.loggedIn", data.loggedIn, data.userId);
-      } catch (error) {
-        console.error("Error fetching login status:", error);
-        setIsLoggedIn(false);
-      } finally {
-        setIsLoading(false);
       }
+      dispatch({ type: "LOGIN", payload: accessToken });
     };
 
-    fetchLoginStatus();
+    checkAuth();
   }, []);
 
-  const login = () => {
-    setIsLoggedIn(true);
+  const login = (token) => {
+    setAccessToken(token);
+    dispatch({ type: "LOGIN", payload: token });
   };
 
-  const logouts = () => {
-    setIsLoggedIn(false);
-    Cookies.remove("token");
+  const logout = async () => {
+    try {
+      const response = await fetch("/api/api-logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        removeAccessToken();
+        dispatch({ type: "LOGOUT" });
+      } else {
+        throw new Error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
-  return <AuthContext.Provider value={{ isLoggedIn, isLoading, login, logouts, userId }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ state, dispatch, login, logout }}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);

@@ -1,4 +1,4 @@
-import connectToMongoDB from "@/database/db";
+import connectToMongoDB from "@/backend/database/db";
 
 export async function fetchUploads() {
   const db = await connectToMongoDB();

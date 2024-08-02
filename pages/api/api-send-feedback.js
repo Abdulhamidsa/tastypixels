@@ -1,5 +1,5 @@
-import connectToMongoDB from "@/database/db";
-import Feedback from "@/models/Feedback";
+import connectToMongoDB from "@/backend/database/db";
+import Feedback from "@/backend/models/Feedback";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {

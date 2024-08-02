@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
-import Member from "@/models/User";
+import Member from "@/backend/models/User";
 import { isValidEmail, isValidPassword, checkExistingUser } from "@/util/validations";
-import connectToMongoDB from "@/database/db";
+import connectToMongoDB from "@/backend/database/db";
 
 export default async function handler(req, res) {
   try {

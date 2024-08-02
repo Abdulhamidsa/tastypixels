@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import User from "@/models/User";
+import User from "@/backend/models/User";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
-import connectToMongoDB from "@/database/db";
+import connectToMongoDB from "@/backend/database/db";
 
 const jwtSecret = "verysecretekey";
 

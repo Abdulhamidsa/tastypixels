@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Box,
   InputGroup,
   InputRightElement,
   IconButton,
@@ -155,7 +154,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
         title: "Success",
         description: editedUpload ? "Post updated successfully." : "Post uploaded successfully. Redirecting...",
         status: "success",
-        duration: 3000,
+        duration: 2000,
         isClosable: true,
       });
 
@@ -163,7 +162,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
 
       setTimeout(() => {
         window.location.reload();
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error(error);
       setUploadError(error.message || "Failed to save photo to database");

@@ -1,5 +1,5 @@
-import userDemo from "@/models/User";
-import connectToMongoDB from "@/database/db";
+import userDemo from "@/backend/models/User";
+import connectToMongoDB from "@/backend/database/db";
 import mongoose from "mongoose";
 
 export default async function handler(req, res) {

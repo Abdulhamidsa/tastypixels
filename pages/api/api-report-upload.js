@@ -1,5 +1,5 @@
-import connectToMongoDB from "@/database/db";
-import User from "@/models/User"; // Adjust path as needed
+import connectToMongoDB from "@/backend/database/db";
+import User from "@/backend/models/User"; // Adjust path as needed
 import mongoose from "mongoose";
 
 export default async function handler(req, res) {

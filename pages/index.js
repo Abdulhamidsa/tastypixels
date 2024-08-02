@@ -4,10 +4,14 @@ import Image from "next/legacy/image";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
-  const { isLoggedIn, isLoading } = useAuth();
+  const { state } = useAuth();
+  const { isAuthenticated, loading } = state;
 
-  // const fontSize = useBreakpointValue({ base: "3xl", md: "2xl", lg: "4xl" });
   const overlayDisplay = useBreakpointValue({ base: "block" });
+
+  if (loading) {
+    return <Box>Loading...</Box>;
+  }
 
   return (
     <>
@@ -18,7 +22,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box position="absolute" top="0" h="100dvh" w="100%">
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <>
             <Image src="/bg-main.jpg" alt="Background Image" layout="fill" objectFit="cover" quality={100} priority />
             <Box position="absolute" top="0" h="100dvh" w="100%" bg="rgba(0, 0, 0, 0.5)" display={overlayDisplay} />

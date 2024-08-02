@@ -1,16 +1,18 @@
 import mongoose from "mongoose";
-import User from "@/models/User";
-import connectToMongoDB from "@/database/db";
+import User from "@/backend/models/User";
+import connectToMongoDB from "@/backend/database/db";
+import authenticateToken from "@/backend/middlewares/authenticateToken";
 
-export default async function handler(req, res) {
+const handler = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const { userId, uploadId, action } = req.body;
+  const { uploadId, action } = req.body;
 
   try {
     await connectToMongoDB();
+    const userId = req.user.userId; // Extract user ID from the token
     const userIdObj = new mongoose.Types.ObjectId(userId);
     const uploadIdObj = new mongoose.Types.ObjectId(uploadId);
 
@@ -96,4 +98,15 @@ export default async function handler(req, res) {
     console.error("Error updating likes/dislikes in database:", error);
     return res.status(500).json({ errors: ["Server error"] });
   }
-}
+};
+
+const applyMiddleware = (handler, middleware) => {
+  return async (req, res) => {
+    await middleware(req, res, () => {});
+    if (!res.headersSent) {
+      return handler(req, res);
+    }
+  };
+};
+
+export default applyMiddleware(handler, authenticateToken);

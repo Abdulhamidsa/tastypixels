@@ -1,4 +1,4 @@
-import user from "@/models/User.js";
+import user from "@/backend/models/User.js";
 async function checkExistingUser(email) {
   try {
     const count = await user.countDocuments({ email: email });
