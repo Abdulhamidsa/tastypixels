@@ -10,7 +10,7 @@ const useComments = () => {
   const [showComments, setShowComments] = useState({});
   const [loadingComments, setLoadingComments] = useState({});
   const [deletingCommentId, setDeletingCommentId] = useState(null);
-  const [addingComment, setAddingComment] = useState(false); // New state for adding comment
+  const [addingComment, setAddingComment] = useState(false);
   const toast = useToast();
 
   const handleToggleComments = async (uploadId) => {
@@ -60,8 +60,8 @@ const useComments = () => {
 
     if (!commentText.trim()) return;
 
-    setAddingComment(true); // Set adding comment to true
-    console.log("Adding comment started"); // Debug log
+    setAddingComment(true);
+    console.log("Adding comment started");
 
     try {
       const response = await fetchWithTokenRefresh("http://localhost:8000/api/add-comment", {
@@ -81,13 +81,11 @@ const useComments = () => {
 
       const newComment = await response.json();
 
-      // Update comments state with the new comment
       setComments((prevComments) => ({
         ...prevComments,
         [uploadId]: [...(prevComments[uploadId] || []), newComment.comment],
       }));
 
-      // Ensure the comments section stays open
       setShowComments((prevShowComments) => ({
         ...prevShowComments,
         [uploadId]: true,
@@ -108,8 +106,8 @@ const useComments = () => {
         isClosable: true,
       });
     } finally {
-      setAddingComment(false); // Set adding comment to false
-      console.log("Adding comment finished"); // Debug log
+      setAddingComment(false);
+      console.log("Adding comment finished");
     }
   };
 
