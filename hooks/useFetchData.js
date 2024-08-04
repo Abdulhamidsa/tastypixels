@@ -19,7 +19,7 @@ const useFetchData = () => {
         let dislikedPosts = [];
 
         if (isAuthenticated) {
-          const userResponse = await fetchWithTokenRefresh("http://localhost:8000/users/profile", {
+          const userResponse = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/users/profile", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -36,7 +36,7 @@ const useFetchData = () => {
           setUserData(userData);
         }
 
-        const postsResponse = await fetchWithTokenRefresh("http://localhost:8000/recipes/all-posts", {
+        const postsResponse = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/recipes/all-posts", {
           headers: {
             "Content-Type": "application/json",
           },

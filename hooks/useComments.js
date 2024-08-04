@@ -26,7 +26,7 @@ const useComments = () => {
           [uploadId]: true,
         }));
 
-        const response = await fetchWithTokenRefresh(`http://localhost:8000/api/comments?uploadId=${uploadId}`);
+        const response = await fetchWithTokenRefresh(`https://tastypixels-production.up.railway.app/api/comments?uploadId=${uploadId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch comments");
         }
@@ -64,7 +64,7 @@ const useComments = () => {
     console.log("Adding comment started");
 
     try {
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/add-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/api/add-comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,7 +136,7 @@ const useComments = () => {
 
       setDeletingCommentId(commentId);
 
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/api-delete-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/api/api-delete-comment", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
