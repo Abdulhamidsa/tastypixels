@@ -1,5 +1,6 @@
 const express = require("express");
 require("module-alias/register");
+const cookieParser = require("cookie-parser");
 require("dotenv").config({ path: "./.env.local" });
 // require('dotenv').config();
 
