@@ -1,6 +1,8 @@
 const express = require("express");
 require("module-alias/register");
-require("dotenv").config({ path: "./.env.local" });
+// require("dotenv").config({ path: "./.env.local" });
+require("dotenv").config();
+
 const bodyParser = require("body-parser");
 const cors = require("@/middlewares/cors");
 const session = require("express-session");
