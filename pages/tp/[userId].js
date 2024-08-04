@@ -2,7 +2,6 @@ import { Box, Avatar, AlertDialog, AlertDialogBody, AlertDialogFooter, Button, A
 import { useState, useEffect, useRef } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
-import CryptoJS from "crypto-js";
 import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
 
@@ -17,37 +16,29 @@ function UserProfile() {
   const cancelRef = useRef();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const decryptedUserId = useRef(null);
   const onClose = () => {
     setIsDeleteOpen(false);
     setIsEditOpen(false);
   };
-  const { userId, isLoggedIn } = useAuth();
-  const { userId: encryptedUserId } = router.query;
+  const { isLoggedIn } = useAuth();
+  const { userId } = router.query;
 
   useEffect(() => {
     if (!isLoggedIn) {
       router.push("/");
-    } else if (encryptedUserId && !decryptedUserId.current) {
-      try {
-        const bytes = CryptoJS.AES.decrypt(decodeURIComponent(encryptedUserId), "secret key");
-        decryptedUserId.current = bytes.toString(CryptoJS.enc.Utf8);
-        fetchUserData(decryptedUserId.current);
-      } catch (error) {
-        console.error("Error decrypting userId:", error);
-      }
+    } else if (userId) {
+      fetchUserData();
     }
-  }, [isLoggedIn, encryptedUserId]);
+  }, [isLoggedIn, userId]);
 
-  const fetchUserData = async (userId) => {
+  const fetchUserData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/getUserUploads`, {
-        method: "POST",
+      const response = await fetch(`/api/getUserProfile`, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
-        body: JSON.stringify({ userId }),
       });
 
       if (response.ok) {
@@ -71,7 +62,7 @@ function UserProfile() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, editedUpload }),
+        body: JSON.stringify({ editedUpload }),
       });
 
       if (response.ok) {
@@ -125,7 +116,7 @@ function UserProfile() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, Id }),
+        body: JSON.stringify({ Id }),
       });
 
       if (response.ok) {

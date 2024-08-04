@@ -15,7 +15,7 @@ export const removeAccessToken = () => {
 };
 
 export const refreshAccessToken = async () => {
-  const response = await fetch("/api/refresh-token", {
+  const response = await fetch("http://localhost:8000/auth/refresh-token", {
     method: "POST",
     credentials: "include",
   });
@@ -32,24 +32,26 @@ export const decodeToken = (token) => {
 };
 
 export const fetchWithTokenRefresh = async (url, options = {}) => {
-  const accessToken = getAccessToken();
+  let accessToken = getAccessToken();
   let response = await fetch(url, {
     ...options,
     headers: {
       ...options.headers,
       Authorization: `Bearer ${accessToken}`,
     },
+    credentials: "include", // Ensure this is outside headers
   });
 
   if (response.status === 401) {
     try {
-      const newAccessToken = await refreshAccessToken();
+      accessToken = await refreshAccessToken();
       response = await fetch(url, {
         ...options,
         headers: {
           ...options.headers,
-          Authorization: `Bearer ${newAccessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
+        credentials: "include", // Ensure this is outside headers
       });
     } catch (error) {
       console.error("Failed to refresh access token:", error);
@@ -58,4 +60,29 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
   }
 
   return response;
+};
+
+// Example of adding a comment
+export const addComment = async (uploadId, commentText) => {
+  try {
+    const response = await fetchWithTokenRefresh("http://localhost:8000/api/add-comment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uploadId,
+        text: commentText,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to add comment");
+    }
+
+    const data = await response.json();
+    console.log("Comment added successfully:", data);
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
 };

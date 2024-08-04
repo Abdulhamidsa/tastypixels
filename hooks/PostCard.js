@@ -1,4 +1,4 @@
-import { Box, Avatar, Heading, Text, Badge, IconButton, Flex, Button, Spinner } from "@chakra-ui/react";
+import { Box, Avatar, Heading, Text, Badge, IconButton, Flex, Button } from "@chakra-ui/react";
 import { FaArrowUp, FaArrowDown, FaComment, FaFlag } from "react-icons/fa";
 import Image from "next/image";
 import { SearchIcon } from "@chakra-ui/icons";
@@ -27,7 +27,7 @@ const PostCard = ({
   handleOpen,
 }) => {
   return (
-    <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
+    <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" borderBottomRadius="none" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
       <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
         <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
         <Box color="black">
@@ -80,8 +80,6 @@ const PostCard = ({
         <Button ml="auto" aria-label="Report" onClick={() => handleReportClick(upload._id)} colorScheme="yellow" variant="outline" disabled={!isAuthenticated}>
           <FaFlag />
         </Button>
-
-        {/* <ReportModal isOpen={isOpen} onClose={onClose} onReport={handleReportSubmit} uploadId={selectedUploadId} /> */}
       </Flex>
       <CommentsSection
         uploadId={upload._id}

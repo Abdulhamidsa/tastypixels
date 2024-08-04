@@ -11,7 +11,8 @@ const updateLikesDislikes = async (req, res) => {
 
   try {
     await connectToMongoDB();
-    const userId = req.user.userId; // Extract user ID from the token
+    const userId = req.user.userId;
+    console.log("User ID:", userId);
     const userIdObj = new mongoose.Types.ObjectId(userId);
     const uploadIdObj = new mongoose.Types.ObjectId(uploadId);
 

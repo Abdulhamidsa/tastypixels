@@ -101,9 +101,9 @@ export default function About() {
     }
   };
 
-  // const confirmReport = () => {
-  //   handleReportSubmit();
-  // };
+  const confirmReport = () => {
+    handleReportSubmit();
+  };
 
   const filterMostLiked = () => {
     const sortedUploads = [...uploads].sort((a, b) => b.likes - a.likes);
@@ -148,7 +148,6 @@ export default function About() {
               onClose={onClose}
               onOpen={onOpen}
               handleOpen={handleOpen}
-              handleReportSubmit={handleReportSubmit}
             />
           ))
         )}

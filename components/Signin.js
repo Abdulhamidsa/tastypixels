@@ -38,7 +38,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
         credentials: "include",
       });
 
-      const data = await response.json(); // Parse the response
+      const data = await response.json();
 
       if (response.ok) {
         // localStorage.setItem("accessToken", data.accessToken); // Store accessToken in localStorage

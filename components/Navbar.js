@@ -7,8 +7,8 @@ import NextLink from "next/link";
 import Signin from "@/components/Signin";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import Upload from "@/components/Upload";
-import CryptoJS from "crypto-js";
 
 const Navbar = () => {
   const { state, logout } = useAuth();
@@ -54,9 +54,9 @@ const Navbar = () => {
 
   return (
     <>
-      <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" justify="center" padding="3" backdropFilter="blur(5px)">
-        <ChakraLink as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-          TASTY PIXELS
+      <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" justify="flex-end" padding="3" backdropFilter="blur(5px)">
+        <ChakraLink position="absolute" top="15" left="0" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
+          <Image src="/logo.png" alt="logo" width="100" height="100" />
         </ChakraLink>
         <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
         {isSpecificPage && isAuthenticated && (
@@ -82,9 +82,9 @@ const Navbar = () => {
             <>
               <ChakraLink onClick={() => handleOpenModal("logout")}>Logout</ChakraLink>
 
-              {/* <ChakraLink as={NextLink} href={`/tp/${encodeURIComponent(ciphertext)}`} onClick={onMenuClose}>
+              <ChakraLink as={NextLink} href={`/Profile-99/`} onClick={onMenuClose}>
                 Profile
-              </ChakraLink> */}
+              </ChakraLink>
             </>
           )}
           <ChakraLink as={NextLink} href="/home">

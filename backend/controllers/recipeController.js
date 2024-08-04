@@ -1,4 +1,3 @@
-// const mongoose = require("mongoose");
 const connectToMongoDB = require("../database/db");
 const UserModel = require("../models/User");
 
@@ -22,14 +21,14 @@ const fetchAllPosts = async (req, res) => {
         if (hasDislikedPosts) {
           disliked = user.dislikedPosts.some((post) => post.uploadId.toString() === upload._id.toString());
         }
-        const commentsWithUsernames = upload.comments.map((comment) => {
-          const commenter = usersData.find((u) => u._id.toString() === comment.userId.toString());
-          return {
-            ...comment.toObject(),
-            userId: undefined,
-            username: commenter ? commenter.username : "Unknown",
-          };
-        });
+        // const commentsWithUsernames = upload.comments.map((comment) => {
+        //   const commenter = usersData.find((u) => u._id.toString() === comment.userId.toString());
+        //   return {
+        //     ...comment.toObject(),
+        //     userId: undefined,
+        //     username: commenter ? commenter.username : "Unknown",
+        //   };
+        // });
 
         enhancedUploads.push({
           ...upload.toObject(),
@@ -37,7 +36,7 @@ const fetchAllPosts = async (req, res) => {
           username: user.username,
           liked,
           disliked,
-          comments: commentsWithUsernames,
+          // comments: commentsWithUsernames,
         });
       }
     }

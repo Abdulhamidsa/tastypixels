@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "Member", required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "Member" },
   text: { type: String, required: true },
-  username: { type: String, required: true },
+  username: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
