@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Box, Flex, Avatar, Text, Skeleton, IconButton, Textarea, Spinner, useToast } from "@chakra-ui/react";
 import { FaTimes } from "react-icons/fa";
 import { MdSend } from "react-icons/md";
-import { fetchWithTokenRefresh } from "@/util/auth"; // Ensure this path is correct
-import { useAuth } from "@/context/AuthContext"; // Ensure this path is correct
+import { fetchWithTokenRefresh } from "@/util/auth";
+import { useAuth } from "@/context/AuthContext";
 
 const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDeleteComment, handleAddComment, showComments, loadingComments, deletingCommentId }) => {
   const { state } = useAuth();
@@ -11,12 +11,6 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const toast = useToast();
-
-  useEffect(() => {
-    if (showComments) {
-      fetchComments(uploadId);
-    }
-  }, [showComments, fetchComments, uploadId]);
 
   const handleAddCommentClick = async () => {
     if (!isAuthenticated) {
@@ -71,6 +65,7 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
       setAddingComment(false);
     }
   };
+
   const getTimeAgo = (date) => {
     const now = new Date();
     const commentDate = new Date(date);
@@ -84,11 +79,12 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
       return `${diffWeeks}w`;
     }
   };
+
   return (
     <Box>
       {loadingComments ? (
         <Box w="100%">
-          {[...Array(comments.length || 3)].map((_, index) => (
+          {[...Array(3)].map((_, index) => (
             <Box key={index} p={2} borderWidth="1px" w="100%">
               <Flex alignItems="center" mb={1}>
                 <Skeleton circle height="30px" width="30px" borderRadius="50%" />
