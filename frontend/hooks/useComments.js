@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const useComments = () => {
   const { state } = useAuth();
-  const { isAuthenticated, user } = state;
+  const { isAuthenticated } = state;
   const [comments, setComments] = useState({});
   const [showComments, setShowComments] = useState({});
   const [loadingComments, setLoadingComments] = useState({});
@@ -55,10 +55,10 @@ const useComments = () => {
         status: "warning",
         isClosable: true,
       });
-      return;
+      return null;
     }
 
-    if (!commentText.trim()) return;
+    if (!commentText.trim()) return null;
 
     setAddingComment(true);
     console.log("Adding comment started");
@@ -81,22 +81,14 @@ const useComments = () => {
 
       const newComment = await response.json();
 
-      setComments((prevComments) => ({
-        ...prevComments,
-        [uploadId]: [...(prevComments[uploadId] || []), newComment.comment],
-      }));
-
-      setShowComments((prevShowComments) => ({
-        ...prevShowComments,
-        [uploadId]: true,
-      }));
-
       toast({
         title: "Comment added",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
+
+      return newComment;
     } catch (error) {
       console.error("Error adding comment:", error);
       toast({
@@ -105,6 +97,7 @@ const useComments = () => {
         status: "error",
         isClosable: true,
       });
+      return null;
     } finally {
       setAddingComment(false);
       console.log("Adding comment finished");
@@ -122,21 +115,10 @@ const useComments = () => {
       return;
     }
 
+    setDeletingCommentId(commentId);
+
     try {
-      const commentToDelete = comments[uploadId]?.find((comment) => comment._id === commentId);
-      if (!commentToDelete) {
-        console.error("Comment not found");
-        return;
-      }
-
-      if (commentToDelete.userId !== user._id) {
-        console.error("You can only delete your own comments");
-        return;
-      }
-
-      setDeletingCommentId(commentId);
-
-      const response = await fetchWithTokenRefresh("http://localhost8000:/api/api-delete-comment", {
+      const response = await fetchWithTokenRefresh("http://localhost:8000/api/delete-comment", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -177,6 +159,7 @@ const useComments = () => {
 
   return {
     comments,
+    setComments,
     showComments,
     loadingComments,
     deletingCommentId,

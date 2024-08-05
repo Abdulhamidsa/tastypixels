@@ -54,19 +54,12 @@ const Navbar = () => {
 
   return (
     <>
-      <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" justify="flex-end" padding="3" backdropFilter="blur(5px)">
-        <ChakraLink position="absolute" top="15" left="0" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-          <Image src="/logo.png" alt="logo" width="100" height="100" />
+      <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" p={1} justify="flex-end" backdropFilter="blur(5px)">
+        <ChakraLink position="" top="15" left="0" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
+          <Image src="/logo.png" alt="logo" width="90" height="100" />
         </ChakraLink>
         <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
-        {isSpecificPage && isAuthenticated && (
-          <>
-            <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
-            <ChakraLink pr={4} onClick={() => openUpload()}>
-              Upload
-            </ChakraLink>
-          </>
-        )}
+
         <Flex align="center" display={{ base: "none", md: "flex" }} p={3} gap={10}>
           {!isAuthenticated && (
             <>
@@ -78,6 +71,12 @@ const Navbar = () => {
               </ChakraLink>
             </>
           )}
+          {isSpecificPage && isAuthenticated && (
+            <>
+              <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+              <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
+            </>
+          )}
           {isAuthenticated && (
             <>
               <ChakraLink onClick={() => handleOpenModal("logout")}>Logout</ChakraLink>
@@ -87,6 +86,7 @@ const Navbar = () => {
               </ChakraLink>
             </>
           )}
+
           <ChakraLink as={NextLink} href="/home">
             Food Gallery
           </ChakraLink>

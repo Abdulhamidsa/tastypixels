@@ -3,6 +3,7 @@ import { createContext } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
 import Demo from "@/components/Demo";
+import { Box } from "@chakra-ui/react";
 
 export const LoginContext = createContext();
 
@@ -16,8 +17,9 @@ export default function Layout({ children }) {
   return (
     <>
       <Navbar />
+
       {children}
-      <Demo />
+      {/* <Demo /> */}
     </>
   );
 }
