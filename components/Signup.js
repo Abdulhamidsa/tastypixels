@@ -3,10 +3,12 @@ import * as Yup from "yup";
 import { FormControl, FormHelperText, Text, FormLabel, Input, FormErrorMessage, Button, Box, useToast } from "@chakra-ui/react";
 import axios from "axios";
 
+const passwordValidationRegex = /^(?=.*\d)[a-zA-Z\d]{8,}$/;
+
 const validationSchema = Yup.object({
   username: Yup.string().required("Username is required"),
   email: Yup.string().email("Invalid email address").required("Email is required"),
-  password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
+  password: Yup.string().matches(passwordValidationRegex, "Password must be at least 8 characters long and contain at least one number").required("Password is required"),
   repeatPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Repeat password is required"),
@@ -18,6 +20,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
     onModalOpen();
   };
   const toast = useToast();
+
   const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     try {
       const response = await axios.post("/api/api-signup", {
@@ -26,14 +29,13 @@ const Signup = ({ onModalOpen, setFormType }) => {
         password: values.password,
       });
 
-      // console.log(response.data);
       setSubmitting(false);
       setFieldError("username", "");
       setFieldError("email", "");
       setFieldError("password", "");
       setFieldError("repeatPassword", "");
       toast({
-        title: "Signup Successful! redirecting to signin form",
+        title: "Signup Successful! Redirecting to signin form",
         status: "success",
         duration: 2000,
         isClosable: true,
@@ -43,18 +45,22 @@ const Signup = ({ onModalOpen, setFormType }) => {
         },
       });
     } catch (error) {
-      // console.error("Error signing up:", error.response.data.message);
-      if (error.response.data.message.includes("username")) {
-        setFieldError("username", error.response.data.message);
-      }
-      if (error.response.data.message.includes("email")) {
-        setFieldError("email", error.response.data.message);
-      }
-      if (error.response.data.message.includes("password")) {
-        setFieldError("password", error.response.data.message);
-      }
-      if (error.response.data.message.includes("repeatPassword")) {
-        setFieldError("repeatPassword", error.response.data.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        const errorMessage = error.response.data.message;
+        if (errorMessage.includes("username")) {
+          setFieldError("username", errorMessage);
+        }
+        if (errorMessage.includes("email")) {
+          setFieldError("email", errorMessage);
+        }
+        if (errorMessage.includes("password")) {
+          setFieldError("password", errorMessage);
+        }
+        if (errorMessage.includes("repeatPassword")) {
+          setFieldError("repeatPassword", errorMessage);
+        }
+      } else {
+        console.error("Signup error:", error);
       }
       setSubmitting(false);
     }
@@ -62,7 +68,6 @@ const Signup = ({ onModalOpen, setFormType }) => {
 
   return (
     <Box display="flex" flexDirection="row">
-      {/* <Box width="50%" background=""></Box> */}
       <Box width="100%" p={0}>
         <Formik initialValues={{ username: "", email: "", password: "", repeatPassword: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ isSubmitting }) => (
@@ -101,7 +106,6 @@ const Signup = ({ onModalOpen, setFormType }) => {
                   </FormControl>
                 )}
               </Field>
-
               <Field name="repeatPassword">
                 {({ field, form }) => (
                   <FormControl isInvalid={form.errors.repeatPassword && form.touched.repeatPassword}>
@@ -113,7 +117,6 @@ const Signup = ({ onModalOpen, setFormType }) => {
                   </FormControl>
                 )}
               </Field>
-
               <Button mt={4} colorScheme="yellow" isLoading={isSubmitting} type="submit">
                 Sign Up
               </Button>
