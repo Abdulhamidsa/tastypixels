@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Flex, Avatar, Text, Skeleton, IconButton, Textarea, Spinner, useToast } from "@chakra-ui/react";
+import { Box, Flex, Avatar, Text, Skeleton, IconButton, Textarea, Button, useToast, Spinner } from "@chakra-ui/react";
 import { FaTimes } from "react-icons/fa";
 import { MdSend } from "react-icons/md";
 import { fetchWithTokenRefresh } from "@/util/auth";
@@ -10,6 +10,7 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
   const { isAuthenticated } = state;
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
+  const [visibleCommentsCount, setVisibleCommentsCount] = useState(3);
   const toast = useToast();
 
   const handleAddCommentClick = async () => {
@@ -66,6 +67,10 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
     }
   };
 
+  const handleShowMore = () => {
+    setVisibleCommentsCount((prevCount) => prevCount + 5); // Show 5 more comments
+  };
+
   const getTimeAgo = (date) => {
     const now = new Date();
     const commentDate = new Date(date);
@@ -84,7 +89,7 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
     <Box>
       {loadingComments ? (
         <Box w="100%">
-          {[...Array(3)].map((_, index) => (
+          {[...Array(comments.length || 3)].map((_, index) => (
             <Box key={index} p={2} borderWidth="1px" w="100%">
               <Flex alignItems="center" mb={1}>
                 <Skeleton circle height="30px" width="30px" borderRadius="50%" />
@@ -96,7 +101,7 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
         </Box>
       ) : (
         <Box w="100%">
-          {comments.map((comment) => (
+          {comments.slice(0, visibleCommentsCount).map((comment) => (
             <Box key={comment._id} p={4} borderWidth="1px" borderRadius="md" w="100%" mb={4}>
               <Flex alignItems="center" mb={2}>
                 <Avatar size="sm" name={comment.username} />
@@ -113,6 +118,11 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
               <Text mb={2}>{comment.text}</Text>
             </Box>
           ))}
+          {comments.length > visibleCommentsCount && (
+            <Button onClick={handleShowMore} mt={2} variant="link" colorScheme="teal">
+              Show more comments
+            </Button>
+          )}
           <Box pt={4} display="flex" alignItems="center">
             <Textarea
               placeholder="Add a comment..."
