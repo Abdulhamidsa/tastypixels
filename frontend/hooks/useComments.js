@@ -64,7 +64,7 @@ const useComments = () => {
     console.log("Adding comment started");
 
     try {
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/add-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app//api/add-comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +118,7 @@ const useComments = () => {
     setDeletingCommentId(commentId);
 
     try {
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/delete-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/api/delete-comment", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
