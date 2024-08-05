@@ -12,6 +12,7 @@ const userRoutes = require("@/routes/userRoutes");
 const updateLikeDislikeRoutes = require("@/routes/updateLikeDislikeRoutes");
 const commentRoutes = require("@/routes/commentRoutes");
 const addCommentRoutes = require("@/routes/addCommentRoutes");
+const deleteCommentRoutes = require("@/routes/deleteCommentRoutes");
 const app = express();
 const port = 8000;
 
@@ -40,6 +41,7 @@ app.use("/users", userRoutes);
 app.use("/api", updateLikeDislikeRoutes);
 app.use("/api", commentRoutes);
 app.use("/api", addCommentRoutes);
+app.use("/api", deleteCommentRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

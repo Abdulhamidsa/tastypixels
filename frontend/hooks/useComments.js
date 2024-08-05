@@ -136,7 +136,7 @@ const useComments = () => {
 
       setDeletingCommentId(commentId);
 
-      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/api/api-delete-comment", {
+      const response = await fetchWithTokenRefresh("http://localhost8000:/api/api-delete-comment", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
