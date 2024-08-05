@@ -1,7 +1,7 @@
 import { Box, Avatar, AlertDialog, AlertDialogBody, AlertDialogFooter, Button, AlertDialogHeader, AlertDialogOverlay, AlertDialogContent, Image, Heading, IconButton, useToast, Skeleton, Center, Badge, Flex, Text } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { useAuth } from "@/frontend/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Upload from "@/components/Upload";
 
