@@ -5,13 +5,13 @@ import { MdSend } from "react-icons/md";
 import { fetchWithTokenRefresh } from "@/util/auth";
 import { useAuth } from "@/context/AuthContext";
 
-const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDeleteComment, handleAddComment, showComments, loadingComments, deletingCommentId }) => {
+const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDeleteComment, showComments, loadingComments, deletingCommentId }) => {
   const { state } = useAuth();
   const { isAuthenticated } = state;
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
-  const [visibleCommentsCount, setVisibleCommentsCount] = useState(3); // Number of comments to show initially
-  const [isExpanded, setIsExpanded] = useState(false); // Track whether comments are expanded
+  const [visibleCommentsCount, setVisibleCommentsCount] = useState(3);
+  const [isExpanded, setIsExpanded] = useState(false);
   const toast = useToast();
   const currentUsername = state?.user?.username;
 
@@ -31,7 +31,7 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
     setAddingComment(true);
 
     try {
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/add-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/api/add-comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,8 +113,7 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
               <Flex alignItems="center" mb={2}>
                 <Avatar size="sm" name={comment.username} />
                 <Flex justifyContent="space-between" alignItems="center">
-                  {comment.username === currentUsername &&
-                    (deletingCommentId === comment._id ? <Spinner size="xs" /> : <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => handleDeleteComment(uploadId, comment._id)} size="xs" variant="ghost" colorScheme="red" />)}
+                  (deletingCommentId === comment._id ? <Spinner size="xs" /> : <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => handleDeleteComment(uploadId, comment._id)} size="xs" variant="ghost" colorScheme="red" />)
                 </Flex>
                 <Text ml={2} fontWeight="bold">
                   {comment.username}
