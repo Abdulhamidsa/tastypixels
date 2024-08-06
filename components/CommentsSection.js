@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Flex, Avatar, Text, Skeleton, IconButton, Textarea, Button, useToast, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Avatar, Text, Skeleton, IconButton, Textarea, Button, Spinner, useToast } from "@chakra-ui/react";
 import { FaTimes } from "react-icons/fa";
 import { MdSend } from "react-icons/md";
 import { fetchWithTokenRefresh } from "@/util/auth";
@@ -10,8 +10,10 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
   const { isAuthenticated } = state;
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
-  const [visibleCommentsCount, setVisibleCommentsCount] = useState(3);
+  const [visibleCommentsCount, setVisibleCommentsCount] = useState(3); // Number of comments to show initially
+  const [isExpanded, setIsExpanded] = useState(false); // Track whether comments are expanded
   const toast = useToast();
+  const currentUsername = state?.user?.username;
 
   const handleAddCommentClick = async () => {
     if (!isAuthenticated) {
@@ -66,9 +68,14 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
       setAddingComment(false);
     }
   };
-
   const handleShowMore = () => {
-    setVisibleCommentsCount((prevCount) => prevCount + 5); // Show 5 more comments
+    setIsExpanded(true);
+    setVisibleCommentsCount(comments.length);
+  };
+
+  const handleShowLess = () => {
+    setIsExpanded(false);
+    setVisibleCommentsCount(3);
   };
 
   const getTimeAgo = (date) => {
@@ -106,8 +113,12 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
               <Flex alignItems="center" mb={2}>
                 <Avatar size="sm" name={comment.username} />
                 <Flex justifyContent="space-between" alignItems="center">
-                  {comment.userId === userId && (deletingCommentId === comment._id ? <Spinner size="xs" /> : <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => handleDeleteComment(uploadId, comment._id)} size="xs" variant="ghost" colorScheme="red" />)}
+                  {comment.username === currentUsername &&
+                    (deletingCommentId === comment._id ? <Spinner size="xs" /> : <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => handleDeleteComment(uploadId, comment._id)} size="xs" variant="ghost" colorScheme="red" />)}
                 </Flex>
+                <Text ml={2} fontWeight="bold">
+                  {comment.username}
+                </Text>
                 <Box ml={3}>
                   <Text fontWeight="bold">{comment.username}</Text>
                   <Text fontSize="xs" color="gray.500">
@@ -118,9 +129,9 @@ const CommentsSection = ({ uploadId, userId, comments, fetchComments, handleDele
               <Text mb={2}>{comment.text}</Text>
             </Box>
           ))}
-          {comments.length > visibleCommentsCount && (
-            <Button onClick={handleShowMore} mt={2} variant="link" colorScheme="teal">
-              Show more comments
+          {comments.length > 3 && (
+            <Button onClick={isExpanded ? handleShowLess : handleShowMore} mt={2} variant="link" colorScheme="teal">
+              {isExpanded ? "Show less comments" : "Show more comments"}
             </Button>
           )}
           <Box pt={4} display="flex" alignItems="center">
