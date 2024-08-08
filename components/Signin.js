@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FormControl, Link as ChakraLink, Text, FormLabel, Input, FormErrorMessage, Button, useToast, Box } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
-import { setAccessToken } from "@/util/auth";
+import { setAccessToken } from "@/utils/auth";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Required"),
@@ -28,7 +28,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
     setLoginStatus("loading");
 
     try {
-      const response = await fetch("https://tastypixels-production.up.railway.app/auth/login", {
+      const response = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

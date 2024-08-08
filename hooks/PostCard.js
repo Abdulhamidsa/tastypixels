@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Box, Avatar, Heading, Text, Badge, IconButton, Flex, Button, Collapse, Skeleton } from "@chakra-ui/react";
 import { FaComment, FaFlag } from "react-icons/fa";
 import Image from "next/image";
 import { SearchIcon } from "@chakra-ui/icons";
 import VoteButton from "@/hooks/VoteButton";
 import CommentsSection from "@/components/CommentsSection";
-import ReportModal from "@/components/ReportModal";
-import useComments from "@/hooks/useComments"; // Ensure this path is correct
+import useComments from "@/hooks/useComments";
 
 const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote, handleOpen }) => {
   const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } = useComments();
@@ -28,10 +27,12 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
       <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
         <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
         <Box color="black">
-          <Heading fontSize="lg" fontWeight="bold">
+          <Heading fontSize="xl" fontWeight="bold">
             {upload.username}
           </Heading>
-          <Text fontSize="sm"> Posted at: {new Date(upload.postedAt).toLocaleString()}</Text>
+          <Text pt="1" fontSize="xs" color="gray.600">
+            Posted at: {new Date(upload.postedAt).toLocaleDateString()}
+          </Text>
         </Box>
       </Box>
 
@@ -49,7 +50,7 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
         </Box>
       </Box>
       <Box position="relative" overflow="hidden">
-        <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="100vw" width={200} height={200} style={{ width: "100%", height: "100%" }} />
+        <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="80vw" width={175} height={100} style={{ width: "100%", height: "100%" }} layout="responsive" priority={false} loading="lazy" />
         <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
       </Box>
       <Badge textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
@@ -73,7 +74,7 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
             {[...Array(comments[upload._id]?.length || 3)].map((_, index) => (
               <Box key={index} p={2} borderWidth="1px" w="100%">
                 <Flex alignItems="center" mb={1}>
-                  <Skeleton circle height="30px" width="30px" borderRadius="50%" />
+                  <Skeleton height="30px" width="30px" borderRadius="50%" />
                   <Skeleton ml={2} height="15px" width="80px" />
                 </Flex>
                 <Skeleton height="30px" width="100%" />

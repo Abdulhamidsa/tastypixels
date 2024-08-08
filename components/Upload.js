@@ -29,10 +29,12 @@ import {
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
 import countryList from "react-select-country-list";
+import { fetchWithTokenRefresh } from "@/utils/auth";
 
 const Upload = ({ isOpen, onClose, editedUpload }) => {
   const { isLoggedIn, userId } = useAuth();
   const [imageUrl, setImageUrl] = useState(editedUpload ? editedUpload.imageUrl : "");
+
   const [title, setTitle] = useState(editedUpload ? editedUpload.title : "");
   const [description, setDescription] = useState(editedUpload ? editedUpload.description : "");
   const [selectedTags, setSelectedTags] = useState(editedUpload ? editedUpload.tags : []);
@@ -126,18 +128,18 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
       // ...(selectedCountry && { countryOfOrigin: selectedCountry.label }),
     };
 
-    let url = "/api/api-upload-img";
+    let url = "http://localhost:8000/api/upload";
     let method = "POST";
 
     if (editedUpload) {
       uploadData.uploadId = editedUpload._id;
-      url = "/api/api-update-recipe";
+      url = "http://localhost:8000/api/edit-post";
       method = "PUT";
     }
 
     try {
       setIsUploading(true);
-      const response = await fetch(url, {
+      const response = await fetchWithTokenRefresh(url, {
         method,
         headers: {
           "Content-Type": "application/json",

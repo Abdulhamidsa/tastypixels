@@ -3,7 +3,7 @@ import { Box, SkeletonCircle, SkeletonText, Skeleton, Flex } from "@chakra-ui/re
 
 const CardSkeleton = () => {
   return Array.from({ length: 5 }).map((_, index) => (
-    <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.900">
+    <Box key={index} borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxw="420px" mx="auto" my="4" boxShadow="md" bg="gray.900">
       <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
         <SkeletonCircle size="10" />
         <Box color="black" ml="4">

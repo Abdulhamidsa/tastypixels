@@ -1,6 +1,6 @@
 const express = require("express");
 const { loginHandler, refreshAccessToken, logoutHandler } = require("../controllers/loginController");
-const { signupHandler } = require("../controllers/createUserController");
+const { signupHandler } = require("@/controllers/signupController");
 const router = express.Router();
 
 router.post("/login", loginHandler);

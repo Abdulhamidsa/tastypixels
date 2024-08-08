@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
-import { fetchWithTokenRefresh } from "@/util/auth";
+import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useAuth } from "@/context/AuthContext";
 
 const useComments = () => {
@@ -82,6 +82,27 @@ const useComments = () => {
       setDeletingCommentId(null);
     }
   };
+  const getTimeAgo = (date) => {
+    const now = new Date();
+    const commentDate = new Date(date);
+    const diffTime = Math.abs(now - commentDate);
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffWeeks = Math.floor(diffDays / 7);
+
+    if (diffMinutes === 0) {
+      return "Just now";
+    } else if (diffMinutes < 60) {
+      return `${diffMinutes}m`;
+    } else if (diffHours < 24) {
+      return `${diffHours}h`;
+    } else if (diffDays < 7) {
+      return `${diffDays}d`;
+    } else {
+      return `${diffWeeks}w`;
+    }
+  };
 
   return {
     comments,
@@ -91,6 +112,7 @@ const useComments = () => {
     handleAddComment,
     handleDeleteComment,
     addingComment,
+    getTimeAgo,
   };
 };
 

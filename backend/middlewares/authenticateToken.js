@@ -8,7 +8,6 @@ const authenticateToken = async (req, res, next) => {
   console.log("Token from header:", token);
 
   if (!token) {
-    console.log("No token provided");
     return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
 
@@ -31,7 +30,7 @@ const authenticateToken = async (req, res, next) => {
         const decodedRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY);
         console.log("Decoded refresh token:", decodedRefresh);
         const userId = decodedRefresh.userId;
-        const newAccessToken = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: "15m" });
+        const newAccessToken = jwt.sign({ userId, username: decodedRefresh.username }, process.env.JWT_SECRET_KEY, { expiresIn: "15m" });
 
         res.setHeader("Authorization", `Bearer ${newAccessToken}`);
         req.user = jwt.verify(newAccessToken, process.env.JWT_SECRET_KEY);

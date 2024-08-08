@@ -5,7 +5,7 @@ const connectToMongoDB = require("../database/db");
 require("dotenv").config();
 
 const generateAccessToken = (user) => {
-  return jwt.sign({ userId: user._id, userRole: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
+  return jwt.sign({ userId: user._id, userName: user.username }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
 };
 
 const generateRefreshToken = (user) => {
@@ -35,6 +35,8 @@ const loginHandler = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    console.log("Generated Refresh Token:", refreshToken);
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -42,6 +44,7 @@ const loginHandler = async (req, res) => {
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+    console.log("Set-Cookie Header:", res.getHeaders()["set-cookie"]);
 
     return res.status(200).json({
       accessToken,

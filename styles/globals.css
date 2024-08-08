@@ -68,6 +68,14 @@ a {
   }
 } */
 /* Add this to your global CSS or component-specific CSS */
-p {
-  /* font-size: calc(0.7rem + 0.6vw) !important; */
+html,
+body {
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
 }

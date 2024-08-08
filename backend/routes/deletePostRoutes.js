@@ -1,9 +1,7 @@
 const express = require("express");
-const { addUpload } = require("../controllers/uploadController");
+const { deletePost } = require("@/controllers/deletePostController");
 const authenticateToken = require("../middlewares/authenticateToken");
-
 const router = express.Router();
 
-router.post("/upload", authenticateToken, addUpload);
-
+router.delete("/delete-post", authenticateToken, deletePost);
 module.exports = router;

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
-import { fetchWithTokenRefresh } from "@/util/auth";
+import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useAuth } from "@/context/AuthContext";
 
 const useVote = (uploads, setUploads) => {
-  const { state } = useAuth();
-  const { isAuthenticated } = state;
+  const {
+    state: { isAuthenticated },
+  } = useAuth();
   const [loadingVote, setLoadingVote] = useState({});
   const toast = useToast();
 

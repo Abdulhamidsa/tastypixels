@@ -12,8 +12,7 @@ import Upload from "@/components/Upload";
 
 const Navbar = () => {
   const { state, logout } = useAuth();
-  const { isAuthenticated, loading, user } = state;
-  // const ciphertext = isAuthenticated ? CryptoJS.AES.encrypt(user.userId, "secret key").toString() : null;
+  const { isAuthenticated, loading, username } = state;
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const [formType, setFormType] = useState(null);
@@ -56,7 +55,7 @@ const Navbar = () => {
     <>
       <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" p={1} justify="flex-end" backdropFilter="blur(5px)">
         <ChakraLink position="" top="15" left="0" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-          <Image src="/logo.png" alt="logo" width="90" height="100" />
+          <Image src="/logo.png" alt="logo" width="100" height="100" priority />
         </ChakraLink>
         <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
 
@@ -81,7 +80,7 @@ const Navbar = () => {
             <>
               <ChakraLink onClick={() => handleOpenModal("logout")}>Logout</ChakraLink>
 
-              <ChakraLink as={NextLink} href={`/Profile-99/`} onClick={onMenuClose}>
+              <ChakraLink as={NextLink} href={`/profile/${username}`} onClick={onMenuClose}>
                 Profile
               </ChakraLink>
             </>
@@ -103,9 +102,9 @@ const Navbar = () => {
                   </ChakraLink>
                   {isAuthenticated && (
                     <>
-                      {/* <ChakraLink as={NextLink} href={`/userProfile/${encodeURIComponent(ciphertext)}`} onClick={onMenuClose}>
+                      <ChakraLink as={NextLink} href={`/profile/${username}`} onClick={onMenuClose}>
                         Profile
-                      </ChakraLink> */}
+                      </ChakraLink>
                       <Button onClick={() => handleOpenModal("logout")}>Logout</Button>
                     </>
                   )}

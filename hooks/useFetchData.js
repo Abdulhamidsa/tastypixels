@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchWithTokenRefresh } from "@/util/auth";
+import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useToast } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -8,69 +8,81 @@ const useFetchData = () => {
   const { isAuthenticated } = state;
   const [uploads, setUploads] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [userData, setUserData] = useState({});
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const toast = useToast();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let userData = {};
-        let likedPosts = [];
-        let dislikedPosts = [];
+  const fetchData = async (page) => {
+    try {
+      let userData = {};
+      let likedPosts = [];
+      let dislikedPosts = [];
 
-        if (isAuthenticated) {
-          const userResponse = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/users/profile", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          });
-
-          if (!userResponse.ok) {
-            throw new Error("Failed to fetch user data");
-          }
-          userData = await userResponse.json();
-          likedPosts = userData.likedPosts || [];
-          dislikedPosts = userData.dislikedPosts || [];
-          setUserData(userData);
+      if (isAuthenticated) {
+        const userResponse = await fetchWithTokenRefresh("http://localhost:8000/users/profile");
+        if (!userResponse.ok) {
+          throw new Error("Failed to fetch user data");
         }
+        userData = await userResponse.json();
+        likedPosts = userData.likedPosts || [];
+        dislikedPosts = userData.dislikedPosts || [];
+        setUserData(userData);
+      }
 
-        const postsResponse = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/recipes/all-posts", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+      const postsResponse = await fetchWithTokenRefresh(`http://localhost:8000/recipes/all-posts?page=${page}`);
+      if (!postsResponse.ok) {
+        throw new Error("Failed to fetch recipes");
+      }
 
-        if (!postsResponse.ok) {
-          throw new Error("Failed to fetch recipes");
-        }
+      const postsData = await postsResponse.json();
+      const uploadsArray = postsData.uploads || [];
 
-        const postsData = await postsResponse.json();
-        const initializedUploads = postsData.map((upload) => ({
+      if (uploadsArray.length === 0) {
+        setHasMore(false);
+      } else {
+        const initializedUploads = uploadsArray.map((upload) => ({
           ...upload,
           isLiked: likedPosts.some((post) => post.uploadId === upload._id),
           isDisliked: dislikedPosts.some((post) => post.uploadId === upload._id),
         }));
 
-        setUploads(initializedUploads);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        toast({
-          title: "Error",
-          description: error.message || "Failed to fetch data",
-          status: "error",
-          isClosable: true,
+        // Ensure no duplicate uploads are added
+        setUploads((prevUploads) => {
+          const existingUploadIds = new Set(prevUploads.map((upload) => upload._id));
+          const uniqueUploads = initializedUploads.filter((upload) => !existingUploadIds.has(upload._id));
+          return [...prevUploads, ...uniqueUploads];
         });
-      } finally {
-        setLoadingPosts(false);
+
+        setPage(page + 1);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to fetch data",
+        status: "error",
+        isClosable: true,
+      });
+    } finally {
+      setLoadingPosts(false);
+      setLoadingMore(false);
+    }
+  };
 
-    fetchData();
-  }, [isAuthenticated, toast]);
+  useEffect(() => {
+    fetchData(1);
+  }, [isAuthenticated]);
 
-  return { uploads, loadingPosts, userData, setUploads };
+  const loadMorePosts = () => {
+    if (hasMore && !loadingMore) {
+      setLoadingMore(true);
+      fetchData(page);
+    }
+  };
+
+  return { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore };
 };
 
 export default useFetchData;

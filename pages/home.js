@@ -1,4 +1,5 @@
-import { Box, useDisclosure, useToast } from "@chakra-ui/react";
+import { Box, useDisclosure, useToast, Spinner, IconButton } from "@chakra-ui/react";
+import { ArrowUpIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
 import FilterDrawer from "@/components/FilterDrawer";
 import CardSkeleton from "@/components/CardSkeleton";
@@ -7,12 +8,13 @@ import ImageModal from "@/hooks/ImageModal";
 import useFetchData from "@/hooks/useFetchData";
 import useVote from "@/hooks/useVote";
 import useComments from "@/hooks/useComments";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function About() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
-  const { uploads, loadingPosts, userData, setUploads } = useFetchData();
+  const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore } = useFetchData();
   const { handleVote, loadingVote } = useVote(uploads, setUploads);
   const { comments, showComments, loadingComments, deletingCommentId, handleToggleComments, handleAddComment, handleDeleteComment } = useComments();
   const [selectedUploadId, setSelectedUploadId] = useState(null);
@@ -21,6 +23,8 @@ export default function About() {
   const toast = useToast();
   const [sortOrder, setSortOrder] = useState("a-z");
   const [currentFilter, setCurrentFilter] = useState("Filter by");
+
+  const [showGoToTop, setShowGoToTop] = useState(false);
 
   const sortUploads = (order) => {
     const sortedUploads = [...uploads].sort((a, b) => {
@@ -121,37 +125,82 @@ export default function About() {
     onClose();
   };
 
+  const handleScroll = () => {
+    if (window.scrollY > 300) {
+      setShowGoToTop(true);
+    } else {
+      setShowGoToTop(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <>
-      <Box p={5} m="auto" maxW="420px" display="grid" gap="10">
+      <Box p={5} maxW="420px" width="100%" m="auto">
         {loadingPosts ? (
-          <CardSkeleton />
+          <Box display="grid" gap="10">
+            <CardSkeleton />
+            {/* <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton /> */}
+          </Box>
         ) : (
-          uploads.map((upload) => (
-            <PostCard
-              key={upload._id}
-              upload={upload}
-              userData={userData}
-              handleVote={handleVote}
-              handleToggleComments={handleToggleComments}
-              comments={comments}
-              showComments={showComments}
-              loadingComments={loadingComments}
-              handleAddComment={handleAddComment}
-              handleDeleteComment={handleDeleteComment}
-              deletingCommentId={deletingCommentId}
-              handleReportClick={handleReportClick}
-              isAuthenticated={isAuthenticated}
-              loadingVote={loadingVote}
-              selectedUploadId={selectedUploadId}
-              isOpen={isOpen}
-              onClose={onClose}
-              onOpen={onOpen}
-              handleOpen={handleOpen}
-            />
-          ))
+          <InfiniteScroll
+            dataLength={uploads.length}
+            next={loadMorePosts}
+            hasMore={hasMore}
+            endMessage={
+              <Box textAlign="center" mt={4} mb={4}>
+                Yay! You have seen it all
+              </Box>
+            }
+          >
+            <Box display="grid" gap="10">
+              {uploads.map((upload) => (
+                <PostCard
+                  key={upload._id}
+                  upload={upload}
+                  userData={userData}
+                  handleVote={handleVote}
+                  handleToggleComments={handleToggleComments}
+                  comments={comments}
+                  showComments={showComments}
+                  loadingComments={loadingComments}
+                  handleAddComment={handleAddComment}
+                  handleDeleteComment={handleDeleteComment}
+                  deletingCommentId={deletingCommentId}
+                  handleReportClick={handleReportClick}
+                  isAuthenticated={isAuthenticated}
+                  loadingVote={loadingVote}
+                  selectedUploadId={selectedUploadId}
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  onOpen={onOpen}
+                  handleOpen={handleOpen}
+                />
+              ))}
+              {loadingMore && (
+                <>
+                  <CardSkeleton />
+                  <CardSkeleton />
+                  <CardSkeleton />
+                </>
+              )}
+            </Box>
+          </InfiniteScroll>
         )}
       </Box>
+
+      {showGoToTop && <IconButton position="fixed" bottom="50px" right="30px" zIndex="1000" colorScheme="teal" icon={<ArrowUpIcon />} onClick={scrollToTop} />}
 
       <ImageModal isOpen={selectedImage !== null} onClose={handleClose} selectedImage={selectedImage} />
 
