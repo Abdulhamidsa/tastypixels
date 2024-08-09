@@ -1,9 +1,16 @@
+import { useState } from "react";
 import { Drawer, IconButton, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, Menu, MenuButton, MenuList, MenuItem, Button, useDisclosure } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { MdFilterList } from "react-icons/md";
 
-const FilterDrawer = ({ sortOrder, handleSortChange, currentFilter, filterMostLiked, filterMostDisliked, saveFilterAndCloseDrawer }) => {
+const FilterDrawer = ({ sortOrder, handleSortChange, currentFilter, filterMostLiked, filterMostDisliked, filterMostCommented, filterHotPosts, saveFilterAndCloseDrawer }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedFilter, setSelectedFilter] = useState(currentFilter);
+
+  const handleFilterChange = (filterName, filterFunction) => {
+    setSelectedFilter(filterName);
+    filterFunction();
+  };
 
   return (
     <>
@@ -27,11 +34,21 @@ const FilterDrawer = ({ sortOrder, handleSortChange, currentFilter, filterMostLi
               </Menu>
               <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="red" variant="outline">
-                  {currentFilter}
+                  {selectedFilter}
                 </MenuButton>
                 <MenuList>
-                  <MenuItem onClick={filterMostLiked}>Most Liked</MenuItem>
-                  <MenuItem onClick={filterMostDisliked}>Most Disliked</MenuItem>
+                  <MenuItem onClick={() => handleFilterChange("Most Liked", filterMostLiked)} isSelected={selectedFilter === "Most Liked"}>
+                    Most Liked
+                  </MenuItem>
+                  <MenuItem onClick={() => handleFilterChange("Most Disliked", filterMostDisliked)} isSelected={selectedFilter === "Most Disliked"}>
+                    Most Disliked
+                  </MenuItem>
+                  <MenuItem onClick={() => handleFilterChange("Most Commented", filterMostCommented)} isSelected={selectedFilter === "Most Commented"}>
+                    Most Commented
+                  </MenuItem>
+                  <MenuItem onClick={() => handleFilterChange("Hot Posts", filterHotPosts)} isSelected={selectedFilter === "Hot Posts"}>
+                    Hot Posts
+                  </MenuItem>
                 </MenuList>
               </Menu>
               <Button

@@ -41,7 +41,7 @@ import CommentsSection from "@/components/CommentsSection";
 import Upload from "@/components/Upload";
 import useComments from "@/hooks/useComments";
 import { useFetch } from "@/hooks/useFetchUser";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 
 export default function Dashboard() {

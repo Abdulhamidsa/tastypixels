@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Box, Avatar, Heading, Text, Badge, IconButton, Flex, Button, Collapse, Skeleton } from "@chakra-ui/react";
 import { FaComment, FaFlag } from "react-icons/fa";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { SearchIcon } from "@chakra-ui/icons";
 import VoteButton from "@/hooks/VoteButton";
 import CommentsSection from "@/components/CommentsSection";
 import useComments from "@/hooks/useComments";
+import ImageModal from "@/hooks/ImageModal";
+import styles from "@/styles/Home.module.css";
 
-const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote, handleOpen }) => {
+const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote }) => {
   const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } = useComments();
 
   const [showCommentSection, setShowCommentSection] = useState(false);
@@ -21,7 +23,18 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
     setLoadingCommentSection(false);
     setShowCommentSection(!showCommentSection);
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
 
+  const handleOpen = (imageUrl) => {
+    setCurrentImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setCurrentImage("");
+  };
   return (
     <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" borderBottomRadius="none" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
       <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
@@ -50,9 +63,11 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
         </Box>
       </Box>
       <Box position="relative" overflow="hidden">
-        <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="80vw" width={175} height={100} style={{ width: "100%", height: "100%" }} layout="responsive" priority={false} loading="lazy" />
+        <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="50vw" width={500} height={400} objectFit="cover" layout="responsive" priority={false} loading="lazy" />
         <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
       </Box>
+      <ImageModal isOpen={isModalOpen} onClose={handleClose} selectedImage={currentImage} />
+
       <Badge textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
         {upload.category}
       </Badge>

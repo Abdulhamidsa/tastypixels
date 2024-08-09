@@ -1,6 +1,6 @@
 import { Box, Avatar, Heading, Text, Badge, Button, Flex, IconButton, Spinner, useDisclosure } from "@chakra-ui/react";
 import { FaArrowUp, FaArrowDown, FaComment, FaFlag } from "react-icons/fa";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import CommentSection from "@/components/CommentsSection";
 import { useState } from "react";
 import { useAuth } from "@/frontend/context/AuthContext";

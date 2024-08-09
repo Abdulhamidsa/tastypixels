@@ -1,5 +1,5 @@
 import { Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody } from "@chakra-ui/react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 const ZoomModal = ({ isOpen, onClose, imageUrl }) => {
   return (
@@ -8,7 +8,7 @@ const ZoomModal = ({ isOpen, onClose, imageUrl }) => {
       <ModalContent>
         <ModalCloseButton />
         <ModalBody p={0}>
-          <Image alt={imageUrl} src={imageUrl} width={0} height={0} sizes="100vw" style={{ width: "100%", height: "auto" }} />
+          <Image alt={imageUrl} src={imageUrl} width={0} height={0} sizes="60vw" style={{ width: "100%", height: "auto" }} />
         </ModalBody>
       </ModalContent>
     </Modal>

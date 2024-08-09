@@ -7,7 +7,7 @@ import NextLink from "next/link";
 import Signin from "@/components/Signin";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Upload from "@/components/Upload";
 
 const Navbar = () => {

@@ -10,7 +10,6 @@ import useVote from "@/hooks/useVote";
 import useComments from "@/hooks/useComments";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-
 export default function About() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
@@ -120,6 +119,20 @@ export default function About() {
     setUploads(sortedUploads);
     setCurrentFilter("Most Disliked");
   };
+  const filterMostCommented = () => {
+    const sortedUploads = [...uploads].sort((a, b) => b.comments.length - a.comments.length);
+    setUploads(sortedUploads);
+    setCurrentFilter("Most Commented");
+  };
+  const filterHotPosts = () => {
+    const sortedUploads = [...uploads].sort((a, b) => {
+      const aInteractions = a.likes + a.dislikes + a.comments.length;
+      const bInteractions = b.likes + b.dislikes + b.comments.length;
+      return bInteractions - aInteractions;
+    });
+    setUploads(sortedUploads);
+    setCurrentFilter("Hot Posts");
+  };
 
   const saveFilterAndCloseDrawer = () => {
     onClose();
@@ -148,10 +161,9 @@ export default function About() {
         {loadingPosts ? (
           <Box display="grid" gap="10">
             <CardSkeleton />
-            {/* <CardSkeleton />
             <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton /> */}
+            {/* <CardSkeleton /> */}
+            {/* <CardSkeleton /> */}
           </Box>
         ) : (
           <InfiniteScroll
@@ -204,7 +216,18 @@ export default function About() {
 
       <ImageModal isOpen={selectedImage !== null} onClose={handleClose} selectedImage={selectedImage} />
 
-      <FilterDrawer isOpen={isOpen} onClose={onClose} filterMostLiked={filterMostLiked} filterMostDisliked={filterMostDisliked} handleSortChange={handleSortChange} saveFilterAndCloseDrawer={saveFilterAndCloseDrawer} sortOrder={sortOrder} currentFilter={currentFilter} />
+      <FilterDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        filterMostLiked={filterMostLiked}
+        filterMostDisliked={filterMostDisliked}
+        filterMostCommented={filterMostCommented}
+        filterHotPosts={filterHotPosts}
+        handleSortChange={handleSortChange}
+        saveFilterAndCloseDrawer={saveFilterAndCloseDrawer}
+        sortOrder={sortOrder}
+        currentFilter={currentFilter}
+      />
     </>
   );
 }
