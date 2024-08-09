@@ -147,16 +147,13 @@ export default function Dashboard() {
 
       const data = await response.json();
       if (response.ok) {
-        // Update the userData state immediately
         setUserData((prevUserData) => ({
           ...prevUserData,
           username: data.username,
           email: data.email,
         }));
 
-        setPassword(""); // Clear the password field after update
-
-        // Use a callback in the state update to ensure it happens before closing the modal
+        setPassword("");
         setTimeout(() => {
           toast({
             title: "User updated.",
@@ -165,8 +162,9 @@ export default function Dashboard() {
             duration: 2000,
             isClosable: true,
           });
-          onClose(); // Close the modal
-        }, 100);
+          onClose();
+          window.location.reload();
+        }, 500);
       } else {
         console.error("Error updating user:", data.errors);
       }
@@ -178,8 +176,8 @@ export default function Dashboard() {
   };
 
   return (
-    <Box width="100%" maxW="900px">
-      <Heading as="h1" m={8} textAlign="center">
+    <Box mx="auto" pt="10" width="100%" maxW="1000px">
+      <Heading as="h1" m={0} textAlign="center">
         User Dashboard
       </Heading>
       <Tabs variant="enclosed">
@@ -248,7 +246,9 @@ export default function Dashboard() {
           </TabPanel>
           <TabPanel>
             {loading ? (
-              <CardSkeleton />
+              <Box w="420px">
+                <CardSkeleton />
+              </Box>
             ) : uploadList && uploadList.length > 0 ? (
               uploadList.map((upload) => (
                 <Box key={upload._id} position="relative" borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="400px" mx="auto" my="4" boxShadow="md" bg="gray.800">

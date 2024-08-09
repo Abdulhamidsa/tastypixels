@@ -1,5 +1,3 @@
-// utils/authUtils.js
-
 export const checkExistingUsername = async (username) => {
   try {
     const response = await fetch("http://localhost:8000/api/validation/check-username", {

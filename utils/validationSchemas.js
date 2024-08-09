@@ -1,8 +1,6 @@
 import * as Yup from "yup";
 import { checkExistingUsername, checkExistingEmail } from "@/utils/authUtils";
-
 const passwordValidationRegex = /^(?=.*\d)[a-zA-Z\d]{8,}$/;
-
 export const signupValidationSchema = Yup.object({
   username: Yup.string()
     .required("Username is required")

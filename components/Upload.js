@@ -3,7 +3,6 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-  useToast,
   Button,
   FormControl,
   Alert,
@@ -27,27 +26,20 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
-import { useAuth } from "@/context/AuthContext";
-import countryList from "react-select-country-list";
-import { fetchWithTokenRefresh } from "@/utils/auth";
+import useUpload from "@/hooks/useUpload";
 
-const Upload = ({ isOpen, onClose, editedUpload }) => {
-  const { isLoggedIn, userId } = useAuth();
-  const [imageUrl, setImageUrl] = useState(editedUpload ? editedUpload.imageUrl : "");
-
+const Upload = ({ isOpen, onClose, editedUpload, addNewUpload }) => {
   const [title, setTitle] = useState(editedUpload ? editedUpload.title : "");
   const [description, setDescription] = useState(editedUpload ? editedUpload.description : "");
   const [selectedTags, setSelectedTags] = useState(editedUpload ? editedUpload.tags : []);
   const [selectedCategory, setSelectedCategory] = useState(editedUpload ? editedUpload.category : "");
   const [tagInput, setTagInput] = useState("");
   const [tagError, setTagError] = useState("");
-  const [isFileLoading, setIsFileLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState(editedUpload ? editedUpload.countryOfOrigin : undefined);
   const fileInputRef = useRef(undefined);
   const inputRef = useRef();
-  const toast = useToast();
+
+  const { imageUrl, isFileLoading, isUploading, uploadError, handleUpload, saveToDatabase } = useUpload(editedUpload, onClose);
+
   const predefinedCategories = [
     "Appetizers & Snacks",
     "Main Courses",
@@ -70,108 +62,15 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
     "Comfort Food",
     "Kids Favorites",
   ];
-  const options = countryList().getData();
 
   useEffect(() => {
     if (editedUpload) {
-      setImageUrl(editedUpload.imageUrl);
       setTitle(editedUpload.title);
       setDescription(editedUpload.description);
       setSelectedTags(editedUpload.tags);
       setSelectedCategory(editedUpload.category);
-      // setSelectedCountry(editedUpload.countryOfOrigin);
     }
   }, [editedUpload]);
-
-  const handleUpload = async (e) => {
-    try {
-      setIsFileLoading(true);
-      const file = e.target.files[0];
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME);
-
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload image");
-      }
-      const data = await response.json();
-      const transformedImageUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${data.public_id}.${data.format}`;
-      setImageUrl(transformedImageUrl);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsFileLoading(false);
-    }
-  };
-
-  const saveToDatabase = async () => {
-    if (!editedUpload) {
-      if (!imageUrl || !title || !description || !selectedCategory || selectedTags.length === 0) {
-        setUploadError("All fields are required");
-        return;
-      }
-    }
-
-    const uploadData = {
-      userId,
-      ...(imageUrl && { imageUrl }),
-      ...(title && { title }),
-      ...(description && { description }),
-      ...(selectedTags.length > 0 && { tags: selectedTags }),
-      ...(selectedCategory && { category: selectedCategory }),
-      // ...(selectedCountry && { countryOfOrigin: selectedCountry.label }),
-    };
-
-    let url = "http://localhost:8000/api/upload";
-    let method = "POST";
-
-    if (editedUpload) {
-      uploadData.uploadId = editedUpload._id;
-      url = "http://localhost:8000/api/edit-post";
-      method = "PUT";
-    }
-
-    try {
-      setIsUploading(true);
-      const response = await fetchWithTokenRefresh(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(uploadData),
-      });
-
-      const responseData = await response.json();
-      if (!response.ok) {
-        throw new Error(responseData.errors ? responseData.errors.join(", ") : "Failed to save photo to database");
-      }
-
-      toast({
-        title: "Success",
-        description: editedUpload ? "Post updated successfully." : "Post uploaded successfully. Redirecting...",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
-
-      onClose();
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    } catch (error) {
-      console.error(error);
-      setUploadError(error.message || "Failed to save photo to database");
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   const handleRemoveTag = (tagToRemove) => {
     setSelectedTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
@@ -219,6 +118,18 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
 
   const handleCategorySelect = (e) => {
     setSelectedCategory(e.target.value);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    handleUpload(file);
+  };
+
+  const handleSave = async () => {
+    const newUpload = await saveToDatabase({ title, description, selectedTags, selectedCategory }, editedUpload);
+    if (newUpload && !editedUpload) {
+      addNewUpload(newUpload); // Call the parent callback to add the new upload
+    }
   };
 
   return (
@@ -275,16 +186,6 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
             </InputGroup>
             <FormErrorMessage>{tagError}</FormErrorMessage>
           </FormControl>
-          {/* <FormControl>
-            <FormLabel>Country Origin</FormLabel>
-            <ChakraSelect value={selectedCountry} onChange={(e) => setSelectedCountry(e.target.value)} placeholder="Select Country" disabled={isUploading}>
-              {options.map((country) => (
-                <option key={country.value} value={country.value}>
-                  {country.label}
-                </option>
-              ))}
-            </ChakraSelect>
-          </FormControl> */}
           <FormControl>
             <FormLabel>Category</FormLabel>
             <ChakraSelect value={selectedCategory} onChange={handleCategorySelect} disabled={isUploading}>
@@ -298,7 +199,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
           </FormControl>
           <FormControl position="relative">
             <FormLabel>Image</FormLabel>
-            <Input p={1} type="file" accept="image/*" ref={fileInputRef} onChange={handleUpload} disabled={isUploading} />
+            <Input p={1} type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} disabled={isUploading} />
             {isFileLoading && <Spinner position="absolute" top="55%" right="5%" transform="translate(-50%, -50%)" />}
           </FormControl>
           {uploadError && !uploadError.includes("maximum limit of uploads") && (
@@ -314,7 +215,7 @@ const Upload = ({ isOpen, onClose, editedUpload }) => {
             </Alert>
           )}
           <ModalFooter>
-            <Button onClick={saveToDatabase} isLoading={isUploading} loadingText="Uploading" disabled={isUploading}>
+            <Button onClick={handleSave} isLoading={isUploading} loadingText="Uploading" disabled={isUploading}>
               {editedUpload ? "SAVE CHANGES" : "UPLOAD"}
             </Button>
           </ModalFooter>

@@ -133,6 +133,11 @@ export default function About() {
     setUploads(sortedUploads);
     setCurrentFilter("Hot Posts");
   };
+  const filterPostedRecently = () => {
+    const sortedUploads = [...uploads].sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt));
+    setUploads(sortedUploads);
+    setCurrentFilter("Posted Recently");
+  };
 
   const saveFilterAndCloseDrawer = () => {
     onClose();
@@ -162,8 +167,7 @@ export default function About() {
           <Box display="grid" gap="10">
             <CardSkeleton />
             <CardSkeleton />
-            {/* <CardSkeleton /> */}
-            {/* <CardSkeleton /> */}
+            <CardSkeleton />
           </Box>
         ) : (
           <InfiniteScroll
@@ -223,6 +227,7 @@ export default function About() {
         filterMostDisliked={filterMostDisliked}
         filterMostCommented={filterMostCommented}
         filterHotPosts={filterHotPosts}
+        filterPostedRecently={filterPostedRecently}
         handleSortChange={handleSortChange}
         saveFilterAndCloseDrawer={saveFilterAndCloseDrawer}
         sortOrder={sortOrder}

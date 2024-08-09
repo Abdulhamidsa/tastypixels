@@ -1,6 +1,5 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
-import { checkExistingUsername, checkExistingEmail } from "@/utils/authUtils";
 import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
