@@ -50,7 +50,7 @@ export const useFetch = () => {
 
   const deleteUpload = async (selectedUploadId) => {
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/delete-post", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/delete-post", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
