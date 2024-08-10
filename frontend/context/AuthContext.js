@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("http://localhost:8000/auth/signup", {
+      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
