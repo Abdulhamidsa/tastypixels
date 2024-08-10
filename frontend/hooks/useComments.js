@@ -36,7 +36,7 @@ const useComments = () => {
 
     setAddingComment(true);
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/api/add-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/add-comment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uploadId, text: commentText }),
