@@ -1,14 +1,15 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
 import { jwtDecode } from "jwt-decode";
+
 const AuthContext = createContext();
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      return { ...state, isAuthenticated: true, token: action.payload.token, friendlyId: action.payload.friendlyId, loading: false };
+      return { ...state, isAuthenticated: true, token: action.payload.token, userId: action.payload.userId, loading: false };
     case "LOGOUT":
-      return { ...state, isAuthenticated: false, token: null, friendlyId: null, loading: false };
+      return { ...state, isAuthenticated: false, token: null, userId: null, loading: false };
     case "SET_LOADING":
       return { ...state, loading: action.payload };
     default:
@@ -20,19 +21,19 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     isAuthenticated: false,
     token: null,
-    friendlyId: null,
+    userId: null,
     loading: true,
   });
 
   useEffect(() => {
     const checkAuth = async () => {
       let accessToken = getAccessToken();
-      let friendlyId = null;
+      let userId = null;
 
       if (accessToken) {
         try {
           const decodedToken = jwtDecode(accessToken);
-          friendlyId = decodedToken.friendlyId;
+          userId = decodedToken.userId;
         } catch (error) {
           console.error("Failed to decode access token:", error);
         }
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
           accessToken = await refreshAccessToken();
           if (accessToken) {
             const decodedToken = jwtDecode(accessToken);
-            friendlyId = decodedToken.friendlyId;
+            userId = decodedToken.userId;
           }
         } catch {
           dispatch({ type: "LOGOUT" });
@@ -49,27 +50,17 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      if (friendlyId) {
-        dispatch({ type: "LOGIN", payload: { token: accessToken, friendlyId } });
-      } else {
-        dispatch({ type: "LOGOUT" });
-      }
+      dispatch({ type: "LOGIN", payload: { token: accessToken, userId } });
     };
 
     checkAuth();
   }, []);
 
   const login = (token) => {
-    try {
-      const decodedToken = jwtDecode(token);
-      const friendlyId = decodedToken.friendlyId;
-      setAccessToken(token); // Store the token
-
-      dispatch({ type: "LOGIN", payload: { token, friendlyId } }); // Immediately update the state
-    } catch (error) {
-      console.error("Failed to log in:", error);
-      dispatch({ type: "LOGOUT" });
-    }
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken.userId;
+    setAccessToken(token);
+    dispatch({ type: "LOGIN", payload: { token, userId } });
   };
 
   const logout = async () => {

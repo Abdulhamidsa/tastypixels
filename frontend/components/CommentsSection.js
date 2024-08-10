@@ -18,7 +18,6 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
   const { isAuthenticated } = state;
 
   const commentsContainerRef = useRef(null);
-
   const scrollToBottom = () => {
     if (commentsContainerRef.current) {
       commentsContainerRef.current.scrollTo({
@@ -74,7 +73,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
         isClosable: true,
       });
 
-      scrollToBottom(); // Scroll to the bottom after adding the comment
+      scrollToBottom();
     } catch (error) {
       console.error("Error adding comment:", error);
       toast({
@@ -116,7 +115,6 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
         </Box>
       ) : (
         <Box w="100%">
-          {/* Scrollable comments section */}
           <Box
             ref={commentsContainerRef}
             maxH="300px"
@@ -125,17 +123,17 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
             p={2}
             sx={{
               "::-webkit-scrollbar": {
-                width: "6px", // Adjust the width of the scrollbar
+                width: "6px",
               },
               "::-webkit-scrollbar-track": {
-                background: "#f1f1f1", // Track color
+                background: "#f1f1f1",
               },
               "::-webkit-scrollbar-thumb": {
-                background: "#888", // Thumb color
+                background: "#888",
                 borderRadius: "10px",
               },
               "::-webkit-scrollbar-thumb:hover": {
-                background: "#555", // Thumb color on hover
+                background: "#555",
               },
             }}
           >
