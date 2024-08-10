@@ -52,12 +52,12 @@ const useUpload = (initialUploadData, onClose) => {
       ...(uploadData.selectedCategory && { category: uploadData.selectedCategory }),
     };
 
-    let url = "http://localhost:8000/api/upload";
+    let url = "https://tastypixels-backend.up.railway.app/api/upload";
     let method = "POST";
 
     if (editedUpload) {
       dataToSave.uploadId = editedUpload._id;
-      url = "http://localhost:8000/api/edit-post";
+      url = "https://tastypixels-backend.up.railway.app/api/edit-post";
       method = "PUT";
     }
 

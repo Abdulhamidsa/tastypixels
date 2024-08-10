@@ -11,5 +11,8 @@
   "dependencies": {
     "@sentry/nextjs": "^8.25.0",
     "@sentry/node": "^8.25.0"
+  },
+  "devDependencies": {
+    "eslint-config-next": "^14.2.5"
   }
 }

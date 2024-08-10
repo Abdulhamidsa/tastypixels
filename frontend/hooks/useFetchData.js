@@ -21,7 +21,7 @@ const useFetchData = () => {
       let dislikedPosts = [];
 
       if (isAuthenticated) {
-        const userResponse = await fetchWithTokenRefresh("http://localhost:8000/users/profile");
+        const userResponse = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/users/profile");
         if (!userResponse.ok) {
           throw new Error("Failed to fetch user data");
         }
@@ -31,7 +31,7 @@ const useFetchData = () => {
         setUserData(userData);
       }
 
-      const postsResponse = await fetchWithTokenRefresh(`http://localhost:8000/recipes/all-posts?page=${page}`);
+      const postsResponse = await fetchWithTokenRefresh(`https://tastypixels-backend.up.railway.app/recipes/all-posts?page=${page}`);
       if (!postsResponse.ok) {
         throw new Error("Failed to fetch recipes");
       }

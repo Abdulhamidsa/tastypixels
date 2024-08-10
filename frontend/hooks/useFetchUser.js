@@ -14,7 +14,7 @@ export const useFetch = () => {
   const fetchUserData = async () => {
     setLoading(true);
     try {
-      const res = await fetchWithTokenRefresh("http://localhost:8000/users/profile");
+      const res = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/users/profile");
       if (!res.ok) throw new Error("Failed to fetch user data");
       const data = await res.json();
       setUser(data);
@@ -50,7 +50,7 @@ export const useFetch = () => {
 
   const deleteUpload = async (selectedUploadId) => {
     try {
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/delete-post", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/delete-post", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
