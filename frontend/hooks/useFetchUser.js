@@ -6,7 +6,6 @@ export const useFetch = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [uploadList, setUploadList] = useState([]);
-  console.log(user);
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -26,27 +25,27 @@ export const useFetch = () => {
     }
   };
 
-  const updateUpload = async (userId, editedUpload) => {
-    try {
-      const response = await fetch("/api/api-update-recipe", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, editedUpload }),
-      });
+  // const updateUpload = async (userId, editedUpload) => {
+  //   try {
+  //     const response = await fetch("/api/api-update-recipe", {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ userId, editedUpload }),
+  //     });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error);
-      }
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.error);
+  //     }
 
-      const updatedUploadList = uploadList.map((upload) => (upload._id === editedUpload._id ? { ...upload, ...editedUpload } : upload));
-      setUploadList(updatedUploadList);
-    } catch (err) {
-      throw new Error(err.message);
-    }
-  };
+  //     const updatedUploadList = uploadList.map((upload) => (upload._id === editedUpload._id ? { ...upload, ...editedUpload } : upload));
+  //     setUploadList(updatedUploadList);
+  //   } catch (err) {
+  //     throw new Error(err.message);
+  //   }
+  // };
 
   const deleteUpload = async (selectedUploadId) => {
     try {
@@ -69,5 +68,5 @@ export const useFetch = () => {
     }
   };
 
-  return { user, loading, error, uploadList, fetchUserData, updateUpload, deleteUpload };
+  return { user, loading, error, uploadList, fetchUserData, deleteUpload };
 };

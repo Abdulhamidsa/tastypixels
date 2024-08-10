@@ -9,7 +9,7 @@
 //   useEffect(() => {
 //     const fetchData = async () => {
 //       try {
-//         const res = await fetchWithTokenRefresh("http://localhost:8000/users/profile");
+//         const res = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/users/profile");
 
 //         if (!res.ok) {
 //           throw new Error("Failed to fetch user data");

@@ -7,8 +7,9 @@ require("dotenv").config();
 const generateAccessToken = (user) => {
   return jwt.sign(
     {
-      userId: user._id,
+      friendlyId: user.friendlyId,
       userName: user.username,
+      userId: user._id,
     },
     process.env.JWT_SECRET_KEY,
     { expiresIn: "1d" }
@@ -18,8 +19,9 @@ const generateAccessToken = (user) => {
 const generateRefreshToken = (user) => {
   return jwt.sign(
     {
-      userId: user._id,
+      friendlyId: user.friendlyId,
       userName: user.username,
+      userId: user._id,
     },
     process.env.REFRESH_TOKEN_SECRET_KEY,
     { expiresIn: "7d" }
@@ -61,7 +63,7 @@ const loginHandler = async (req, res) => {
     console.log("Set-Cookie Header:", res.getHeaders()["set-cookie"]);
 
     return res.status(200).json({
-      userId: user._id, // Include userId in the response
+      friendlyId: user.friendlyId,
       accessToken,
       message: "Login successful",
       success: true,
@@ -80,7 +82,7 @@ const refreshAccessToken = async (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY);
-    const user = await User.findById(decoded.userId).lean();
+    const user = await User.findOne({ friendlyId: decoded.friendlyId }).lean();
 
     if (!user) {
       return res.status(401).json({ message: "Unauthorized: User not found" });

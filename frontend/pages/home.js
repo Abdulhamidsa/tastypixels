@@ -13,7 +13,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 export default function About() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
-  const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore } = useFetchData();
+  const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId } = useFetchData();
   const { handleVote, loadingVote } = useVote(uploads, setUploads);
   const { comments, showComments, loadingComments, deletingCommentId, handleToggleComments, handleAddComment, handleDeleteComment } = useComments();
   const [selectedUploadId, setSelectedUploadId] = useState(null);
@@ -202,6 +202,7 @@ export default function About() {
                   onClose={onClose}
                   onOpen={onOpen}
                   handleOpen={handleOpen}
+                  friendlyId={friendlyId}
                 />
               ))}
               {loadingMore && (

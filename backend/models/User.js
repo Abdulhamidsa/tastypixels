@@ -48,7 +48,6 @@ const memberSchema = new mongoose.Schema(
     },
     friendlyId: {
       type: String,
-      required: true,
       unique: true,
     },
     uploads: [uploadSchema],

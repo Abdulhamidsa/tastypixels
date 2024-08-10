@@ -10,6 +10,7 @@ const useFetchData = () => {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [userData, setUserData] = useState({});
+  const [friendlyId, setFriendlyId] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const toast = useToast();
@@ -28,7 +29,10 @@ const useFetchData = () => {
         userData = await userResponse.json();
         likedPosts = userData.likedPosts || [];
         dislikedPosts = userData.dislikedPosts || [];
+
         setUserData(userData);
+        setFriendlyId(userData.friendlyId); // Extract and set the friendlyId
+        console.log("Friendly ID: ", userData.friendlyId);
       }
 
       const postsResponse = await fetchWithTokenRefresh(`https://tastypixels-backend.up.railway.app/recipes/all-posts?page=${page}`);
@@ -48,7 +52,6 @@ const useFetchData = () => {
           isDisliked: dislikedPosts.some((post) => post.uploadId === upload._id),
         }));
 
-        // Ensure no duplicate uploads are added
         setUploads((prevUploads) => {
           const existingUploadIds = new Set(prevUploads.map((upload) => upload._id));
           const uniqueUploads = initializedUploads.filter((upload) => !existingUploadIds.has(upload._id));
@@ -82,7 +85,7 @@ const useFetchData = () => {
     }
   };
 
-  return { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore };
+  return { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId };
 };
 
 export default useFetchData;

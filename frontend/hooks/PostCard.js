@@ -7,11 +7,13 @@ import VoteButton from "@/hooks/VoteButton";
 import CommentsSection from "@/components/CommentsSection";
 import useComments from "@/hooks/useComments";
 import ImageModal from "@/hooks/ImageModal";
-import styles from "@/styles/Home.module.css";
+// import { useFetchData } from "@/hooks/useFetchData";
+import { useAuth } from "@/context/AuthContext";
 
-const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote }) => {
+const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote, friendlyId }) => {
   const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } = useComments();
-
+  // const { uploads } = useFetchData();
+  const { state } = useAuth();
   const [showCommentSection, setShowCommentSection] = useState(false);
   const [loadingCommentSection, setLoadingCommentSection] = useState(false);
 
@@ -107,6 +109,7 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
             showComments={showCommentSection}
             loadingComments={loadingComments[upload._id]}
             deletingCommentId={deletingCommentId}
+            friendlyId={friendlyId}
           />
         )}
       </Collapse>

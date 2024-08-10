@@ -19,11 +19,14 @@ const addComment = async (req, res) => {
     await connectToMongoDB();
     const userIdObj = new mongoose.Types.ObjectId(userId);
     const uploadIdObj = new mongoose.Types.ObjectId(uploadId);
+
     const user = await User.findById(userIdObj).lean();
     if (!user) {
       return res.status(404).json({ errors: ["User not found"] });
     }
     const username = user.username;
+    const friendlyId = user.friendlyId;
+
     const userWithUpload = await User.findOne({ "uploads._id": uploadIdObj });
     if (!userWithUpload) {
       return res.status(404).json({ errors: ["User not found for the upload"] });
@@ -34,11 +37,13 @@ const addComment = async (req, res) => {
       return res.status(404).json({ errors: ["Upload not found"] });
     }
 
+    // Create a new comment with all necessary fields
     const newComment = {
-      userId: userIdObj,
-      username,
+      userId: userIdObj, // Add userId to the comment
+      friendlyId, // Add friendlyId to the comment
+      username, // Add username to the comment
       text,
-      created: new Date(),
+      createdAt: new Date(), // Use createdAt instead of created
     };
 
     upload.comments.push(newComment);

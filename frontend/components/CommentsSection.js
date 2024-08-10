@@ -1,23 +1,38 @@
-import React, { useState } from "react";
-import { Box, Flex, Avatar, Text, Skeleton, IconButton, Textarea, Button, Spinner, useToast, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from "@chakra-ui/react";
+import React, { useState, useRef, useEffect } from "react";
+import { Box, Flex, Button, Avatar, Text, Skeleton, IconButton, Textarea, Spinner, useToast, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from "@chakra-ui/react";
 import { FaTimes } from "react-icons/fa";
 import { MdSend } from "react-icons/md";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useAuth } from "@/context/AuthContext";
 import useComments from "@/hooks/useComments";
-import { useRef } from "react";
-const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId }) => {
-  const { state } = useAuth();
-  const { isAuthenticated, userId } = state;
+
+const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId, friendlyId }) => {
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
-  const [visibleCommentsCount, setVisibleCommentsCount] = useState(3);
-  const [isExpanded, setIsExpanded] = useState(false);
   const toast = useToast();
   const { getTimeAgo } = useComments();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
   const cancelRef = useRef();
+  const { state } = useAuth();
+  const { isAuthenticated } = state;
+
+  const commentsContainerRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (commentsContainerRef.current) {
+      commentsContainerRef.current.scrollTo({
+        top: commentsContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!loadingComments) {
+      scrollToBottom();
+    }
+  }, [comments, loadingComments]);
 
   const handleAddCommentClick = async () => {
     if (!isAuthenticated) {
@@ -50,7 +65,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
         throw new Error("Failed to add comment");
       }
       setNewComment("");
-      fetchComments(uploadId);
+      await fetchComments(uploadId);
 
       toast({
         title: "Comment added",
@@ -58,6 +73,8 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
         duration: 3000,
         isClosable: true,
       });
+
+      scrollToBottom(); // Scroll to the bottom after adding the comment
     } catch (error) {
       console.error("Error adding comment:", error);
       toast({
@@ -71,15 +88,6 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
     }
   };
 
-  const handleShowMore = () => {
-    setIsExpanded(true);
-    setVisibleCommentsCount(comments.length);
-  };
-
-  const handleShowLess = () => {
-    setIsExpanded(false);
-    setVisibleCommentsCount(3);
-  };
   const onCloseAlert = () => setIsAlertOpen(false);
 
   const onDeleteClick = (commentId) => {
@@ -108,37 +116,54 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
         </Box>
       ) : (
         <Box w="100%">
-          {comments.slice(0, visibleCommentsCount).map((comment) => (
-            <Box key={comment._id} p={3} borderWidth="1px" w="100%">
-              <Flex alignItems="center" mb={2}>
-                <Avatar size="sm" name={comment.username} />
-                <Box ml={3}>
-                  <Text fontWeight="bold">{comment.username}</Text>
-                  <Text fontSize="xs" color="gray.500">
-                    {getTimeAgo(comment.createdAt)}
-                  </Text>
-                </Box>
-                <Flex justifyContent="space-between" alignItems="center" ml="auto">
-                  {deletingCommentId === comment._id && comment.username === userId ? (
-                    <Spinner size="xs" />
-                  ) : (
-                    comment.userId === userId && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => onDeleteClick(comment._id)} size="xs" variant="ghost" colorScheme="red" />
-                  )}
-                  <Text fontSize="xs" color="gray.500">
-                    {comment.userId}
-                  </Text>
+          {/* Scrollable comments section */}
+          <Box
+            ref={commentsContainerRef}
+            maxH="300px"
+            overflowY="auto"
+            borderWidth="1px"
+            p={2}
+            sx={{
+              "::-webkit-scrollbar": {
+                width: "6px", // Adjust the width of the scrollbar
+              },
+              "::-webkit-scrollbar-track": {
+                background: "#f1f1f1", // Track color
+              },
+              "::-webkit-scrollbar-thumb": {
+                background: "#888", // Thumb color
+                borderRadius: "10px",
+              },
+              "::-webkit-scrollbar-thumb:hover": {
+                background: "#555", // Thumb color on hover
+              },
+            }}
+          >
+            {comments.map((comment) => (
+              <Box key={comment._id} p={3} borderWidth="1px" w="100%">
+                <Flex alignItems="center" mb={2}>
+                  <Avatar size="sm" name={comment.username} />
+                  <Box ml={3}>
+                    <Text fontWeight="bold">{comment.username}</Text>
+                    <Text fontSize="xs" color="gray.500">
+                      {getTimeAgo(comment.createdAt)}
+                    </Text>
+                  </Box>
+                  <Flex justifyContent="space-between" alignItems="center" ml="auto">
+                    {deletingCommentId === comment._id && comment.username === friendlyId ? (
+                      <Spinner size="xs" />
+                    ) : (
+                      comment.friendlyId === friendlyId && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => onDeleteClick(comment._id)} size="xs" variant="ghost" colorScheme="red" />
+                    )}
+                  </Flex>
                 </Flex>
-              </Flex>
-              <Text>{comment.text}</Text>
-            </Box>
-          ))}
-          {comments.length > 3 && (
-            <Button onClick={isExpanded ? handleShowLess : handleShowMore} mt={2} variant="link" colorScheme="teal">
-              {isExpanded ? "Show less comments" : "Show more comments"}
-            </Button>
-          )}
-          {!disableFeatures ? (
-            <Box display="flex" alignItems="center">
+                <Text>{comment.text}</Text>
+              </Box>
+            ))}
+          </Box>
+
+          {!disableFeatures && (
+            <Box display="flex" alignItems="center" mt={3}>
               <Textarea
                 placeholder="Add a comment..."
                 size="sm"
@@ -155,7 +180,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
               />
               <IconButton height="40px" width="40px" borderRadius="none" alignSelf="flex-end" icon={addingComment ? <Spinner size="sm" /> : <MdSend style={{ transform: "rotate(-45deg)" }} />} aria-label="Send Comment" onClick={handleAddCommentClick} variant="outline" />
             </Box>
-          ) : null}
+          )}
         </Box>
       )}
 

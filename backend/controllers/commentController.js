@@ -6,6 +6,7 @@ const handleComments = async (req, res) => {
   await connectToMongoDB();
   const { uploadId } = req.query;
   console.log("Upload ID:", uploadId);
+
   if (!mongoose.Types.ObjectId.isValid(uploadId)) {
     console.error("Invalid uploadId:", uploadId);
     return res.status(400).json({ errors: ["Invalid uploadId"] });
@@ -22,12 +23,18 @@ const handleComments = async (req, res) => {
       return res.status(404).json({ errors: ["Upload not found"] });
     }
 
-    const comments = upload.comments.map((comment) => ({
-      _id: comment._id,
-      text: comment.text,
-      username: comment.username,
-      createdAt: comment.createdAt,
-    }));
+    const comments = await Promise.all(
+      upload.comments.map(async (comment) => {
+        const user = await User.findById(comment.userId).lean();
+        return {
+          _id: comment._id,
+          text: comment.text,
+          username: comment.username,
+          friendlyId: user ? user.friendlyId : null,
+          createdAt: comment.createdAt,
+        };
+      })
+    );
 
     return res.status(200).json(comments);
   } catch (error) {
