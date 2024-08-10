@@ -15,7 +15,7 @@ const useComments = () => {
   const fetchComments = async (uploadId) => {
     setLoadingComments((prev) => ({ ...prev, [uploadId]: true }));
     try {
-      const response = await fetchWithTokenRefresh(`https://tastypixels-production.up.railway.app/api/comments?uploadId=${uploadId}`);
+      const response = await fetchWithTokenRefresh(`https://tastypixels-backend.up.railway.app/api/comments?uploadId=${uploadId}`);
       if (!response.ok) throw new Error("Failed to fetch comments");
 
       const fetchedComments = await response.json();
