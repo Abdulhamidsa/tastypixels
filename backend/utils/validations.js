@@ -1,5 +1,5 @@
 const User = require("@/models/User");
-import { nanoid } from "nanoid";
+const { nanoid } = require("nanoid");
 
 async function checkExistingUser(email) {
   try {
@@ -46,4 +46,5 @@ const generateFriendlyId = async (username) => {
   }
   return friendlyId;
 };
+
 module.exports = { checkExistingUser, generateFriendlyId, checkExistingUsername, isValidEmail, isValidPassword };
