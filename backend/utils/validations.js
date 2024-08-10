@@ -1,5 +1,5 @@
 const User = require("@/models/User");
-const { nanoid } = require("nanoid");
+import { nanoid } from "nanoid";
 
 async function checkExistingUser(email) {
   try {
