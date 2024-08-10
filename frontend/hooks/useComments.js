@@ -63,7 +63,7 @@ const useComments = () => {
 
     setDeletingCommentId(commentId);
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-production.up.railway.app/api/delete-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/delete-comment", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ commentId }),
