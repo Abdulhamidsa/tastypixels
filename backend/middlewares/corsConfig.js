@@ -1,7 +1,7 @@
 const cors = require("cors");
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://tastypixels-backend.up.railway.app"],
+  origin: ["http://localhost:3000", "https://tastypixels-git-developing-abdulhamidsas-projects.vercel.app", "https://tastypixels-vnvi.vercel.app"],
   optionsSuccessStatus: 200,
   credentials: true,
 };
