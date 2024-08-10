@@ -7,9 +7,9 @@ const AuthContext = createContext();
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      return { ...state, isAuthenticated: true, token: action.payload.token, username: action.payload.username, loading: false };
+      return { ...state, isAuthenticated: true, token: action.payload.token, userId: action.payload.userId, loading: false };
     case "LOGOUT":
-      return { ...state, isAuthenticated: false, token: null, username: null, loading: false };
+      return { ...state, isAuthenticated: false, token: null, userId: null, loading: false };
     case "SET_LOADING":
       return { ...state, loading: action.payload };
     default:
@@ -21,19 +21,19 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     isAuthenticated: false,
     token: null,
-    username: null,
+    userId: null,
     loading: true,
   });
 
   useEffect(() => {
     const checkAuth = async () => {
       let accessToken = getAccessToken();
-      let username = null;
+      let userId = null;
 
       if (accessToken) {
         try {
           const decodedToken = jwtDecode(accessToken);
-          username = decodedToken.userName;
+          userId = decodedToken.userId;
         } catch (error) {
           console.error("Failed to decode access token:", error);
         }
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
           accessToken = await refreshAccessToken();
           if (accessToken) {
             const decodedToken = jwtDecode(accessToken);
-            username = decodedToken.userName;
+            userId = decodedToken.userId;
           }
         } catch {
           dispatch({ type: "LOGOUT" });
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      dispatch({ type: "LOGIN", payload: { token: accessToken, username } });
+      dispatch({ type: "LOGIN", payload: { token: accessToken, userId } });
     };
 
     checkAuth();
@@ -58,9 +58,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = (token) => {
     const decodedToken = jwtDecode(token);
-    const username = decodedToken.userName;
+    const userId = decodedToken.userId;
     setAccessToken(token);
-    dispatch({ type: "LOGIN", payload: { token, username } });
+    dispatch({ type: "LOGIN", payload: { token, userId } });
   };
 
   const logout = async () => {

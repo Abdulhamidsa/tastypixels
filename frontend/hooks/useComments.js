@@ -27,29 +27,54 @@ const useComments = () => {
     }
   };
 
-  const handleAddComment = async (uploadId, commentText) => {
+  const handleAddComment = async (uploadId, newComment) => {
     if (!isAuthenticated) {
-      toast({ title: "Not authenticated", description: "Please log in to comment", status: "warning", isClosable: true });
-      return null;
+      toast({
+        title: "Not authenticated",
+        description: "Please log in to comment",
+        status: "warning",
+        isClosable: true,
+      });
+      return;
     }
-    if (!commentText.trim()) return null;
+
+    if (!newComment.trim()) return;
 
     setAddingComment(true);
-    try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/add-comment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uploadId, text: commentText }),
-      });
-      if (!response.ok) throw new Error("Failed to add comment");
 
-      const newComment = await response.json();
-      toast({ title: "Comment added", status: "success", duration: 3000, isClosable: true });
-      return newComment;
+    try {
+      const response = await fetchWithTokenRefresh("http://localhost:8000/api/add-comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uploadId,
+          text: newComment,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add comment");
+      }
+
+      setNewComment("");
+      fetchComments(uploadId);
+
+      toast({
+        title: "Comment added",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
       console.error("Error adding comment:", error);
-      toast({ title: "Error", description: "Failed to add comment", status: "error", isClosable: true });
-      return null;
+      toast({
+        title: "Error",
+        description: "Failed to add comment",
+        status: "error",
+        isClosable: true,
+      });
     } finally {
       setAddingComment(false);
     }
@@ -82,6 +107,7 @@ const useComments = () => {
       setDeletingCommentId(null);
     }
   };
+
   const getTimeAgo = (date) => {
     const now = new Date();
     const commentDate = new Date(date);

@@ -8,7 +8,7 @@ import useComments from "@/hooks/useComments";
 import { useRef } from "react";
 const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId }) => {
   const { state } = useAuth();
-  const { isAuthenticated, username } = state;
+  const { isAuthenticated, userId } = state;
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const [visibleCommentsCount, setVisibleCommentsCount] = useState(3);
@@ -35,7 +35,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
     setAddingComment(true);
 
     try {
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/add-comment", {
+      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/add-comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,8 +49,6 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
       if (!response.ok) {
         throw new Error("Failed to add comment");
       }
-
-      // const addedComment = await response.json();
       setNewComment("");
       fetchComments(uploadId);
 
@@ -121,11 +119,14 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
                   </Text>
                 </Box>
                 <Flex justifyContent="space-between" alignItems="center" ml="auto">
-                  {deletingCommentId === comment._id && comment.username === username ? (
+                  {deletingCommentId === comment._id && comment.username === userId ? (
                     <Spinner size="xs" />
                   ) : (
-                    comment.username === username && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => onDeleteClick(comment._id)} size="xs" variant="ghost" colorScheme="red" />
+                    comment.userId === userId && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => onDeleteClick(comment._id)} size="xs" variant="ghost" colorScheme="red" />
                   )}
+                  <Text fontSize="xs" color="gray.500">
+                    {comment.userId}
+                  </Text>
                 </Flex>
               </Flex>
               <Text>{comment.text}</Text>

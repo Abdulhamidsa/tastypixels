@@ -46,6 +46,11 @@ const memberSchema = new mongoose.Schema(
       type: String,
       default: "user",
     },
+    friendlyId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     uploads: [uploadSchema],
     likedPosts: [
       {
