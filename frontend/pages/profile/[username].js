@@ -73,7 +73,7 @@ export default function Dashboard() {
   if (!isAuthenticated) {
     router.push("/");
   }
-  if (loading || !isAuthenticated) {
+  if (isLoading || !isAuthenticated) {
     return <Loading />;
   }
   const openUpload = () => {
