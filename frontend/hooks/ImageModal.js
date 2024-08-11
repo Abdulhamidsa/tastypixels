@@ -9,11 +9,11 @@ const ImageModal = ({ isOpen, onClose, selectedImage }) => {
         <ModalOverlay />
         <ModalContent bg="transparent" boxShadow="none" display="flex" alignItems="center" justifyContent="center">
           <Box position="relative" w="100%" h="100%" display="flex" justifyContent="center" alignItems="center">
-            <CloseButton onClick={onClose} size="lg" color="white" position="absolute" top="10px" right="10px" />
+            <CloseButton zIndex="1" onClick={onClose} size="lg" color="white" position="absolute" top="10px" right="10px" />
             <TransformWrapper>
               <TransformComponent>
-                <Box position="relative" w="600px" h="600px">
-                  <Image src={selectedImage} alt="Zoomed dish" objectFit="contain" layout="" width={700} height={700} sizes="70vw" />
+                <Box position="relative" w="700px" maxW="600px" h="auto">
+                  <Image src={selectedImage} alt="Zoomed dish" objectFit="contain" layout="fixed" width={400} height={500} sizes="(max-width: 600px) 100vw, 600px" />
                 </Box>
               </TransformComponent>
             </TransformWrapper>

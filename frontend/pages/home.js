@@ -13,7 +13,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 export default function About() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
-  const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId } = useFetchData();
+  const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId, userName, userRole } = useFetchData();
   const { handleVote, loadingVote } = useVote(uploads, setUploads);
   const { comments, showComments, loadingComments, deletingCommentId, handleToggleComments, handleAddComment, handleDeleteComment } = useComments();
   const [selectedUploadId, setSelectedUploadId] = useState(null);
@@ -24,7 +24,6 @@ export default function About() {
   const [currentFilter, setCurrentFilter] = useState("Filter by");
 
   const [showGoToTop, setShowGoToTop] = useState(false);
-
   const sortUploads = (order) => {
     const sortedUploads = [...uploads].sort((a, b) => {
       if (order === "a-z") {
@@ -203,6 +202,7 @@ export default function About() {
                   onOpen={onOpen}
                   handleOpen={handleOpen}
                   friendlyId={friendlyId}
+                  userRole={userRole}
                 />
               ))}
               {loadingMore && (

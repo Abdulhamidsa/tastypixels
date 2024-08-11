@@ -13,6 +13,8 @@ const useFetchData = () => {
   const [friendlyId, setFriendlyId] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");
   const toast = useToast();
 
   const fetchData = async (page) => {
@@ -31,8 +33,9 @@ const useFetchData = () => {
         dislikedPosts = userData.dislikedPosts || [];
 
         setUserData(userData);
-        setFriendlyId(userData.friendlyId); // Extract and set the friendlyId
-        console.log("Friendly ID: ", userData.friendlyId);
+        setFriendlyId(userData.friendlyId);
+        setUserName(userData.username);
+        setUserRole(userData.userRole);
       }
 
       const postsResponse = await fetchWithTokenRefresh(`https://tastypixels-backend.up.railway.app/recipes/all-posts?page=${page}`);
@@ -85,7 +88,7 @@ const useFetchData = () => {
     }
   };
 
-  return { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId };
+  return { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId, userName, userRole };
 };
 
 export default useFetchData;

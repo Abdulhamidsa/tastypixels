@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Flex, Button, Avatar, Text, Skeleton, IconButton, Textarea, Spinner, useToast, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from "@chakra-ui/react";
+import { Box, Flex, Button, Avatar, Text, Skeleton, IconButton, Textarea, Spinner, Badge, useToast, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from "@chakra-ui/react";
 import { FaTimes } from "react-icons/fa";
 import { MdSend } from "react-icons/md";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useAuth } from "@/context/AuthContext";
 import useComments from "@/hooks/useComments";
 
-const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId, friendlyId }) => {
+const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId, friendlyId, userRole }) => {
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const toast = useToast();
@@ -16,7 +16,6 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
   const cancelRef = useRef();
   const { state } = useAuth();
   const { isAuthenticated } = state;
-
   const commentsContainerRef = useRef(null);
   const scrollToBottom = () => {
     if (commentsContainerRef.current) {
@@ -143,6 +142,11 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
                   <Avatar size="sm" name={comment.username} />
                   <Box ml={3}>
                     <Text fontWeight="bold">{comment.username}</Text>
+                    {comment.username === "Abdulhamid" && (
+                      <Badge ml={2} colorScheme="purple">
+                        Admin
+                      </Badge>
+                    )}
                     <Text fontSize="xs" color="gray.500">
                       {getTimeAgo(comment.createdAt)}
                     </Text>

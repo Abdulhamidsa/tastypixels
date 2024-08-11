@@ -12,7 +12,8 @@ import Upload from "@/components/Upload";
 
 const Navbar = () => {
   const { state, logout } = useAuth();
-  const { isAuthenticated, loading, username } = state;
+  const { isAuthenticated, loading, userName } = state;
+  console.log(userName);
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const [formType, setFormType] = useState(null);
@@ -80,7 +81,7 @@ const Navbar = () => {
             <>
               <ChakraLink onClick={() => handleOpenModal("logout")}>Logout</ChakraLink>
 
-              <ChakraLink as={NextLink} href={`/profile/${username}`} onClick={onMenuClose}>
+              <ChakraLink as={NextLink} href={`/profile/${userName}`} onClick={onMenuClose}>
                 Profile
               </ChakraLink>
             </>
@@ -102,7 +103,7 @@ const Navbar = () => {
                   </ChakraLink>
                   {isAuthenticated && (
                     <>
-                      <ChakraLink as={NextLink} href={`/profile/${username}`} onClick={onMenuClose}>
+                      <ChakraLink as={NextLink} href={`/profile/${userName}`} onClick={onMenuClose}>
                         Profile
                       </ChakraLink>
                       <Button onClick={() => handleOpenModal("logout")}>Logout</Button>

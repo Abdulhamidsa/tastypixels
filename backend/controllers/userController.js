@@ -4,7 +4,7 @@ const getUserProfile = async (req, res) => {
   try {
     await connectToMongoDB();
     const userId = req.user.userId;
-    const user = await User.findById(userId).select("-userRole -deletedAt -createdAt -updatedAt -_id").lean();
+    const user = await User.findById(userId).select("-deletedAt -createdAt -updatedAt -_id").lean();
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

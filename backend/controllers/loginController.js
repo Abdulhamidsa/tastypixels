@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const connectToMongoDB = require("../database/db");
+const { generateFriendlyId } = require("../utils/validations");
 require("dotenv").config();
 
 const generateAccessToken = (user) => {
@@ -10,6 +11,7 @@ const generateAccessToken = (user) => {
       friendlyId: user.friendlyId,
       userName: user.username,
       userId: user._id,
+      userRole: user.userRole,
     },
     process.env.JWT_SECRET_KEY,
     { expiresIn: "1d" }
@@ -22,6 +24,7 @@ const generateRefreshToken = (user) => {
       friendlyId: user.friendlyId,
       userName: user.username,
       userId: user._id,
+      userRole: user.userRole,
     },
     process.env.REFRESH_TOKEN_SECRET_KEY,
     { expiresIn: "7d" }
@@ -37,7 +40,7 @@ const loginHandler = async (req, res) => {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const user = await User.findOne({ email }).lean();
+    let user = await User.findOne({ email }).lean();
 
     if (!user) {
       return res.status(401).json({ message: "User not found" });
@@ -46,6 +49,11 @@ const loginHandler = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid password" });
+    }
+
+    if (!user.friendlyId) {
+      const friendlyId = await generateFriendlyId(user.username);
+      user = await User.findOneAndUpdate({ _id: user._id }, { friendlyId }, { new: true }).lean(); // Fetch the updated user
     }
 
     const accessToken = generateAccessToken(user);

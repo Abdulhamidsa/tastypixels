@@ -10,7 +10,7 @@ import ImageModal from "@/hooks/ImageModal";
 // import { useFetchData } from "@/hooks/useFetchData";
 import { useAuth } from "@/context/AuthContext";
 
-const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote, friendlyId }) => {
+const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote, friendlyId, userRole }) => {
   const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } = useComments();
   // const { uploads } = useFetchData();
   const { state } = useAuth();
@@ -110,6 +110,7 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
             loadingComments={loadingComments[upload._id]}
             deletingCommentId={deletingCommentId}
             friendlyId={friendlyId}
+            userRole={userRole}
           />
         )}
       </Collapse>

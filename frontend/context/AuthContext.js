@@ -1,15 +1,31 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 const AuthContext = createContext();
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      return { ...state, isAuthenticated: true, token: action.payload.token, userId: action.payload.userId, loading: false };
+      return {
+        ...state,
+        isAuthenticated: true,
+        token: action.payload.token,
+        userId: action.payload.userId,
+        userRole: action.payload.userRole,
+        userName: action.payload.userName, // Add userName to state
+        loading: false,
+      };
     case "LOGOUT":
-      return { ...state, isAuthenticated: false, token: null, userId: null, loading: false };
+      return {
+        ...state,
+        isAuthenticated: false,
+        token: null,
+        userId: null,
+        userRole: null,
+        userName: null, // Clear userName on logout
+        loading: false,
+      };
     case "SET_LOADING":
       return { ...state, loading: action.payload };
     default:
@@ -22,6 +38,8 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: false,
     token: null,
     userId: null,
+    userRole: null,
+    userName: null, // Initialize userName in state
     loading: true,
   });
 
@@ -29,11 +47,16 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       let accessToken = getAccessToken();
       let userId = null;
+      let userRole = null;
+      let userName = null;
 
       if (accessToken) {
         try {
           const decodedToken = jwtDecode(accessToken);
           userId = decodedToken.userId;
+          userRole = decodedToken.userRole;
+          userName = decodedToken.userName; // Extract userName from token
+          console.log("decodedToken", decodedToken);
         } catch (error) {
           console.error("Failed to decode access token:", error);
         }
@@ -43,6 +66,8 @@ export const AuthProvider = ({ children }) => {
           if (accessToken) {
             const decodedToken = jwtDecode(accessToken);
             userId = decodedToken.userId;
+            userRole = decodedToken.userRole;
+            userName = decodedToken.userName; // Extract userName from refreshed token
           }
         } catch {
           dispatch({ type: "LOGOUT" });
@@ -50,17 +75,31 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      dispatch({ type: "LOGIN", payload: { token: accessToken, userId } });
+      dispatch({
+        type: "LOGIN",
+        payload: { token: accessToken, userId, userRole, userName },
+      });
     };
 
     checkAuth();
   }, []);
 
   const login = (token) => {
-    const decodedToken = jwtDecode(token);
-    const userId = decodedToken.userId;
-    setAccessToken(token);
-    dispatch({ type: "LOGIN", payload: { token, userId } });
+    try {
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.userId;
+      const userRole = decodedToken.userRole;
+      const userName = decodedToken.userName;
+      setAccessToken(token);
+
+      dispatch({
+        type: "LOGIN",
+        payload: { token, userId, userRole, userName },
+      });
+    } catch (error) {
+      console.error("Failed to log in:", error);
+      dispatch({ type: "LOGOUT" });
+    }
   };
 
   const logout = async () => {
@@ -95,6 +134,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
+        // Handle successful signup if needed
       } else {
         throw new Error(data.message || "Signup failed");
       }

@@ -21,7 +21,9 @@ const useVote = (uploads, setUploads) => {
       return;
     }
 
+    // Set loading state only for the specific upload
     setLoadingVote((prev) => ({ ...prev, [uploadId]: action }));
+
     try {
       const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/update-like-dislike", {
         method: "POST",
@@ -34,6 +36,7 @@ const useVote = (uploads, setUploads) => {
       if (!response.ok) {
         throw new Error("Failed to update likes/dislikes");
       }
+
       const data = await response.json();
       const updatedUploads = uploads.map((upload) =>
         upload._id === uploadId
@@ -51,6 +54,7 @@ const useVote = (uploads, setUploads) => {
     } catch (error) {
       console.error("Error updating likes/dislikes:", error);
     } finally {
+      // Reset the loading state for this upload
       setLoadingVote((prev) => ({ ...prev, [uploadId]: null }));
     }
   };
