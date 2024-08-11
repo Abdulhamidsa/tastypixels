@@ -10,10 +10,10 @@ import useVote from "@/hooks/useVote";
 import useComments from "@/hooks/useComments";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Image from "next/legacy/image";
 import Head from "next/head";
+// import * as Sentry from "@sentry/nextjs";
 
-export default function home() {
+export default function Home() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
   const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId, userName, userRole } = useFetchData();
@@ -96,6 +96,7 @@ export default function home() {
 
       onClose();
     } catch (error) {
+      // Sentry.captureException(error);
       console.error("Error submitting report:", error);
       toast({
         title: "Error",
