@@ -20,12 +20,10 @@ async function checkExistingUsername(username) {
     throw error;
   }
 }
-
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
-
 function isValidPassword(password) {
   const passwordRegex = /^(?=.*\d)[a-zA-Z\d]{8,}$/;
   return passwordRegex.test(password);

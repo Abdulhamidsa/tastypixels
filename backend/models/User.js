@@ -25,7 +25,6 @@ const uploadSchema = new mongoose.Schema({
   reportsCount: { type: Number, default: 0 },
   postedAt: { type: Date, default: Date.now },
 });
-
 const memberSchema = new mongoose.Schema(
   {
     username: {
@@ -82,5 +81,4 @@ const memberSchema = new mongoose.Schema(
   { timestamps: true }
 );
 const UserModel = mongoose.models.Member || mongoose.model("Member", memberSchema);
-
 module.exports = UserModel;

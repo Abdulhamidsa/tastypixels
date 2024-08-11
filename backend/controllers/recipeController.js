@@ -9,7 +9,7 @@ const fetchAllPosts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const usersData = await User.find({});
-    const uniqueUploads = new Map(); // Using a Map to ensure uniqueness
+    const uniqueUploads = new Map();
     let userData = {};
 
     if (req.user) {

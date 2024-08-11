@@ -11,7 +11,6 @@ export const LoginContext = createContext();
 export default function Layout({ children }) {
   const { state } = useAuth();
   const { isAuthenticated, loading, isLoading, userName, friendlyId } = state;
-  console.log(userName, loading, friendlyId);
 
   if (isLoading) {
     return <Loading />;

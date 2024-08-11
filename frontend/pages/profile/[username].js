@@ -45,11 +45,15 @@ import { useFetch } from "@/hooks/useFetchUser";
 import Image from "next/legacy/image";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import Loading from "@/components/Loading";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/router";
 
 export default function Dashboard() {
   const { user, loading, uploadList, updateUpload, deleteUpload } = useFetch();
   const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } = useComments();
   const toast = useToast();
+  const { state } = useAuth();
+  const { isAuthenticated, isLoading } = state;
   const [selectedUploadId, setSelectedUploadId] = useState(null);
   const [showCommentSection, setShowCommentSection] = useState({});
   const [loadingCommentSection, setLoadingCommentSection] = useState({});
@@ -64,7 +68,14 @@ export default function Dashboard() {
   const [password, setPassword] = useState("");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
+  const router = useRouter();
 
+  if (!isAuthenticated) {
+    router.push("/");
+  }
+  if (loading || !isAuthenticated) {
+    return <Loading />;
+  }
   const openUpload = () => {
     setIsUploadOpen(true);
   };

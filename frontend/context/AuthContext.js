@@ -1,9 +1,7 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
 import { jwtDecode } from "jwt-decode";
-
 const AuthContext = createContext();
-
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
@@ -32,7 +30,6 @@ const authReducer = (state, action) => {
       return state;
   }
 };
-
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     isAuthenticated: false,
@@ -42,7 +39,6 @@ export const AuthProvider = ({ children }) => {
     userName: null,
     loading: true,
   });
-
   useEffect(() => {
     const checkAuth = async () => {
       let accessToken = getAccessToken();
@@ -79,13 +75,10 @@ export const AuthProvider = ({ children }) => {
         payload: { token: accessToken, userId, userRole, userName },
       });
     };
-
     checkAuth();
   }, []);
-
   const signin = async (values) => {
     dispatch({ type: "SET_LOADING", payload: true });
-
     try {
       const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
         method: "POST",
@@ -95,22 +88,18 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(values),
         credentials: "include",
       });
-
       const data = await response.json();
-
       if (response.ok) {
         const token = data.accessToken;
         const decodedToken = jwtDecode(token);
         const userId = decodedToken.userId;
         const userRole = decodedToken.userRole;
         const userName = decodedToken.userName;
-
         setAccessToken(token);
         dispatch({
           type: "LOGIN",
           payload: { token, userId, userRole, userName },
         });
-
         return { success: true };
       } else {
         throw new Error(data.message || "Login failed");
@@ -122,7 +111,6 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: "SET_LOADING", payload: false });
     }
   };
-
   const logout = async () => {
     dispatch({ type: "LOGOUT", payload: true });
 
@@ -143,7 +131,6 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: "LOGOUT", payload: false });
     }
   };
-
   const signup = async (signupData) => {
     dispatch({ type: "SET_LOADING", payload: true });
 

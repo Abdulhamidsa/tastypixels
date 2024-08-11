@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Image from "next/legacy/image";
 
-export default function About() {
+export default function home() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
   const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId, userName, userRole } = useFetchData();

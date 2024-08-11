@@ -6,7 +6,6 @@ const corsConfig = require("@/middlewares/corsConfig");
 const cookieParser = require("cookie-parser");
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
-
 const recipeRoutes = require("@/routes/recipeRoutes");
 const authRoutes = require("@/routes/authRoutes");
 const userRoutes = require("@/routes/userRoutes");
@@ -18,7 +17,6 @@ const uploadRoutes = require("@/routes/uploadRoutes");
 const deletePostRoutes = require("@/routes/deletePostRoutes");
 const editPostRoutes = require("@/routes/editPostRoutes");
 const userValidationRoutes = require("@/routes/userValidationRoutes");
-
 const app = express();
 const port = process.env.SERVER_PORT;
 const swaggerOptions = {
@@ -51,7 +49,6 @@ const swaggerOptions = {
   },
   apis: ["routes/*.js"],
 };
-
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
