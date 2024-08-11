@@ -1,7 +1,9 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
 import { jwtDecode } from "jwt-decode";
+
 const AuthContext = createContext();
+
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
@@ -30,6 +32,7 @@ const authReducer = (state, action) => {
       return state;
   }
 };
+
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     isAuthenticated: false,
@@ -39,46 +42,53 @@ export const AuthProvider = ({ children }) => {
     userName: null,
     loading: true,
   });
+
   useEffect(() => {
     const checkAuth = async () => {
       let accessToken = getAccessToken();
-      let userId = null;
-      let userRole = null;
-      let userName = null;
 
       if (accessToken) {
         try {
           const decodedToken = jwtDecode(accessToken);
-          userId = decodedToken.userId;
-          userRole = decodedToken.userRole;
-          userName = decodedToken.userName;
+          dispatch({
+            type: "LOGIN",
+            payload: {
+              token: accessToken,
+              userId: decodedToken.userId,
+              userRole: decodedToken.userRole,
+              userName: decodedToken.userName,
+            },
+          });
         } catch (error) {
-          // console.error("Failed to decode access token:", error);
+          console.error("Failed to decode access token:", error);
         }
       } else {
         try {
           accessToken = await refreshAccessToken();
           if (accessToken) {
             const decodedToken = jwtDecode(accessToken);
-            userId = decodedToken.userId;
-            userRole = decodedToken.userRole;
-            userName = decodedToken.userName;
+            dispatch({
+              type: "LOGIN",
+              payload: {
+                token: accessToken,
+                userId: decodedToken.userId,
+                userRole: decodedToken.userRole,
+                userName: decodedToken.userName,
+              },
+            });
           }
         } catch {
           dispatch({ type: "LOGOUT" });
-          return;
         }
       }
-
-      dispatch({
-        type: "LOGIN",
-        payload: { token: accessToken, userId, userRole, userName },
-      });
     };
+
     checkAuth();
   }, []);
+
   const signin = async (values) => {
     dispatch({ type: "SET_LOADING", payload: true });
+
     try {
       const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
         method: "POST",
@@ -88,31 +98,38 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(values),
         credentials: "include",
       });
+
       const data = await response.json();
+
       if (response.ok) {
         const token = data.accessToken;
         const decodedToken = jwtDecode(token);
-        const userId = decodedToken.userId;
-        const userRole = decodedToken.userRole;
-        const userName = decodedToken.userName;
+
         setAccessToken(token);
         dispatch({
           type: "LOGIN",
-          payload: { token, userId, userRole, userName },
+          payload: {
+            token,
+            userId: decodedToken.userId,
+            userRole: decodedToken.userRole,
+            userName: decodedToken.userName,
+          },
         });
+
         return { success: true };
       } else {
         throw new Error(data.message || "Login failed");
       }
     } catch (error) {
-      // console.error("Signin error:", error);
+      console.error("Signin error:", error);
       throw error;
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
     }
   };
+
   const logout = async () => {
-    dispatch({ type: "LOGOUT", payload: true });
+    dispatch({ type: "LOGOUT" });
 
     try {
       const response = await fetch("https://tastypixels-backend.up.railway.app/auth/logout", {
@@ -126,11 +143,10 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Logout failed");
       }
     } catch (error) {
-      // console.error("Error logging out:", error);
-    } finally {
-      dispatch({ type: "LOGOUT", payload: false });
+      console.error("Error logging out:", error);
     }
   };
+
   const signup = async (signupData) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
@@ -146,11 +162,12 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
+        // Handle successful signup if needed
       } else {
         throw new Error(data.message || "Signup failed");
       }
     } catch (error) {
-      // console.error("Signup error:", error);
+      console.error("Signup error:", error);
       throw error;
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });

@@ -68,16 +68,16 @@ export default function Home() {
                 Login To Be Part Of The Community
               </Text>
               <Flex gap="2">
-                <Box mx="0.5rem" animation={`${dropIn} 1s ease-in-out forwards`} animationDelay="1s" opacity="0">
+                <Box mx="0.5rem" animation={`${dropIn} 1s ease-in-out forwards`} animationdelay="1s" opacity="0">
                   <GiPizzaSlice color="#FF7347" size="2.3em" />
                 </Box>
-                <Box mx="0.5rem" animation={`${dropIn} 1.5s ease-in-out forwards`} animationDelay="1.5s" opacity="0">
+                <Box mx="0.5rem" animation={`${dropIn} 1.5s ease-in-out forwards`} animationdelay="1.5s" opacity="0">
                   <GiHamburger color="#8B4513" size="2.3em" />
                 </Box>
-                <Box mx="0.5rem" animation={`${dropIn} 2s ease-in-out forwards`} animationDelay="2s" opacity="0">
+                <Box mx="0.5rem" animation={`${dropIn} 2s ease-in-out forwards`} animationdelay="2s" opacity="0">
                   <GiFrenchFries color="#FFD755" size="2.3em" />
                 </Box>
-                <Box mx="0.5rem" animation={`${dropIn} 2.5s ease-in-out forwards`} animationDelay="2.5s" opacity="0">
+                <Box mx="0.5rem" animation={`${dropIn} 2.5s ease-in-out forwards`} animationdelay="2.5s" opacity="0">
                   <GiHotDog color="#DC343C" size="2.3em" />
                 </Box>
               </Flex>

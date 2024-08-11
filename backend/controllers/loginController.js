@@ -14,7 +14,7 @@ const generateAccessToken = (user) => {
       userRole: user.userRole,
     },
     process.env.JWT_SECRET_KEY,
-    { expiresIn: "1d" }
+    { expiresIn: "15m" } // Shorter lifespan for access tokens
   );
 };
 
@@ -41,7 +41,6 @@ const loginHandler = async (req, res) => {
     }
 
     let user = await User.findOne({ email }).lean();
-
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
@@ -59,16 +58,13 @@ const loginHandler = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    console.log("Generated Refresh Token:", refreshToken);
-
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    console.log("Set-Cookie Header:", res.getHeaders()["set-cookie"]);
 
     return res.status(200).json({
       friendlyId: user.friendlyId,
@@ -91,7 +87,6 @@ const refreshAccessToken = async (req, res) => {
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY);
     const user = await User.findOne({ friendlyId: decoded.friendlyId }).lean();
-
     if (!user) {
       return res.status(401).json({ message: "Unauthorized: User not found" });
     }
@@ -108,10 +103,43 @@ const logoutHandler = (req, res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     path: "/",
   });
   return res.status(200).json({ message: "Logout successful", success: true });
 };
 
-module.exports = { loginHandler, refreshAccessToken, logoutHandler };
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) {
+        return res.status(401).json({ message: "Unauthorized: No refresh token provided" });
+      }
+      try {
+        const decodedRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY);
+        const newAccessToken = generateAccessToken(decodedRefresh);
+        res.setHeader("Authorization", `Bearer ${newAccessToken}`);
+        req.user = jwt.verify(newAccessToken, process.env.JWT_SECRET_KEY);
+        next();
+      } catch (refreshError) {
+        console.log("Refresh token verification error:", refreshError);
+        return res.status(403).json({ message: "Forbidden: Invalid refresh token" });
+      }
+    } else {
+      return res.status(403).json({ message: "Forbidden: Invalid token" });
+    }
+  }
+};
+
+module.exports = { loginHandler, refreshAccessToken, logoutHandler, authenticateToken };

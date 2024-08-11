@@ -21,9 +21,9 @@ export const refreshAccessToken = async () => {
       credentials: "include",
     });
 
-    // if (!response.ok) {
-    //   throw new Error("Failed to refresh access token");
-    // }
+    if (!response.ok) {
+      throw new Error("Failed to refresh access token");
+    }
 
     const data = await response.json();
     setAccessToken(data.accessToken);
