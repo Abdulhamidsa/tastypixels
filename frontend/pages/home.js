@@ -11,6 +11,7 @@ import useComments from "@/hooks/useComments";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Image from "next/legacy/image";
+import Head from "next/head";
 
 export default function home() {
   const { state } = useAuth();
@@ -163,6 +164,9 @@ export default function home() {
 
   return (
     <>
+      <Head>
+        <title>Home Page</title>
+      </Head>
       {/* <Box position="absolute" w="100%" h="100%" direction="column" bg="rgba(0, 0, 0, 0.5)" backdropFilter="blur(20px)" /> */}
       <Box p={5} maxW="420px" width="100%" m="auto">
         {loadingPosts ? (
