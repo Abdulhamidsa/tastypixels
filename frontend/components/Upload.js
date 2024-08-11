@@ -28,7 +28,7 @@ import {
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import useUpload from "@/hooks/useUpload";
 
-const Upload = ({ isOpen, onClose, editedUpload, addNewUpload }) => {
+const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
   const [title, setTitle] = useState(editedUpload ? editedUpload.title : "");
   const [description, setDescription] = useState(editedUpload ? editedUpload.description : "");
   const [selectedTags, setSelectedTags] = useState(editedUpload ? editedUpload.tags : []);

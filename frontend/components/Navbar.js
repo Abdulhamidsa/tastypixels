@@ -10,7 +10,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Image from "next/legacy/image";
 import Upload from "@/components/Upload";
-import Loading from "./Loading";
 
 const Navbar = () => {
   const { state, logout } = useAuth();
