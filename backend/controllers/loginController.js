@@ -103,3 +103,15 @@ const refreshAccessToken = async (req, res) => {
     return res.status(403).json({ message: "Forbidden: Invalid refresh token" });
   }
 };
+
+const logoutHandler = (req, res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    path: "/",
+  });
+  return res.status(200).json({ message: "Logout successful", success: true });
+};
+
+module.exports = { loginHandler, refreshAccessToken, logoutHandler };
