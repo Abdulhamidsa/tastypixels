@@ -1,4 +1,4 @@
-import { Box, useDisclosure, useToast, Spinner, IconButton } from "@chakra-ui/react";
+import { Box, useDisclosure, useToast, IconButton } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
 import FilterDrawer from "@/components/FilterDrawer";
@@ -10,6 +10,8 @@ import useVote from "@/hooks/useVote";
 import useComments from "@/hooks/useComments";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Image from "next/legacy/image";
+
 export default function About() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
@@ -161,6 +163,7 @@ export default function About() {
 
   return (
     <>
+      {/* <Box position="absolute" w="100%" h="100%" direction="column" bg="rgba(0, 0, 0, 0.5)" backdropFilter="blur(20px)" /> */}
       <Box p={5} maxW="420px" width="100%" m="auto">
         {loadingPosts ? (
           <Box display="grid" gap="10">

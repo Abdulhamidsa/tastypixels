@@ -124,6 +124,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    dispatch({ type: "LOGOUT", payload: true });
+
     try {
       const response = await fetch("https://tastypixels-backend.up.railway.app/auth/logout", {
         method: "POST",
@@ -137,6 +139,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error logging out:", error);
+    } finally {
+      dispatch({ type: "LOGOUT", payload: false });
     }
   };
 

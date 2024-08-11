@@ -38,7 +38,8 @@ const Upload = ({ isOpen, onClose, editedUpload, addNewUpload }) => {
   const fileInputRef = useRef(undefined);
   const inputRef = useRef();
 
-  const { imageUrl, isFileLoading, isUploading, uploadError, handleUpload, saveToDatabase } = useUpload(editedUpload, onClose);
+  const { isFileLoading, isUploading, uploadError, handleUpload, saveToDatabase } = useUpload(editedUpload, onClose);
+  const [isImageUpdated, setIsImageUpdated] = useState(false);
 
   const predefinedCategories = [
     "Appetizers & Snacks",
@@ -122,13 +123,27 @@ const Upload = ({ isOpen, onClose, editedUpload, addNewUpload }) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    setIsImageUpdated(true);
+
     handleUpload(file);
   };
 
   const handleSave = async () => {
-    const newUpload = await saveToDatabase({ title, description, selectedTags, selectedCategory }, editedUpload);
+    const imageToSave = isImageUpdated ? imageUrl : editedUpload?.imageUrl;
+
+    const newUpload = await saveToDatabase(
+      {
+        title,
+        description,
+        selectedTags,
+        selectedCategory,
+        imageUrl: imageToSave,
+      },
+      editedUpload
+    );
+
     if (newUpload && !editedUpload) {
-      addNewUpload(newUpload); // Call the parent callback to add the new upload
+      addNewUpload(newUpload);
     }
   };
 

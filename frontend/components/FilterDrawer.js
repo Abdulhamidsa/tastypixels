@@ -7,41 +7,72 @@ const FilterDrawer = ({ sortOrder, handleSortChange, currentFilter, filterMostLi
 
   return (
     <>
-      <IconButton aria-label="Filter" icon={<MdFilterList />} onClick={onOpen} position="fixed" top="250px" left="0px" zIndex="1" color="black" bg="white" _hover={{ bg: "gray.300" }} />
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+      <IconButton
+        aria-label="Filter"
+        icon={<MdFilterList />}
+        onClick={onOpen}
+        position="fixed"
+        top="100px"
+        left="-15px"
+        zIndex="1"
+        colorScheme="blue"
+        variant="outline"
+        // borderRadius="3px"
+        _hover={{
+          left: "0px",
+        }}
+        transition="left 0.3s ease"
+      />
+      <Drawer size="xs" isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay>
-          <DrawerContent bg="gray.800" color="white">
+          <DrawerContent bg="#212121" color="white">
             <DrawerCloseButton />
 
             <DrawerHeader>Filter Options</DrawerHeader>
 
             <DrawerBody>
               <Menu>
-                <MenuButton mb={3} as={Button} rightIcon={<ChevronDownIcon />} colorScheme="red" variant="outline">
+                <MenuButton mb={3} as={Button} rightIcon={<ChevronDownIcon />} colorScheme="black" borderRadius="4px" variant="outline">
                   Sort by Username: {sortOrder === "a-z" ? "A-Z" : "Z-A"}
                 </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => handleSortChange("a-z")}>A-Z</MenuItem>
-                  <MenuItem onClick={() => handleSortChange("z-a")}>Z-A</MenuItem>
+                <MenuList bg="#212121">
+                  <MenuItem bg="#212121" _hover={{ bg: "white", color: "black" }} onClick={() => handleSortChange("a-z")}>
+                    A-Z
+                  </MenuItem>
+                  <MenuItem bg="#212121" _hover={{ bg: "white", color: "black" }} onClick={() => handleSortChange("z-a")}>
+                    Z-A
+                  </MenuItem>
                 </MenuList>
               </Menu>
               <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="red" variant="outline">
+                <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="black" borderRadius="4px" variant="outline">
                   {currentFilter}
                 </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={filterMostLiked}>Most Liked</MenuItem>
-                  <MenuItem onClick={filterMostDisliked}>Most Disliked</MenuItem>
-                  <MenuItem onClick={filterMostCommented}>Most Commented</MenuItem>
-                  <MenuItem onClick={filterHotPosts}>Hot Posts</MenuItem>
-                  <MenuItem onClick={filterPostedRecently}>Posted Recently</MenuItem>
+                <MenuList bg="#212121">
+                  <MenuItem bg="#212121" color="white" _hover={{ bg: "white", color: "black" }} onClick={filterMostLiked}>
+                    Most Liked
+                  </MenuItem>
+                  <MenuItem bg="#212121" color="white" _hover={{ bg: "white", color: "black" }} onClick={filterMostDisliked}>
+                    Most Disliked
+                  </MenuItem>
+                  <MenuItem bg="#212121" color="white" _hover={{ bg: "white", color: "black" }} onClick={filterMostCommented}>
+                    Most Commented
+                  </MenuItem>
+                  <MenuItem bg="#212121" color="white" _hover={{ bg: "white", color: "black" }} onClick={filterHotPosts}>
+                    Hot Posts
+                  </MenuItem>
+                  <MenuItem bg="#212121" color="white" _hover={{ bg: "white", color: "black" }} onClick={filterPostedRecently}>
+                    Posted Recently
+                  </MenuItem>
                 </MenuList>
               </Menu>
               <Button
                 pos="absolute"
                 bottom="20px"
                 right="20px"
-                colorScheme="orange"
+                borderRadius="4px"
+                colorScheme="green"
+                variant="outline"
                 onClick={() => {
                   saveFilterAndCloseDrawer();
                   onClose();

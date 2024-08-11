@@ -9,7 +9,9 @@ import Footer from "./Footer";
 export const LoginContext = createContext();
 
 export default function Layout({ children }) {
-  const { isLoading } = useAuth();
+  const { state } = useAuth();
+  const { isAuthenticated, loading, isLoading, userName, friendlyId } = state;
+  console.log(userName, loading, friendlyId);
 
   if (isLoading) {
     return <Loading />;

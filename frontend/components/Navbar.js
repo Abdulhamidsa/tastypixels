@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Flex, Button, IconButton, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
+import { Flex, Button, IconButton, puserna, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiLogOut } from "react-icons/fi"; // Import the logout icon
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Image from "next/legacy/image";
 import Upload from "@/components/Upload";
+import Loading from "./Loading";
 
 const Navbar = () => {
   const { state, logout } = useAuth();
@@ -45,13 +46,9 @@ const Navbar = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Flex justify="center" align="center" height="100vh">
-        <Spinner size="xl" />
-      </Flex>
-    );
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   return (
     <>
@@ -88,7 +85,7 @@ const Navbar = () => {
               <ChakraLink as={NextLink} href={`/profile/${userName}`} onClick={onMenuClose}>
                 Profile
               </ChakraLink>
-              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={() => handleOpenModal("logout")} variant="outline" colorScheme="red" border="0" />
+              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={() => handleOpenModal("logout")} variant="outline" colorScheme="red" border="1px" />
             </>
           )}
         </Flex>

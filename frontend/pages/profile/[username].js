@@ -34,6 +34,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { FaUser, FaList, FaEdit, FaTrash, FaComment, FaFlag, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import CardSkeleton from "@/components/CardSkeleton";
@@ -43,6 +44,7 @@ import useComments from "@/hooks/useComments";
 import { useFetch } from "@/hooks/useFetchUser";
 import Image from "next/legacy/image";
 import { fetchWithTokenRefresh } from "@/utils/auth";
+import Loading from "@/components/Loading";
 
 export default function Dashboard() {
   const { user, loading, uploadList, updateUpload, deleteUpload } = useFetch();
@@ -60,7 +62,12 @@ export default function Dashboard() {
   const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [password, setPassword] = useState("");
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
 
+  const openUpload = () => {
+    setIsUploadOpen(true);
+  };
   const handleEditUpload = (upload) => {
     setSelectedUploadId(upload._id);
     onEditOpen();
@@ -194,7 +201,7 @@ export default function Dashboard() {
         <TabPanels>
           <TabPanel>
             {loading ? (
-              <Spinner />
+              <Loading />
             ) : (
               <Stack spacing={4}>
                 <Box>
@@ -370,7 +377,13 @@ export default function Dashboard() {
                 </Box>
               ))
             ) : (
-              <Text>No uploads available</Text>
+              <>
+                <Text>Hey {username}, You have not posted anything yet, ready for your first post?</Text>
+                <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+                <ChakraLink color="blue.400" onClick={() => openUpload()}>
+                  Upload Now
+                </ChakraLink>
+              </>
             )}
           </TabPanel>
         </TabPanels>
