@@ -81,7 +81,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
                       Password
                     </FormLabel>
                     <Tooltip label="Caps Lock is on" isOpen={isCapsLockActive} placement="left">
-                      <Input {...field} id="password" placeholder="Password" type="password" onKeyUp={handleKeyUp} />
+                      <Input {...field} id="password" placeholder="Password" type="password" onKeyUp={handleKeyUp} autoComplete="true" />
                     </Tooltip>
                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                   </FormControl>
@@ -94,7 +94,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
                       Repeat Password
                     </FormLabel>
                     <Tooltip label="Caps Lock is on" isOpen={isCapsLockActive} placement="left">
-                      <Input {...field} id="repeatPassword" placeholder="Repeat Password" type="password" onKeyUp={handleKeyUp} />
+                      <Input {...field} id="repeatPassword" placeholder="Repeat Password" type="password" onKeyUp={handleKeyUp} autoComplete="true" />
                     </Tooltip>
                     <FormErrorMessage>{form.errors.repeatPassword}</FormErrorMessage>
                   </FormControl>

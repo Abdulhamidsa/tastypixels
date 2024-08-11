@@ -61,7 +61,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
             {({ field, form }) => (
               <FormControl isInvalid={errors.password && form.touched.password}>
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <Input {...field} id="password" placeholder="password" type="password" />
+                <Input {...field} id="password" placeholder="password" type="password" autoComplete="true" />
                 <FormErrorMessage>{errors.password}</FormErrorMessage>
               </FormControl>
             )}

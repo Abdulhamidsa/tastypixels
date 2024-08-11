@@ -256,7 +256,7 @@ export default function Dashboard() {
                     </Box>
                   </Flex>
                 )}
-                <Button onClick={onOpen} colorScheme="blue">
+                <Button width="150px" onClick={onOpen} colorScheme="blue">
                   Edit User Info
                 </Button>
               </Stack>
@@ -310,7 +310,7 @@ export default function Dashboard() {
                   </Box>
                   <Upload isOpen={isEditOpen} onClose={onEditClose} editedUpload={uploadList.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={onEditClose} />
                   <Box position="relative" overflow="hidden" w="100%" objectFit="cover" height="auto">
-                    <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="80vw" width={100} height={100} objectFit="contain" style={{ width: "100%", height: "100%" }} />
+                    <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="80vw" width={200} height={150} objectFit="cover" style={{ width: "100%", height: "100%" }} />
                   </Box>
                   <Badge textAlign="center" p="3" colorScheme="orange">
                     {upload.category}

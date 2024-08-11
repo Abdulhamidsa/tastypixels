@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
           userRole = decodedToken.userRole;
           userName = decodedToken.userName;
         } catch (error) {
-          console.error("Failed to decode access token:", error);
+          // console.error("Failed to decode access token:", error);
         }
       } else {
         try {
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.message || "Login failed");
       }
     } catch (error) {
-      console.error("Signin error:", error);
+      // console.error("Signin error:", error);
       throw error;
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
@@ -126,7 +126,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Logout failed");
       }
     } catch (error) {
-      console.error("Error logging out:", error);
+      // console.error("Error logging out:", error);
     } finally {
       dispatch({ type: "LOGOUT", payload: false });
     }
@@ -146,12 +146,11 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Handle successful signup if needed
       } else {
         throw new Error(data.message || "Signup failed");
       }
     } catch (error) {
-      console.error("Signup error:", error);
+      // console.error("Signup error:", error);
       throw error;
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });

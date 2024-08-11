@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Flex, Button, IconButton, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
+import { Flex, IconButton, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiLogOut } from "react-icons/fi"; // Import the logout icon
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Image from "next/legacy/image";
 import Upload from "@/components/Upload";
+import Link from "next/link";
 
 const Navbar = () => {
   const { state, logout } = useAuth();
@@ -52,7 +53,7 @@ const Navbar = () => {
   return (
     <>
       <Flex zIndex="1" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" p={1} justify="flex-end" backdropFilter="blur(5px)">
-        <ChakraLink position="relative" W="100px" h="auto" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto" display="flex" alignItems="center">
+        <ChakraLink position="relative" w="100px" h="auto" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto" display="flex" alignItems="center">
           <Image src="/logo.png" alt="logo" width={85} height={85} priority layout="fixed" />
         </ChakraLink>
 
@@ -108,8 +109,27 @@ const Navbar = () => {
                   )}
                   {!isAuthenticated && (
                     <>
-                      <ChakraLink onClick={() => handleOpenModal("signup")}>Sign Up</ChakraLink>
-                      <ChakraLink onClick={() => handleOpenModal("signin")}>Sign In</ChakraLink>
+                      <Link href="/signup" passHref>
+                        <ChakraLink
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleOpenModal("signup");
+                          }}
+                        >
+                          Sign Up
+                        </ChakraLink>
+                      </Link>
+
+                      <Link href="/signin" passHref>
+                        <ChakraLink
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleOpenModal("signin");
+                          }}
+                        >
+                          Sign In
+                        </ChakraLink>
+                      </Link>
                     </>
                   )}
                 </VStack>
