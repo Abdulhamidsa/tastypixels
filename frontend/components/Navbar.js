@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Flex, Button, IconButton, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
+import { FiLogOut } from "react-icons/fi"; // Import the logout icon
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
 import SignUp from "@/components/Signup";
 import NextLink from "next/link";
@@ -13,7 +14,6 @@ import Upload from "@/components/Upload";
 const Navbar = () => {
   const { state, logout } = useAuth();
   const { isAuthenticated, loading, userName } = state;
-  console.log(userName);
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const [formType, setFormType] = useState(null);
@@ -37,6 +37,7 @@ const Navbar = () => {
   const handleOpenModal = (type) => {
     if (type === "logout") {
       handleLogout();
+      onMenuClose();
     } else {
       setFormType(type);
       onModalOpen();
@@ -54,13 +55,17 @@ const Navbar = () => {
 
   return (
     <>
-      <Flex zIndex="100" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" p={1} justify="flex-end" backdropFilter="blur(5px)">
-        <ChakraLink position="" top="15" left="0" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto">
-          <Image src="/logo.png" alt="logo" width="100" height="100" priority />
+      <Flex zIndex="1" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" p={1} justify="flex-end" backdropFilter="blur(5px)">
+        <ChakraLink position="relative" W="100px" h="auto" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto" display="flex" alignItems="center">
+          <Image src="/logo.png" alt="logo" width={85} height={85} priority layout="fixed" />
         </ChakraLink>
+
         <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
 
-        <Flex align="center" display={{ base: "none", md: "flex" }} p={3} gap={10}>
+        <Flex align="center" display={{ base: "none", md: "flex" }} pr={3} gap={10}>
+          <ChakraLink as={NextLink} href="/home">
+            Food Gallery
+          </ChakraLink>
           {!isAuthenticated && (
             <>
               <ChakraLink colorScheme="teal" variant="solid" onClick={() => handleOpenModal("signup")}>
@@ -77,19 +82,15 @@ const Navbar = () => {
               <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
             </>
           )}
+
           {isAuthenticated && (
             <>
-              <ChakraLink onClick={() => handleOpenModal("logout")}>Logout</ChakraLink>
-
               <ChakraLink as={NextLink} href={`/profile/${userName}`} onClick={onMenuClose}>
                 Profile
               </ChakraLink>
+              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={() => handleOpenModal("logout")} variant="outline" colorScheme="red" border="0" />
             </>
           )}
-
-          <ChakraLink as={NextLink} href="/home">
-            Food Gallery
-          </ChakraLink>
         </Flex>
         <Drawer isOpen={isMenuOpen} placement="right" onClose={onMenuClose} size={{ base: "full", md: "half" }}>
           <DrawerOverlay>
@@ -106,7 +107,7 @@ const Navbar = () => {
                       <ChakraLink as={NextLink} href={`/profile/${userName}`} onClick={onMenuClose}>
                         Profile
                       </ChakraLink>
-                      <Button onClick={() => handleOpenModal("logout")}>Logout</Button>
+                      <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={() => handleOpenModal("logout")} variant="outline" colorScheme="" />
                     </>
                   )}
                   {!isAuthenticated && (

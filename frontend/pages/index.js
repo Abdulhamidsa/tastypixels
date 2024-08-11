@@ -2,6 +2,8 @@ import { Box, Flex, Heading, Text, useBreakpointValue } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/legacy/image";
 import { useAuth } from "@/context/AuthContext";
+import { GiPizzaSlice } from "react-icons/gi";
+import { MdGridOn } from "react-icons/md"; // Import the grid/pixel-like icon
 
 export default function Home() {
   const { state } = useAuth();
@@ -21,24 +23,38 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box position="absolute" top="0" h="100dvh" w="100%">
+      <Box position="absolute" top="0" h={["100dvh", "100vh"]} w="100%">
+        <Image src="/bg-main.webp" alt="Background Image" layout="fill" objectFit="cover" quality={100} priority style={{ filter: "brightness(0.7)" }} />
+        <Box position="absolute" top="0" h={["100dvh", "100vh"]} w="100%" bg="rgba(0, 0, 0, 0.5)" display={overlayDisplay} />
+
         {isAuthenticated ? (
           <>
-            <Image src="/bg-main.jpg" alt="Background Image" layout="fill" objectFit="cover" quality={100} priority />
-            <Box position="absolute" top="0" h="100dvh" w="100%" bg="rgba(0, 0, 0, 0.5)" display={overlayDisplay} />
+            <Box position="absolute" top="0" h={["100dvh", "100vh"]} w="100%" bg="rgba(0, 0, 0, 0.5)" display={overlayDisplay} />
             <Flex m="auto" p="3" maxW="550px" direction="column" position="absolute" top="0" right="0" bottom="50" left="0" alignItems="center" justifyContent="center" textAlign="center" spacing={5}>
-              <Heading mb="3" fontSize="3xl" fontWeight="bold" color="white">
-                Welcome to Tasty Pixels!
-              </Heading>
-              <Text fontSize="lg" color="white">
-                Share your food pictures and enjoy others' culinary creations. Join our community and explore the world of food like never before. Discover new recipes, make new friends, and share your passion for food with the world.
+              <Text fontSize="lg" color="white" mt="2">
+                Unleash your passion for food by sharing your most delicious moments. Discover new recipes, connect with fellow food lovers, and make every meal a masterpiece.
               </Text>
             </Flex>
           </>
         ) : (
-          <Flex m="auto" direction="column" position="absolute" top="0" right="0" bottom="50" left="0" alignItems="center" justifyContent="center" textAlign="center" spacing={5}>
-            <Text color="white">Login to have access to be able to start uploading and sharing your food pictures with the world.</Text>
-          </Flex>
+          <>
+            <Flex m="auto" direction="column" position="absolute" top="0" right="0" bottom="50" left="0" alignItems="center" justifyContent="center" textAlign="center" spacing={5}>
+              <Heading mb="3" fontSize={{ base: "5xl", md: "7xl" }} fontWeight="bold" display="flex" alignItems="center" flexDirection={{ base: "column", md: "row" }}>
+                <Flex alignItems="center">
+                  Tasty
+                  <Box mx="0.5rem">
+                    <GiPizzaSlice />
+                  </Box>
+                </Flex>
+                <Flex alignItems="center" mt={{ base: 2, md: 0 }}>
+                  <Box mx="0.5rem" transform="rotate(175deg)">
+                    <MdGridOn />
+                  </Box>
+                  Pixels
+                </Flex>
+              </Heading>
+            </Flex>
+          </>
         )}
       </Box>
     </>

@@ -44,7 +44,7 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
         <Box color="black">
           <Heading fontSize="xl" fontWeight="bold">
             {upload.username}
-            {userRole === "admin" && (
+            {upload.userRole === "admin" && (
               <Badge ml={2} colorScheme="red">
                 Admin
               </Badge>

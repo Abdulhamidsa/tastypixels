@@ -1,6 +1,6 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -13,7 +13,7 @@ const authReducer = (state, action) => {
         token: action.payload.token,
         userId: action.payload.userId,
         userRole: action.payload.userRole,
-        userName: action.payload.userName, // Add userName to state
+        userName: action.payload.userName,
         loading: false,
       };
     case "LOGOUT":
@@ -23,7 +23,7 @@ const authReducer = (state, action) => {
         token: null,
         userId: null,
         userRole: null,
-        userName: null, // Clear userName on logout
+        userName: null,
         loading: false,
       };
     case "SET_LOADING":
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     token: null,
     userId: null,
     userRole: null,
-    userName: null, // Initialize userName in state
+    userName: null,
     loading: true,
   });
 
@@ -55,8 +55,7 @@ export const AuthProvider = ({ children }) => {
           const decodedToken = jwtDecode(accessToken);
           userId = decodedToken.userId;
           userRole = decodedToken.userRole;
-          userName = decodedToken.userName; // Extract userName from token
-          console.log("decodedToken", decodedToken);
+          userName = decodedToken.userName;
         } catch (error) {
           console.error("Failed to decode access token:", error);
         }
@@ -67,7 +66,7 @@ export const AuthProvider = ({ children }) => {
             const decodedToken = jwtDecode(accessToken);
             userId = decodedToken.userId;
             userRole = decodedToken.userRole;
-            userName = decodedToken.userName; // Extract userName from refreshed token
+            userName = decodedToken.userName;
           }
         } catch {
           dispatch({ type: "LOGOUT" });
@@ -84,27 +83,49 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (token) => {
-    try {
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.userId;
-      const userRole = decodedToken.userRole;
-      const userName = decodedToken.userName;
-      setAccessToken(token);
+  const signin = async (values) => {
+    dispatch({ type: "SET_LOADING", payload: true });
 
-      dispatch({
-        type: "LOGIN",
-        payload: { token, userId, userRole, userName },
+    try {
+      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+        credentials: "include",
       });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const token = data.accessToken;
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.userId;
+        const userRole = decodedToken.userRole;
+        const userName = decodedToken.userName;
+
+        setAccessToken(token);
+        dispatch({
+          type: "LOGIN",
+          payload: { token, userId, userRole, userName },
+        });
+
+        return { success: true };
+      } else {
+        throw new Error(data.message || "Login failed");
+      }
     } catch (error) {
-      console.error("Failed to log in:", error);
-      dispatch({ type: "LOGOUT" });
+      console.error("Signin error:", error);
+      throw error;
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
   const logout = async () => {
     try {
-      const response = await fetch("/api/api-logout", {
+      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -146,7 +167,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  return <AuthContext.Provider value={{ state, dispatch, login, logout, signup }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ state, dispatch, signin, logout, signup }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

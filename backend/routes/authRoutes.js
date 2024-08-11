@@ -82,9 +82,19 @@ router.post("/refresh-token", refreshAccessToken);
  * /auth/logout:
  *   post:
  *     summary: Logout a user
+ *     requestBody:
+ *       required: false
  *     responses:
  *       200:
  *         description: Successful logout
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Logout success message
  *       500:
  *         description: Internal server error
  */

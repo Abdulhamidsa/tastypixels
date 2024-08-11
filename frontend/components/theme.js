@@ -19,7 +19,7 @@ const theme = extendTheme({
   components: {
     Link: {
       baseStyle: {
-        textTransform: "uppercase",
+        textTransform: "",
         _hover: {
           textDecoration: "none",
           color: "blue.500",

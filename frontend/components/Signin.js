@@ -1,10 +1,7 @@
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
 import { FormControl, Link as ChakraLink, Text, FormLabel, Input, FormErrorMessage, Button, useToast, Box } from "@chakra-ui/react";
-import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
-import { setAccessToken } from "@/utils/auth";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Required"),
@@ -12,11 +9,7 @@ const validationSchema = Yup.object({
 });
 
 const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
-  const { dispatch } = useAuth();
-
-  // const { login } = useAuth();
-  // const { isLoggedIn } = useAuth();
-  const [loginStatus, setLoginStatus] = useState("idle");
+  const { signin } = useAuth();
   const toast = useToast();
 
   const handleSignUpClick = () => {
@@ -25,46 +18,20 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
   };
 
   const handleLogin = async (values, setErrors) => {
-    setLoginStatus("loading");
-
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-        credentials: "include",
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // localStorage.setItem("accessToken", data.accessToken); // Store accessToken in localStorage
+      const result = await signin(values);
+      if (result.success) {
+        onModalClose();
         toast({
-          title: "Signin Successful! Redirecting To Home Page",
+          title: "Signin Successful! Redirecting...",
           status: "success",
           duration: 1000,
           isClosable: true,
           position: "middle",
-          onCloseComplete: () => {
-            setLoginStatus("idle");
-            onModalClose();
-            // login();
-            setAccessToken(data.accessToken);
-            dispatch({ type: "LOGIN", payload: { accessToken: data.accessToken } });
-            // history.push("/home");
-            setLoginStatus("success");
-            console.log(data.message);
-          },
         });
-      } else {
-        setLoginStatus("error");
-        setErrors({ loginError: data.message }); // Use parsed response data
       }
     } catch (error) {
-      console.error("Sign in error:", error);
-      setLoginStatus("error");
+      setErrors({ loginError: error.message });
     }
   };
 
@@ -79,7 +46,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
         setSubmitting(false);
       }}
     >
-      {({ isSubmitting, errors }) => (
+      {({ errors }) => (
         <Form>
           <Field name="email">
             {({ field, form }) => (
@@ -104,14 +71,8 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
               {errors.loginError}
             </Box>
           )}
-          <Button mt={4} isLoading={loginStatus === "loading"} type="submit">
-            {loginStatus === "success" ? (
-              <>
-                <CheckCircleIcon color="green.700" />
-              </>
-            ) : (
-              "Sign In"
-            )}
+          <Button mt={4} type="submit">
+            Sign In
           </Button>
           <Text as="span" onClick={handleSignUpClick} color="blue.500" mt={2} display="block" cursor="pointer">
             Don't have an account yet? Sign up

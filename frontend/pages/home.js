@@ -166,7 +166,6 @@ export default function About() {
           <Box display="grid" gap="10">
             <CardSkeleton />
             <CardSkeleton />
-            <CardSkeleton />
           </Box>
         ) : (
           <InfiniteScroll
@@ -207,7 +206,6 @@ export default function About() {
               ))}
               {loadingMore && (
                 <>
-                  <CardSkeleton />
                   <CardSkeleton />
                   <CardSkeleton />
                 </>
