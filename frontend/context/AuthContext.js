@@ -1,6 +1,8 @@
-﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
+﻿import React, { createContext, useReducer, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
-import { jwtDecode } from "jwt-decode"; // Fixed the import
+import { jwtDecode } from "jwt-decode";
+import Loading from "@/components/Loading";
 
 const AuthContext = createContext();
 
@@ -43,56 +45,21 @@ export const AuthProvider = ({ children }) => {
     loading: true,
   });
 
+  const router = useRouter();
+
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuthentication = async () => {
+      console.log("AuthProvider - Checking authentication status...");
+
       let accessToken = getAccessToken();
 
-      if (accessToken) {
+      if (!accessToken) {
+        console.log("AuthProvider - No access token found, attempting to refresh...");
         try {
-          const decodedToken = jwtDecode(accessToken);
-
-          // Check if the token is about to expire (within 5 minutes)
-          if (Date.now() >= decodedToken.exp * 1000 - 5 * 60 * 1000) {
-            console.log("Token is about to expire, refreshing...");
-            accessToken = await refreshAccessToken();
-
-            if (accessToken) {
-              setAccessToken(accessToken); // Store the new access token
-              const newDecodedToken = jwtDecode(accessToken);
-              dispatch({
-                type: "LOGIN",
-                payload: {
-                  token: accessToken,
-                  userId: newDecodedToken.userId,
-                  userRole: newDecodedToken.userRole,
-                  userName: newDecodedToken.userName,
-                },
-              });
-            } else {
-              console.error("Failed to refresh access token, logging out.");
-              dispatch({ type: "LOGOUT" });
-            }
-          } else {
-            dispatch({
-              type: "LOGIN",
-              payload: {
-                token: accessToken,
-                userId: decodedToken.userId,
-                userRole: decodedToken.userRole,
-                userName: decodedToken.userName,
-              },
-            });
-          }
-        } catch (error) {
-          console.error("Failed to decode access token, logging out:", error);
-          dispatch({ type: "LOGOUT" });
-        }
-      } else {
-        try {
-          console.log("No access token found, attempting to refresh...");
           accessToken = await refreshAccessToken();
 
           if (accessToken) {
+            console.log("AuthProvider - Access token refreshed successfully.");
             setAccessToken(accessToken);
             const decodedToken = jwtDecode(accessToken);
             dispatch({
@@ -105,18 +72,52 @@ export const AuthProvider = ({ children }) => {
               },
             });
           } else {
-            console.error("No refresh token available, logging out.");
-            dispatch({ type: "LOGOUT" });
+            console.log("AuthProvider - Failed to refresh access token, redirecting to login.");
           }
         } catch (error) {
-          console.error("Failed to refresh access token, logging out:", error);
-          dispatch({ type: "LOGOUT" });
+          console.error("AuthProvider - Error refreshing access token:", error);
+        }
+      } else {
+        console.log("AuthProvider - Token found.");
+        try {
+          const decodedToken = jwtDecode(accessToken);
+          dispatch({
+            type: "LOGIN",
+            payload: {
+              token: accessToken,
+              userId: decodedToken.userId,
+              userRole: decodedToken.userRole,
+              userName: decodedToken.userName,
+            },
+          });
+        } catch (error) {
+          console.error("AuthProvider - Failed to decode access token, redirecting to login:", error);
         }
       }
+
+      dispatch({ type: "SET_LOADING", payload: false });
     };
 
-    checkAuth();
-  }, []);
+    checkAuthentication();
+
+    const handleRouteChange = () => {
+      dispatch({ type: "SET_LOADING", payload: true });
+      checkAuthentication();
+    };
+
+    router.events.on("routeChangeStart", handleRouteChange);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, [router, dispatch]);
+
+  if (state.loading) {
+    console.log("AuthProvider - Loading...");
+    return <Loading />;
+  }
+
+  console.log("AuthProvider - User authenticated, rendering children.");
 
   const signin = async (values) => {
     dispatch({ type: "SET_LOADING", payload: true });
