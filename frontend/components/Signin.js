@@ -37,7 +37,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
 
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
+      initialValues={{ email: "a@a.com", password: "Aboood166" }}
       validationSchema={validationSchema}
       validateOnBlur={true}
       validateOnChange={false}

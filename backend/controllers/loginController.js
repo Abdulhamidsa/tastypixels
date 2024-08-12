@@ -14,7 +14,7 @@ const generateAccessToken = (user) => {
       userRole: user.userRole,
     },
     process.env.JWT_SECRET_KEY,
-    { expiresIn: "10s" }
+    { expiresIn: "15m" } // Shorter lifespan for access tokens
   );
 };
 
@@ -58,22 +58,17 @@ const loginHandler = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-      maxAge: 15 * 60 * 1000,
-    });
-
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
       friendlyId: user.friendlyId,
+      accessToken,
       message: "Login successful",
       success: true,
     });

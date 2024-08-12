@@ -1,8 +1,6 @@
-﻿import React, { createContext, useReducer, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
 import { jwtDecode } from "jwt-decode";
-import Loading from "@/components/Loading";
 
 const AuthContext = createContext();
 
@@ -45,40 +43,11 @@ export const AuthProvider = ({ children }) => {
     loading: true,
   });
 
-  const router = useRouter();
-
   useEffect(() => {
-    const checkAuthentication = async () => {
-      console.log("AuthProvider - Checking authentication status...");
-
+    const checkAuth = async () => {
       let accessToken = getAccessToken();
 
-      if (!accessToken) {
-        console.log("AuthProvider - No access token found, attempting to refresh...");
-        try {
-          accessToken = await refreshAccessToken();
-
-          if (accessToken) {
-            console.log("AuthProvider - Access token refreshed successfully.");
-            setAccessToken(accessToken);
-            const decodedToken = jwtDecode(accessToken);
-            dispatch({
-              type: "LOGIN",
-              payload: {
-                token: accessToken,
-                userId: decodedToken.userId,
-                userRole: decodedToken.userRole,
-                userName: decodedToken.userName,
-              },
-            });
-          } else {
-            console.log("AuthProvider - Failed to refresh access token, redirecting to login.");
-          }
-        } catch (error) {
-          console.error("AuthProvider - Error refreshing access token:", error);
-        }
-      } else {
-        console.log("AuthProvider - Token found.");
+      if (accessToken) {
         try {
           const decodedToken = jwtDecode(accessToken);
           dispatch({
@@ -91,39 +60,37 @@ export const AuthProvider = ({ children }) => {
             },
           });
         } catch (error) {
-          console.error("AuthProvider - Failed to decode access token, redirecting to login:", error);
+          console.error("Failed to decode access token:", error);
+        }
+      } else {
+        try {
+          accessToken = await refreshAccessToken();
+          if (accessToken) {
+            const decodedToken = jwtDecode(accessToken);
+            dispatch({
+              type: "LOGIN",
+              payload: {
+                token: accessToken,
+                userId: decodedToken.userId,
+                userRole: decodedToken.userRole,
+                userName: decodedToken.userName,
+              },
+            });
+          }
+        } catch {
+          dispatch({ type: "LOGOUT" });
         }
       }
-
-      dispatch({ type: "SET_LOADING", payload: false });
     };
 
-    checkAuthentication();
-
-    const handleRouteChange = () => {
-      dispatch({ type: "SET_LOADING", payload: true });
-      checkAuthentication();
-    };
-
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
-    };
-  }, [router, dispatch]);
-
-  if (state.loading) {
-    console.log("AuthProvider - Loading...");
-    return <Loading />;
-  }
-
-  console.log("AuthProvider - User authenticated, rendering children.");
+    checkAuth();
+  }, []);
 
   const signin = async (values) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
+      const response = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -165,7 +132,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "LOGOUT" });
 
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/logout", {
+      const response = await fetch("http://localhost:8000/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -184,7 +151,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/signup", {
+      const response = await fetch("http://localhost:8000/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -19,7 +19,7 @@ const EditUserInfo = ({ user, onClose, stateChanger, setUpdate }) => {
     };
 
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/edit-post", {
+      const response = await fetchWithTokenRefresh("http://localhost:8000ackend.up.railway.app/api/edit-post", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

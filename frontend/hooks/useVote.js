@@ -25,7 +25,7 @@ const useVote = (uploads, setUploads) => {
     setLoadingVote((prev) => ({ ...prev, [uploadId]: action }));
 
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/update-like-dislike", {
+      const response = await fetchWithTokenRefresh("http://localhost:8000ackend.up.railway.app/api/update-like-dislike", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

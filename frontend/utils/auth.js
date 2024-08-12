@@ -16,7 +16,7 @@ export const removeAccessToken = () => {
 
 export const refreshAccessToken = async () => {
   try {
-    const response = await fetch("https://tastypixels-backend.up.railway.app/auth/refresh-token", {
+    const response = await fetch("http://localhost:8000/auth/refresh-token", {
       method: "POST",
       credentials: "include",
     });

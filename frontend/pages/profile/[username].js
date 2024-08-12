@@ -155,7 +155,7 @@ export default function Dashboard() {
     };
 
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/edit-post", {
+      const response = await fetchWithTokenRefresh("http://localhost:8000/api/edit-post", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -317,14 +317,14 @@ export default function Dashboard() {
                   </Badge>
                   <Flex p={4} gap={3} align="center">
                     <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                      <Button colorScheme="gray" variant="outline" cursor="none" _hover="none" style={{ pointerEvents: "none" }} disabled>
+                      <Button colorScheme="gray" variant="outline" cursor="none" style={{ pointerEvents: "none" }} disabled>
                         <FaArrowUp />
                       </Button>
                       <Text mx={2}>{upload.likes}</Text>
                     </Box>
 
                     <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                      <Button colorScheme="gray" variant="outline" cursor="auto" _hover="none" disabled style={{ pointerEvents: "none" }}>
+                      <Button colorScheme="gray" variant="outline" cursor="auto" disabled style={{ pointerEvents: "none" }}>
                         <FaArrowDown />
                       </Button>
                       <Text mx={2}>{upload.dislikes}</Text>
