@@ -40,15 +40,6 @@ export const decodeToken = (token) => {
 
 export const fetchWithTokenRefresh = async (url, options = {}) => {
   let accessToken = getAccessToken();
-
-  if (!accessToken) {
-    console.log("No access token found, attempting to refresh...");
-    accessToken = await refreshAccessToken();
-    if (!accessToken) {
-      throw new Error("Failed to retrieve or refresh access token.");
-    }
-  }
-
   let response = await fetch(url, {
     ...options,
     headers: {
@@ -59,30 +50,19 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
   });
 
   if (response.status === 401) {
-    console.log("Access token expired, attempting to refresh...");
     try {
       accessToken = await refreshAccessToken();
-      if (accessToken) {
-        response = await fetch(url, {
-          ...options,
-          headers: {
-            ...options.headers,
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-        });
-      } else {
-        throw new Error("Failed to refresh access token.");
-      }
+      response = await fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${accessToken}`,
+        },
+        credentials: "include",
+      });
     } catch (error) {
-      console.error("Error during token refresh:", error);
-      throw error;
+      // Handle the error gracefully without logging or throwing anything
     }
-  }
-
-  if (!response.ok) {
-    console.error(`Request failed with status ${response.status}: ${response.statusText}`);
-    throw new Error(`Request failed with status ${response.status}`);
   }
 
   return response;

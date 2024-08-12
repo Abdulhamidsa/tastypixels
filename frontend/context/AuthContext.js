@@ -51,10 +51,13 @@ export const AuthProvider = ({ children }) => {
         try {
           const decodedToken = jwtDecode(accessToken);
 
-          // Check if the token is close to expiring
-          if (Date.now() >= decodedToken.exp * 1000 - 60 * 1000) {
+          // Check if the token is about to expire (within 5 minutes)
+          if (Date.now() >= decodedToken.exp * 1000 - 5 * 60 * 1000) {
+            console.log("Token is about to expire, refreshing...");
             accessToken = await refreshAccessToken();
+
             if (accessToken) {
+              setAccessToken(accessToken); // Store the new access token
               const newDecodedToken = jwtDecode(accessToken);
               dispatch({
                 type: "LOGIN",
@@ -66,6 +69,7 @@ export const AuthProvider = ({ children }) => {
                 },
               });
             } else {
+              console.error("Failed to refresh access token, logging out.");
               dispatch({ type: "LOGOUT" });
             }
           } else {
@@ -80,21 +84,38 @@ export const AuthProvider = ({ children }) => {
             });
           }
         } catch (error) {
-          console.error("Failed to decode access token:", error);
+          console.error("Failed to decode access token, logging out:", error);
           dispatch({ type: "LOGOUT" });
         }
       } else {
-        dispatch({ type: "LOGOUT" });
+        try {
+          console.log("No access token found, attempting to refresh...");
+          accessToken = await refreshAccessToken();
+
+          if (accessToken) {
+            setAccessToken(accessToken);
+            const decodedToken = jwtDecode(accessToken);
+            dispatch({
+              type: "LOGIN",
+              payload: {
+                token: accessToken,
+                userId: decodedToken.userId,
+                userRole: decodedToken.userRole,
+                userName: decodedToken.userName,
+              },
+            });
+          } else {
+            console.error("No refresh token available, logging out.");
+            dispatch({ type: "LOGOUT" });
+          }
+        } catch (error) {
+          console.error("Failed to refresh access token, logging out:", error);
+          dispatch({ type: "LOGOUT" });
+        }
       }
     };
 
     checkAuth();
-
-    const intervalId = setInterval(() => {
-      checkAuth(); // Recheck every few minutes (e.g., 5 minutes)
-    }, 5 * 60 * 1000); // 5 minutes
-
-    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []);
 
   const signin = async (values) => {

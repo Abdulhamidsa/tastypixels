@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Flex, IconButton, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
+import { Flex, IconButton, Box, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiLogOut } from "react-icons/fi"; // Import the logout icon
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
@@ -53,16 +53,17 @@ const Navbar = () => {
   return (
     <>
       <Flex zIndex="1" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" p={1} justify="flex-end" backdropFilter="blur(5px)">
-        <ChakraLink position="relative" w="100px" h="auto" as={NextLink} color="red.500" href="/" fontWeight="bold" fontSize="xl" mr="auto" display="flex" alignItems="center">
-          <Image src="/logo.png" alt="logo" width={85} height={85} priority layout="fixed" />
-        </ChakraLink>
-
+        <Box mr="auto">
+          <Link href="/">
+            <Image src="/logo.png" alt="logo" width={85} height={85} priority layout="fixed" />
+          </Link>
+        </Box>
         <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
 
         <Flex align="center" display={{ base: "none", md: "flex" }} pr={3} gap={10}>
-          <ChakraLink as={NextLink} href="/home">
+          <Link as={NextLink} href="/home">
             Food Gallery
-          </ChakraLink>
+          </Link>
           {!isAuthenticated && (
             <>
               <ChakraLink colorScheme="teal" variant="solid" onClick={() => handleOpenModal("signup")}>
