@@ -70,7 +70,7 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
         </Box>
       </Box>
       <Box position="relative" overflow="hidden">
-        <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="50vw" width={500} height={400} objectFit="cover" layout="responsive" priority={false} loading="lazy" />
+        <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="40vw" width={600} height={350} objectFit="cover" layout="responsive" priority={false} loading="lazy" />
         <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
       </Box>
       <ImageModal isOpen={isModalOpen} onClose={handleClose} selectedImage={currentImage} />

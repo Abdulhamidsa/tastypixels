@@ -1,6 +1,6 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Fixed the import
 
 const AuthContext = createContext();
 
@@ -50,23 +50,25 @@ export const AuthProvider = ({ children }) => {
       if (accessToken) {
         try {
           const decodedToken = jwtDecode(accessToken);
-          dispatch({
-            type: "LOGIN",
-            payload: {
-              token: accessToken,
-              userId: decodedToken.userId,
-              userRole: decodedToken.userRole,
-              userName: decodedToken.userName,
-            },
-          });
-        } catch (error) {
-          console.error("Failed to decode access token:", error);
-        }
-      } else {
-        try {
-          accessToken = await refreshAccessToken();
-          if (accessToken) {
-            const decodedToken = jwtDecode(accessToken);
+
+          // Check if the token is close to expiring
+          if (Date.now() >= decodedToken.exp * 1000 - 60 * 1000) {
+            accessToken = await refreshAccessToken();
+            if (accessToken) {
+              const newDecodedToken = jwtDecode(accessToken);
+              dispatch({
+                type: "LOGIN",
+                payload: {
+                  token: accessToken,
+                  userId: newDecodedToken.userId,
+                  userRole: newDecodedToken.userRole,
+                  userName: newDecodedToken.userName,
+                },
+              });
+            } else {
+              dispatch({ type: "LOGOUT" });
+            }
+          } else {
             dispatch({
               type: "LOGIN",
               payload: {
@@ -77,13 +79,22 @@ export const AuthProvider = ({ children }) => {
               },
             });
           }
-        } catch {
+        } catch (error) {
+          console.error("Failed to decode access token:", error);
           dispatch({ type: "LOGOUT" });
         }
+      } else {
+        dispatch({ type: "LOGOUT" });
       }
     };
 
     checkAuth();
+
+    const intervalId = setInterval(() => {
+      checkAuth(); // Recheck every few minutes (e.g., 5 minutes)
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []);
 
   const signin = async (values) => {
