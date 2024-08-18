@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("http://localhost:8000/auth/login", {
+      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +132,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "LOGOUT" });
 
     try {
-      const response = await fetch("http://localhost:8000/auth/logout", {
+      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -151,7 +151,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("http://localhost:8000/auth/signup", {
+      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
