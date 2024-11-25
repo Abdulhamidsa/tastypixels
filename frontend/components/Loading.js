@@ -1,5 +1,7 @@
 import React from "react";
-import { Box, Flex, Image, keyframes } from "@chakra-ui/react";
+import { Box, Flex, Image } from "@chakra-ui/react";
+import { keyframes } from "@emotion/react";
+
 const pulseAnimation = keyframes`
   0% { opacity: 0.5; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.1); }
