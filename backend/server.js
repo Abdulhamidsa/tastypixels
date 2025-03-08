@@ -1,6 +1,6 @@
 const express = require("express");
 require("module-alias/register");
-require("dotenv").config({ path: "./.env.local" });
+require("dotenv").config({ path: "./.env" });
 const bodyParser = require("body-parser");
 const corsConfig = require("@/middlewares/corsConfig");
 const cookieParser = require("cookie-parser");
@@ -27,7 +27,7 @@ const swaggerOptions = {
     info: {
       title: "API Documentation",
       version: "1.0.0",
-      description: "API documentation for your application",
+      description: "API documentation for tastypixels",
     },
     servers: [
       {
