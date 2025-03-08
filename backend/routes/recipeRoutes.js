@@ -1,6 +1,7 @@
 const express = require("express");
 const { fetchAllPosts } = require("../controllers/recipeController");
 const router = express.Router();
+const { fetchTrendingRecipes } = require("../controllers/fetchTrendingPosts");
 
 /**
  * @swagger
@@ -45,5 +46,6 @@ const router = express.Router();
  *         description: Bad Request - Invalid page number
  */
 router.get("/all-posts", fetchAllPosts);
+router.get("/trending-posts", fetchTrendingRecipes);
 
 module.exports = router;
