@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const User = require("@/models/User");
 const connectToMongoDB = require("@/database/db");
 const { checkExistingUser, checkExistingUsername, isValidEmail, isValidPassword, generateFriendlyId } = require("@/utils/validations");
