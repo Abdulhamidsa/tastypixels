@@ -16,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     const fetchTrendingRecipes = async () => {
       try {
-        const response = await fetch("http://localhost:4000/recipes/trending-posts");
+        const response = await fetch("https://cre8ify-backend-develop-production.up.railway.app/recipes/trending-posts");
         const data = await response.json();
         setRecipes(data.recipes);
       } catch (error) {
