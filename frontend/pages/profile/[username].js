@@ -155,7 +155,7 @@ export default function Dashboard() {
     };
 
     try {
-      const response = await fetchWithTokenRefresh("http://localhost:8000/api/edit-post", {
+      const response = await fetchWithTokenRefresh("https://cre8ify-backend-develop-production.up.railway.app/api/edit-post", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
