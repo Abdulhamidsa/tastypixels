@@ -1,6 +1,6 @@
 export const checkExistingUsername = async (username) => {
   try {
-    const response = await fetch("http://localhost:8000/api/validation/check-username", {
+    const response = await fetch("https://cre8ify-backend-develop-production.up.railway.app/api/validation/check-username", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export const checkExistingUsername = async (username) => {
 
 export const checkExistingEmail = async (email) => {
   try {
-    const response = await fetch("http://localhost:8000/api/validation/check-email", {
+    const response = await fetch("https://cre8ify-backend-develop-production.up.railway.app/api/validation/check-email", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
