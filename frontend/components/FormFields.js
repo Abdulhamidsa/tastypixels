@@ -17,14 +17,18 @@ export const UsernameField = () => {
   return (
     <Field name="username">
       {({ field, form }) => (
-        <FormControl isInvalid={form.errors.username && form.touched.username}>
-          <FormLabel htmlFor="username" color="white">
+        <FormControl isInvalid={form.errors.username && form.touched.username} mb={4}>
+          <FormLabel htmlFor="username" color="secondary.700">
             Username
           </FormLabel>
           <Input
             {...field}
             id="username"
-            placeholder="Username"
+            placeholder="Enter your username"
+            borderColor="gray.300"
+            _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }}
+            size="lg"
+            borderRadius="md"
             onBlur={async (e) => {
               form.handleBlur(e);
               await validateUsername(e.target.value);
@@ -52,14 +56,18 @@ export const EmailField = () => {
   return (
     <Field name="email">
       {({ field, form }) => (
-        <FormControl isInvalid={form.errors.email && form.touched.email}>
-          <FormLabel htmlFor="email" color="white">
+        <FormControl isInvalid={form.errors.email && form.touched.email} mb={4}>
+          <FormLabel htmlFor="email" color="secondary.700">
             Email Address
           </FormLabel>
           <Input
             {...field}
             id="email"
-            placeholder="Email"
+            placeholder="Enter your email"
+            borderColor="gray.300"
+            _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }}
+            size="lg"
+            borderRadius="md"
             onBlur={async (e) => {
               form.handleBlur(e);
               await validateEmail(e.target.value);
