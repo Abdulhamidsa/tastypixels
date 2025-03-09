@@ -1,12 +1,12 @@
 import React from "react";
-import { Box, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Text, Flex } from "@chakra-ui/react";
+import { FaInstagram, FaTwitter, FaFacebook } from "react-icons/fa";
+import Link from "next/link";
 
 const Footer = () => {
   return (
-    <Box p={5} zIndex="1" mt="auto" position="relative" bg="rgba(0, 0, 0, 0.5)" as="footer" backdropFilter="blur(5px)">
-      <Text fontSize="sm" textAlign="center">
-        © {new Date().getFullYear()} TastyPixels. All rights reserved.
-      </Text>
+    <Box bg="gray.900" color="white" py={8} textAlign="center">
+      <Text fontSize="sm">&copy; {new Date().getFullYear()} Tasty Pixels. All Rights Reserved.</Text>
     </Box>
   );
 };

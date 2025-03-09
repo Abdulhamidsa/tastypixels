@@ -1,155 +1,137 @@
-import React, { useCallback, useState } from "react";
-import { Flex, IconButton, Box, Link as ChakraLink, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Spinner } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Flex, IconButton, Box, Button, useDisclosure, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, VStack, Modal, ModalOverlay, ModalContent, ModalBody, Tab, Tabs, TabList, TabPanels, TabPanel, CloseButton } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { FiLogOut } from "react-icons/fi"; // Import the logout icon
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from "@chakra-ui/react";
+import { FiLogOut } from "react-icons/fi";
 import SignUp from "@/components/Signup";
-import NextLink from "next/link";
 import Signin from "@/components/Signin";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import Image from "next/legacy/image";
 import Upload from "@/components/Upload";
-import Link from "next/link";
+import NextLink from "next/link";
 
 const Navbar = () => {
   const { state, logout } = useAuth();
-  const { isAuthenticated, loading, userName } = state;
+  const { isAuthenticated, userName } = state;
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
-  const [formType, setFormType] = useState(null);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const router = useRouter();
   const isSpecificPage = router.pathname === "/home";
-
-  const openUpload = () => {
-    setIsUploadOpen(true);
-  };
-
-  const handleMenuClose = useCallback(() => {
-    onMenuClose();
-  }, [onMenuClose]);
 
   const handleLogout = () => {
     logout();
     router.push("/");
   };
 
-  const handleOpenModal = (type) => {
-    if (type === "logout") {
-      handleLogout();
-      onMenuClose();
-    } else {
-      setFormType(type);
-      onModalOpen();
-      handleMenuClose();
-    }
-  };
-
-  // if (loading) {
-  //   return <Loading />;
-  // }
-
   return (
     <>
-      <Flex zIndex="1" position="relative" bg="rgba(0, 0, 0, 0.5)" as="nav" align="center" p={1} justify="flex-end" backdropFilter="blur(5px)">
-        <Box mr="auto">
-          <Link href="/">
+      <Flex zIndex="1" position="relative" bg="background" as="nav" align="center" p={2} justify="space-between" backdropFilter="blur(5px)" boxShadow="lg">
+        <Box ml={4}>
+          <NextLink href="/" passHref>
             <Image src="/logo.png" alt="logo" width={85} height={85} priority layout="fixed" />
-          </Link>
+          </NextLink>
         </Box>
-        <IconButton mr={5} aria-label="Open menu" icon={<HamburgerIcon />} size="md" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
 
-        <Flex align="center" display={{ base: "none", md: "flex" }} pr={3} gap={10}>
-          <Link as={NextLink} href="/home">
-            Food Gallery
-          </Link>
-          {!isAuthenticated && (
-            <>
-              <ChakraLink colorScheme="teal" variant="solid" onClick={() => handleOpenModal("signup")}>
-                Sign Up
-              </ChakraLink>
-              <ChakraLink colorScheme="teal" variant="outline" onClick={() => handleOpenModal("signin")}>
-                Sign In
-              </ChakraLink>
-            </>
-          )}
-          {isSpecificPage && isAuthenticated && (
-            <>
-              <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
-              <ChakraLink onClick={() => openUpload()}>Upload</ChakraLink>
-            </>
-          )}
+        {/* Mobile Menu Button */}
+        <IconButton aria-label="Open menu" icon={<HamburgerIcon />} size="md" color="white" variant="outline" onClick={onMenuOpen} display={{ base: "block", md: "none" }} mr={4} />
 
-          {isAuthenticated && (
+        {/* Desktop Links */}
+        <Flex align="center" display={{ base: "none", md: "flex" }} pr={3} gap={6}>
+          {isAuthenticated ? (
             <>
-              <ChakraLink as={NextLink} href={`/profile/${userName}`} onClick={onMenuClose}>
+              <Button as={NextLink} href="/home" bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md">
+                Food Gallery
+              </Button>
+              {isSpecificPage && (
+                <>
+                  <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+
+                  <Button bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md" onClick={() => setIsUploadOpen(true)}>
+                    Upload
+                  </Button>
+                </>
+              )}
+              <Button as={NextLink} href={`/profile/${userName}`} bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md">
                 Profile
-              </ChakraLink>
-              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={() => handleOpenModal("logout")} variant="outline" colorScheme="red" border="1px" />
+              </Button>
+              <IconButton
+                aria-label="Logout"
+                icon={<FiLogOut />}
+                onClick={handleLogout}
+                variant="outline"
+                color="red.500"
+                border="1px"
+                _hover={{
+                  bg: "white",
+                  color: "red.600",
+                  transition: "0.2s ease-in-out",
+                }}
+              />
             </>
+          ) : (
+            <Button bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md" onClick={onModalOpen}>
+              Sign Up
+            </Button>
           )}
         </Flex>
-        <Drawer isOpen={isMenuOpen} placement="right" onClose={onMenuClose} size={{ base: "full", md: "half" }}>
-          <DrawerOverlay>
-            <DrawerContent bg="#212121">
-              <DrawerCloseButton />
-              <DrawerHeader></DrawerHeader>
-              <DrawerBody>
-                <VStack spacing="20px">
-                  <ChakraLink as={NextLink} href="/home" onClick={onMenuClose}>
-                    Food Gallery
-                  </ChakraLink>
-                  {isAuthenticated && (
-                    <>
-                      <ChakraLink as={NextLink} href={`/profile/${userName}`} onClick={onMenuClose}>
-                        Profile
-                      </ChakraLink>
-                      <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={() => handleOpenModal("logout")} variant="outline" colorScheme="" />
-                    </>
-                  )}
-                  {!isAuthenticated && (
-                    <>
-                      <Link href="/signup" passHref>
-                        <ChakraLink
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleOpenModal("signup");
-                          }}
-                        >
-                          Sign Up
-                        </ChakraLink>
-                      </Link>
 
-                      <Link href="/signin" passHref>
-                        <ChakraLink
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleOpenModal("signin");
-                          }}
-                        >
-                          Sign In
-                        </ChakraLink>
-                      </Link>
-                    </>
-                  )}
-                </VStack>
-              </DrawerBody>
-            </DrawerContent>
-          </DrawerOverlay>
+        {/* Mobile Drawer */}
+        <Drawer isOpen={isMenuOpen} placement="right" onClose={onMenuClose} size={{ base: "full", md: "sm" }}>
+          <DrawerOverlay />
+          <DrawerContent bg="background.dark" color="white">
+            <DrawerCloseButton />
+            <DrawerHeader></DrawerHeader>
+            <DrawerBody>
+              <VStack spacing="20px">
+                {isAuthenticated ? (
+                  <>
+                    <Button as={NextLink} href="/home" bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md">
+                      Food Gallery
+                    </Button>
+                    <Button as={NextLink} href={`/profile/${userName}`} bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md">
+                      Profile
+                    </Button>
+                    <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="outline" color="red.500" />
+                  </>
+                ) : (
+                  <Button bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md" onClick={onModalOpen}>
+                    Sign Up
+                  </Button>
+                )}
+                {isSpecificPage && isAuthenticated && (
+                  <>
+                    <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
+                    <Button bg="transparent" border="1px" borderColor="primary.700" colorScheme="primary" size="md" onClick={() => setIsUploadOpen(true)}>
+                      Upload
+                    </Button>
+                  </>
+                )}
+              </VStack>
+            </DrawerBody>
+          </DrawerContent>
         </Drawer>
       </Flex>
+
+      {/* Auth Modal with Tabs */}
       <Modal isOpen={isModalOpen} onClose={onModalClose}>
-        <ModalOverlay />
-        <ModalContent maxW={["90vw", "70vw", "50vw", "40vw"]}>
-          <ModalHeader>{formType === "logout" ? "Logout" : formType === "signup" ? "Sign Up" : "Sign In"}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {formType === "signup" ? (
-              <SignUp isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
-            ) : formType === "signin" ? (
-              <Signin isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} setFormType={setFormType} />
-            ) : null}
+        <ModalContent maxH="auto" overflowY="" maxW={["90vw", "70vw", "50vw", "40vw"]} borderRadius="lg" boxShadow="xl" bg="white" p="6" box Shadow="none">
+          <CloseButton size="xl" onClick={onModalClose} position="absolute" right="-35px" top="-15px" />
+          <ModalBody p={0}>
+            <Tabs mt="6" variant="soft-rounded" colorScheme="primary" isFitted>
+              <TabList>
+                <Tab>Sign Up</Tab>
+                <Tab>Sign In</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <SignUp isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} />
+                </TabPanel>
+                <TabPanel>
+                  <Signin isModalOpen={isModalOpen} onModalOpen={onModalOpen} onModalClose={onModalClose} />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </ModalBody>
         </ModalContent>
       </Modal>
