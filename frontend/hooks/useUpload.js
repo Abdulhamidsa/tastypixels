@@ -52,7 +52,7 @@ const useUpload = (initialUploadData, onClose) => {
       ...(uploadData.selectedCategory && { category: uploadData.selectedCategory }),
     };
 
-    let url = "https://tastypixels-backend.up.railway.appackend.up.railway.app/api/upload";
+    let url = "https://tastypixels-backend.up.railway.app/api/upload";
     let method = "POST";
 
     if (editedUpload) {

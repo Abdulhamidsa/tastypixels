@@ -24,6 +24,7 @@ import {
   ModalCloseButton,
   ModalFooter,
   Spinner,
+  Box,
 } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import useUpload from "@/hooks/useUpload";
@@ -124,7 +125,6 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setIsImageUpdated(true);
-
     handleUpload(file);
   };
 
@@ -148,25 +148,30 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
   };
 
   return (
-    <Modal size="lg" isOpen={isOpen} onClose={onClose}>
+    <Modal size="lg" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{editedUpload ? "Edit Post" : "Upload Post"}</ModalHeader>
+      <ModalContent bg="background.dark" color="text.dark" borderRadius="lg" p={6}>
+        <ModalHeader fontSize="xl" fontWeight="bold" color="primary.500">
+          {editedUpload ? "Edit Post" : "Upload Post"}
+        </ModalHeader>
         <ModalCloseButton />
+
         <ModalBody>
           <FormControl>
-            <FormLabel>Title</FormLabel>
+            <FormLabel color="text.dark">Title</FormLabel>
             <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Dish Title" disabled={isUploading} />
           </FormControl>
-          <FormControl>
-            <FormLabel>Description</FormLabel>
+
+          <FormControl mt={4}>
+            <FormLabel color="text.dark">Description</FormLabel>
             <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description of your dish" disabled={isUploading} />
           </FormControl>
-          <FormControl isInvalid={tagError !== ""}>
-            <FormLabel>Custom Tags</FormLabel>
+
+          <FormControl mt={4} isInvalid={tagError !== ""}>
+            <FormLabel color="text.dark">Custom Tags</FormLabel>
             <Wrap>
               {selectedTags.map((tag) => (
-                <Tag key={tag} size="md" borderRadius="full" variant="solid" colorScheme="blue" mr={1} mb={1}>
+                <Tag key={tag} size="md" borderRadius="full" variant="solid" colorScheme="primary" mr={1} mb={1}>
                   <TagLabel>{tag}</TagLabel>
                   <TagCloseButton onClick={() => handleRemoveTag(tag)} />
                 </Tag>
@@ -188,21 +193,14 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
                 disabled={isUploading}
               />
               <InputRightElement>
-                <IconButton
-                  aria-label="Add tag"
-                  icon={<ArrowUpIcon />}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddTag();
-                  }}
-                  disabled={isUploading}
-                />
+                <IconButton aria-label="Add tag" icon={<ArrowUpIcon />} onClick={handleAddTag} disabled={isUploading} />
               </InputRightElement>
             </InputGroup>
             <FormErrorMessage>{tagError}</FormErrorMessage>
           </FormControl>
-          <FormControl>
-            <FormLabel>Category</FormLabel>
+
+          <FormControl mt={4}>
+            <FormLabel color="text.dark">Category</FormLabel>
             <ChakraSelect value={selectedCategory} onChange={handleCategorySelect} disabled={isUploading}>
               <option value="">Select Category</option>
               {predefinedCategories.map((category) => (
@@ -212,29 +210,19 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
               ))}
             </ChakraSelect>
           </FormControl>
+
           <FormControl position="relative">
             <FormLabel>Image</FormLabel>
             <Input p={1} type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} disabled={isUploading} />
             {isFileLoading && <Spinner position="absolute" top="55%" right="5%" transform="translate(-50%, -50%)" />}
           </FormControl>
-          {uploadError && !uploadError.includes("maximum limit of uploads") && (
-            <Alert status="error" mb={4}>
-              <AlertIcon />
-              {uploadError}
-            </Alert>
-          )}
-          {uploadError && uploadError.includes("maximum limit of uploads") && (
-            <Alert status="error" mb={4}>
-              <AlertIcon />
-              You have reached the maximum limit of uploads
-            </Alert>
-          )}
-          <ModalFooter>
-            <Button onClick={handleSave} isLoading={isUploading} loadingText="Uploading" disabled={isUploading}>
-              {editedUpload ? "SAVE CHANGES" : "UPLOAD"}
-            </Button>
-          </ModalFooter>
         </ModalBody>
+
+        <ModalFooter>
+          <Button onClick={handleSave} isLoading={isUploading} loadingText="Uploading" bg="primary.500" color="white" _hover={{ bg: "primary.600" }}>
+            {editedUpload ? "SAVE CHANGES" : "UPLOAD"}
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
