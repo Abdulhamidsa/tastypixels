@@ -79,17 +79,33 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
         {upload.category}
       </Badge>
       <Flex p={4} gap={3}>
-        <VoteButton upload={upload} handleVote={handleVote} loadingVote={loadingVote} isAuthenticated={isAuthenticated} />
+        {/* Upvote & Downvote Section */}
+        <VoteButton upload={upload} handleVote={handleVote} loadingVote={loadingVote} isAuthenticated={isAuthenticated} upvoteColor={upload.hasUpvoted ? "primary.500" : "gray.500"} downvoteColor={upload.hasDownvoted ? "secondary.500" : "gray.500"} />
+
+        {/* Comments Button */}
         <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-          <Button aria-label="Comments" onClick={toggleComments} colorScheme={showCommentSection ? "teal" : "gray"} variant="outline" isLoading={loadingCommentSection}>
+          <Button
+            aria-label="Comments"
+            onClick={toggleComments}
+            bg={showCommentSection ? "accent.500" : "transparent"}
+            color={showCommentSection ? "white" : "gray.500"}
+            border="1px solid"
+            borderColor={showCommentSection ? "accent.500" : "gray.500"}
+            _hover={{ bg: "accent.600", color: "white" }}
+            isLoading={loadingCommentSection}
+            disabled={!isAuthenticated}
+          >
             <FaComment />
           </Button>
-          <Text>{comments[upload._id]?.length ?? upload.comments.length}</Text>
+          <Text color="gray.400">{comments[upload._id]?.length ?? upload.comments.length}</Text>
         </Box>
-        <Button ml="auto" aria-label="Report" onClick={() => handleReportClick(upload._id)} colorScheme="yellow" variant="outline" disabled={!isAuthenticated}>
+
+        {/* Report Button */}
+        {/* <Button ml="auto" aria-label="Report" onClick={() => handleReportClick(upload._id)} bg="transparent" color="yellow.400" border="1px solid" borderColor="yellow.400" _hover={{ bg: "yellow.100" }} disabled={!isAuthenticated}>
           <FaFlag />
-        </Button>
+        </Button> */}
       </Flex>
+
       <Collapse in={showCommentSection} animateOpacity>
         {loadingComments[upload._id] ? (
           <Box w="100%">
