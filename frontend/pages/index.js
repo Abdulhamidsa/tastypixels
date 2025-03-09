@@ -6,6 +6,7 @@ import Head from "next/head";
 import Image from "next/legacy/image";
 import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
+import { fetchWithTokenRefresh } from "@/utils/auth";
 
 export default function Home() {
   const { state } = useAuth();
@@ -16,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     const fetchTrendingRecipes = async () => {
       try {
-        const response = await fetch("https://cre8ify-backend-develop-production.up.railway.app/recipes/trending-posts");
+        const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/recipes/trending-posts");
         const data = await response.json();
         setRecipes(data.recipes);
       } catch (error) {
