@@ -179,8 +179,19 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
                 }}
                 resize="none"
                 minH="40px"
+                isDisabled={!isAuthenticated}
               />
-              <IconButton height="40px" width="40px" borderRadius="none" alignSelf="flex-end" icon={addingComment ? <Spinner size="sm" /> : <MdSend style={{ transform: "rotate(-45deg)" }} />} aria-label="Send Comment" onClick={handleAddCommentClick} variant="outline" />
+              <IconButton
+                height="40px"
+                width="40px"
+                borderRadius="none"
+                alignSelf="flex-end"
+                icon={addingComment ? <Spinner size="sm" /> : <MdSend style={{ transform: "rotate(-45deg)" }} />}
+                aria-label="Send Comment"
+                onClick={handleAddCommentClick}
+                variant="outline"
+                isDisabled={!isAuthenticated}
+              />{" "}
             </Box>
           )}
         </Box>
