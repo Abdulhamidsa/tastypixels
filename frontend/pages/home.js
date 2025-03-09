@@ -1,4 +1,5 @@
-import { Box, useDisclosure, useToast, IconButton } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import { Box, useDisclosure, useToast, IconButton, Heading, Text } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthContext";
 import FilterDrawer from "@/components/FilterDrawer";
@@ -8,10 +9,8 @@ import ImageModal from "@/hooks/ImageModal";
 import useFetchData from "@/hooks/useFetchData";
 import useVote from "@/hooks/useVote";
 import useComments from "@/hooks/useComments";
-import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Head from "next/head";
-// import * as Sentry from "@sentry/nextjs";
 
 export default function Home() {
   const { state } = useAuth();
@@ -27,124 +26,6 @@ export default function Home() {
   const [currentFilter, setCurrentFilter] = useState("Filter by");
 
   const [showGoToTop, setShowGoToTop] = useState(false);
-  const sortUploads = (order) => {
-    const sortedUploads = [...uploads].sort((a, b) => {
-      if (order === "a-z") {
-        return a.username.localeCompare(b.username);
-      } else {
-        return b.username.localeCompare(a.username);
-      }
-    });
-    setUploads(sortedUploads);
-  };
-
-  const handleSortChange = (order) => {
-    setSortOrder(order);
-    sortUploads(order);
-  };
-
-  const handleOpen = (imageUrl) => setSelectedImage(imageUrl);
-  const handleClose = () => setSelectedImage(null);
-
-  const handleReportClick = (uploadId) => {
-    if (!isAuthenticated) {
-      toast({
-        title: "Not authenticated",
-        description: "Please log in to report",
-        status: "warning",
-        isClosable: true,
-      });
-      return;
-    }
-
-    setSelectedUploadId(uploadId);
-    onOpen();
-  };
-
-  const handleReportSubmit = async () => {
-    try {
-      const response = await fetch("/api/api-report-upload", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: userData.user._id, uploadId: selectedUploadId }),
-      });
-
-      if (response.status === 402) {
-        toast({
-          title: "Already reported",
-          description: "You have already reported this post",
-          status: "warning",
-          duration: 3000,
-          isClosable: true,
-        });
-        onClose();
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error("Failed to submit report");
-      }
-
-      toast({
-        title: "Report submitted",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      onClose();
-    } catch (error) {
-      // Sentry.captureException(error);
-      console.error("Error submitting report:", error);
-      toast({
-        title: "Error",
-        description: "Failed to submit report",
-        status: "error",
-        isClosable: true,
-      });
-    }
-  };
-
-  const confirmReport = () => {
-    handleReportSubmit();
-  };
-
-  const filterMostLiked = () => {
-    const sortedUploads = [...uploads].sort((a, b) => b.likes - a.likes);
-    setUploads(sortedUploads);
-    setCurrentFilter("Most Liked");
-  };
-
-  const filterMostDisliked = () => {
-    const sortedUploads = [...uploads].sort((a, b) => b.dislikes - a.dislikes);
-    setUploads(sortedUploads);
-    setCurrentFilter("Most Disliked");
-  };
-  const filterMostCommented = () => {
-    const sortedUploads = [...uploads].sort((a, b) => b.comments.length - a.comments.length);
-    setUploads(sortedUploads);
-    setCurrentFilter("Most Commented");
-  };
-  const filterHotPosts = () => {
-    const sortedUploads = [...uploads].sort((a, b) => {
-      const aInteractions = a.likes + a.dislikes + a.comments.length;
-      const bInteractions = b.likes + b.dislikes + b.comments.length;
-      return bInteractions - aInteractions;
-    });
-    setUploads(sortedUploads);
-    setCurrentFilter("Hot Posts");
-  };
-  const filterPostedRecently = () => {
-    const sortedUploads = [...uploads].sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt));
-    setUploads(sortedUploads);
-    setCurrentFilter("Posted Recently");
-  };
-
-  const saveFilterAndCloseDrawer = () => {
-    onClose();
-  };
 
   const handleScroll = () => {
     if (window.scrollY > 300) {
@@ -166,10 +47,15 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Home Page</title>
+        <title>Home | Tasty Pixels</title>
       </Head>
-      {/* <Box position="absolute" w="100%" h="100%" direction="column" bg="rgba(0, 0, 0, 0.5)" backdropFilter="blur(20px)" /> */}
-      <Box p={5} maxW="420px" width="100%" m="auto">
+
+      {/* Page Container */}
+      <Box p={5} maxW="500px" width="100%" mx="auto" bg="background.dark" color="text.dark">
+        <Heading textAlign="center" fontSize="3xl" color="primary.500" mb={6}>
+          Feed
+        </Heading>
+
         {loadingPosts ? (
           <Box display="grid" gap="10">
             <CardSkeleton />
@@ -181,9 +67,9 @@ export default function Home() {
             next={loadMorePosts}
             hasMore={hasMore}
             endMessage={
-              <Box textAlign="center" mt={4} mb={4}>
+              <Text textAlign="center" color="text.dark" mt={4} mb={4}>
                 Yay! You have seen it all
-              </Box>
+              </Text>
             }
           >
             <Box display="grid" gap="10">
@@ -200,14 +86,12 @@ export default function Home() {
                   handleAddComment={handleAddComment}
                   handleDeleteComment={handleDeleteComment}
                   deletingCommentId={deletingCommentId}
-                  handleReportClick={handleReportClick}
                   isAuthenticated={isAuthenticated}
                   loadingVote={loadingVote}
                   selectedUploadId={selectedUploadId}
                   isOpen={isOpen}
                   onClose={onClose}
                   onOpen={onOpen}
-                  handleOpen={handleOpen}
                   friendlyId={friendlyId}
                   userRole={userRole}
                 />
@@ -223,20 +107,25 @@ export default function Home() {
         )}
       </Box>
 
-      {showGoToTop && <IconButton position="fixed" bottom="50px" right="30px" zIndex="1000" colorScheme="teal" icon={<ArrowUpIcon />} onClick={scrollToTop} />}
+      {/* Scroll to Top Button */}
+      {showGoToTop && <IconButton position="fixed" bottom="50px" right="30px" zIndex="1000" bg="primary.500" color="white" icon={<ArrowUpIcon />} onClick={scrollToTop} _hover={{ bg: "primary.600" }} _active={{ bg: "primary.700" }} />}
 
-      <ImageModal isOpen={selectedImage !== null} onClose={handleClose} selectedImage={selectedImage} />
+      {/* Image Modal */}
+      <ImageModal isOpen={selectedImage !== null} onClose={() => setSelectedImage(null)} selectedImage={selectedImage} />
 
+      {/* Filter Drawer */}
       <FilterDrawer
         isOpen={isOpen}
         onClose={onClose}
-        filterMostLiked={filterMostLiked}
-        filterMostDisliked={filterMostDisliked}
-        filterMostCommented={filterMostCommented}
-        filterHotPosts={filterHotPosts}
-        filterPostedRecently={filterPostedRecently}
-        handleSortChange={handleSortChange}
-        saveFilterAndCloseDrawer={saveFilterAndCloseDrawer}
+        filterMostLiked={() => setUploads([...uploads].sort((a, b) => b.likes - a.likes))}
+        filterMostDisliked={() => setUploads([...uploads].sort((a, b) => b.dislikes - a.dislikes))}
+        filterMostCommented={() => setUploads([...uploads].sort((a, b) => b.comments.length - a.comments.length))}
+        filterHotPosts={() => {
+          setUploads([...uploads].sort((a, b) => b.likes + b.dislikes + b.comments.length - (a.likes + a.dislikes + a.comments.length)));
+        }}
+        filterPostedRecently={() => setUploads([...uploads].sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt)))}
+        handleSortChange={setSortOrder}
+        saveFilterAndCloseDrawer={onClose}
         sortOrder={sortOrder}
         currentFilter={currentFilter}
       />
