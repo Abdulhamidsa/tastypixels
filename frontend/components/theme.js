@@ -23,8 +23,8 @@ const theme = extendTheme({
       100: "#C7D8FB",
       200: "#A4BEF9",
       300: "#809FF6",
-      400: "#5C7DF3", // 🔵 **Royal Blue**
-      500: "#3A5CDB", // 💎 **Deep Sapphire**
+      400: "#fffff",
+      500: "#3A5CDB",
       600: "#2F4BB8",
       700: "#233795",
       800: "#182572",
@@ -35,8 +35,8 @@ const theme = extendTheme({
       100: "#EFC7D1",
       200: "#E4A4B2",
       300: "#D97F92",
-      400: "#CC5A72", // ❤️ **Deep Rosewood**
-      500: "#B33E56", // 🍷 **Burgundy Wine**
+      400: "#CC5A72",
+      500: "#B33E56",
       600: "#902D42",
       700: "#6E1E2E",
       800: "#4C0F1B",
@@ -47,16 +47,16 @@ const theme = extendTheme({
       100: "#F5E0B3",
       200: "#EFCB84",
       300: "#E9B756",
-      400: "#E3A332", // ✨ **Champagne Gold**
-      500: "#CC8A00", // 🌟 **Elegant Gold**
+      400: "#E3A332",
+      500: "#CC8A00",
       600: "#A07000",
       700: "#745000",
       800: "#493000",
       900: "#1F1000",
     },
     background: {
-      dark: "#121212", // **Deep Charcoal**
-      light: "#F8F9FA", // **Soft Ivory**
+      dark: "#121212",
+      light: "#F8F9FA",
     },
     text: {
       light: "#1A1A1A",
