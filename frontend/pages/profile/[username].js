@@ -194,12 +194,13 @@ export default function Dashboard() {
   };
 
   return (
-    <Box mx="auto" pt="10" width="100%" maxW="1000px">
-      <Heading as="h1" m={0} textAlign="center">
+    <Box mx="auto" pt="6" width="100%" maxW="800px">
+      <Heading as="h1" size="xl" textAlign="center" mb={6}>
         User Dashboard
       </Heading>
+
       <Tabs variant="enclosed">
-        <TabList mb={4}>
+        <TabList>
           <Tab>
             <FaUser />
             <Text ml={2}>User Info</Text>
@@ -209,59 +210,33 @@ export default function Dashboard() {
             <Text ml={2}>Posts</Text>
           </Tab>
         </TabList>
+
         <TabPanels>
+          {/* User Info Section */}
           <TabPanel>
             {loading ? (
               <Loading />
             ) : (
-              <Stack spacing={4}>
-                <Box>
-                  <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent>
-                      <ModalHeader>Edit User Info</ModalHeader>
-                      <ModalCloseButton />
-                      <ModalBody>
-                        <Box as="form" onSubmit={handleUserUpdate}>
-                          <FormControl id="username" mb={4}>
-                            <FormLabel>Username</FormLabel>
-                            <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                          </FormControl>
-                          <FormControl id="email" mb={4}>
-                            <FormLabel>Email</FormLabel>
-                            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                          </FormControl>
-                          <FormControl id="password" mb={4}>
-                            <FormLabel>Password</FormLabel>
-                            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                          </FormControl>
-                          <Button type="submit" colorScheme="blue" isLoading={loadingUserUpdate}>
-                            Save Changes
-                          </Button>
-                        </Box>
-                      </ModalBody>
-                    </ModalContent>
-                  </Modal>
-                </Box>
-
-                {userData && (
-                  <Flex align="center">
-                    <Avatar size="xl" name={userData.username} src={userData.userAvatar} />
-                    <Box ml={4}>
-                      <Heading as="h2" size="lg">
-                        {userData.username}
-                      </Heading>
-                      <Text>Email: {userData.email}</Text>
-                      <Text>Username: {userData.username}</Text>
-                    </Box>
-                  </Flex>
-                )}
+              <Stack spacing={5}>
+                <Flex align="center">
+                  <Avatar size="xl" name={userData?.username} src={userData?.userAvatar} />
+                  <Box ml={4}>
+                    <Heading as="h2" size="md">
+                      {userData?.username}
+                    </Heading>
+                    <Text fontSize="sm" color="gray.400">
+                      {userData?.email}
+                    </Text>
+                  </Box>
+                </Flex>
                 <Button width="150px" onClick={onOpen} colorScheme="blue">
-                  Edit User Info
+                  Edit Profile
                 </Button>
               </Stack>
             )}
           </TabPanel>
+
+          {/* Posts Section */}
           <TabPanel>
             {loading ? (
               <Box w="420px">
@@ -269,78 +244,72 @@ export default function Dashboard() {
               </Box>
             ) : uploadList && uploadList.length > 0 ? (
               uploadList.map((upload) => (
-                <Box key={upload._id} position="relative" borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="400px" mx="auto" my="4" boxShadow="md" bg="gray.800">
-                  <Box bg="white" p="4" display="flex" alignItems="center">
-                    <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
-                    <Box color="black">
-                      <Heading fontSize="xl" fontWeight="bold">
-                        {upload.username}
-                      </Heading>
-                      <Text pt="1" fontSize="xs" color="gray.600">
-                        Posted at: {new Date(upload.postedAt).toLocaleDateString()}
-                      </Text>
-                    </Box>
-                    <Flex ml="auto" gap={2}>
-                      <IconButton aria-label="Edit upload" icon={<FaEdit />} onClick={() => handleEditUpload(upload)} colorScheme="blue" bg="white" borderRadius="full" />
+                <Box key={upload._id} bg="gray.900" borderRadius="lg" p={4} mb={6} boxShadow="md">
+                  <Flex align="center" justify="space-between">
+                    <Flex align="center">
+                      <Avatar size="sm" name={upload.username} src={upload.userAvatar} />
+                      <Box ml={3}>
+                        <Text fontWeight="bold">{upload.username}</Text>
+                        <Text fontSize="xs" color="gray.500">
+                          {new Date(upload.postedAt).toLocaleDateString()}
+                        </Text>
+                      </Box>
+                    </Flex>
+
+                    <Flex gap={2}>
+                      <IconButton aria-label="Edit" icon={<FaEdit />} onClick={() => handleEditUpload(upload)} colorScheme="blue" size="sm" />
                       <IconButton
-                        aria-label="Delete upload"
+                        aria-label="Delete"
                         icon={<FaTrash />}
                         onClick={() => {
                           setSelectedUploadId(upload._id);
                           onDeleteOpen();
                         }}
                         colorScheme="red"
-                        bg="white"
-                        borderRadius="full"
+                        size="sm"
                       />
                     </Flex>
-                  </Box>
-                  <Box p={3} bg="white" color="black">
-                    <Heading fontSize="xl">{upload.title}</Heading>
-                    <Text fontSize="md" mb={5}>
+                  </Flex>
+
+                  <Box mt={3}>
+                    <Heading fontSize="lg">{upload.title}</Heading>
+                    <Text fontSize="sm" color="gray.300" mb={2}>
                       {upload.description}
                     </Text>
-                    <Box display="flex" gap={1}>
+                    <Flex gap={2} wrap="wrap">
                       {upload.tags.map((tag, index) => (
-                        <Text fontSize="sm" color="gray.600" pb="2" key={`${tag}-${index}`}>
+                        <Badge key={index} colorScheme="purple">
                           {tag}
-                        </Text>
+                        </Badge>
                       ))}
-                    </Box>
+                    </Flex>
                   </Box>
-                  <Upload isOpen={isEditOpen} onClose={onEditClose} editedUpload={uploadList.find((upload) => upload._id === selectedUploadId)} onSave={handleSaveEdit} onCancel={onEditClose} />
-                  <Box position="relative" overflow="hidden" w="100%" objectFit="cover" height="auto">
-                    <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="80vw" width={200} height={150} objectFit="cover" style={{ width: "100%", height: "100%" }} />
+
+                  <Box mt={4} position="relative">
+                    <Image alt={upload.imageUrl} src={upload.imageUrl} width={500} height={300} objectFit="cover" style={{ borderRadius: "8px" }} />
                   </Box>
-                  <Badge textAlign="center" p="3" colorScheme="orange">
-                    {upload.category}
-                  </Badge>
-                  <Flex p={4} gap={3} align="center">
-                    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                      <Button colorScheme="gray" variant="outline" cursor="none" style={{ pointerEvents: "none" }} disabled>
-                        <FaArrowUp />
-                      </Button>
-                      <Text mx={2}>{upload.likes}</Text>
-                    </Box>
 
-                    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                      <Button colorScheme="gray" variant="outline" cursor="auto" disabled style={{ pointerEvents: "none" }}>
-                        <FaArrowDown />
-                      </Button>
-                      <Text mx={2}>{upload.dislikes}</Text>
-                    </Box>
+                  <Flex align="center" justify="space-between" mt={4}>
+                    <Flex gap={2}>
+                      <IconButton aria-label="Upvote" icon={<FaArrowUp />} size="sm" variant="outline" isDisabled colorScheme="gray" />
+                      <Text>{upload.likes}</Text>
 
-                    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                      <Button aria-label="Comments" onClick={() => toggleComments(upload._id)} colorScheme={showCommentSection[upload._id] ? "teal" : "gray"} variant="outline" isLoading={loadingCommentSection[upload._id]}>
-                        <FaComment />
+                      <IconButton aria-label="Downvote" icon={<FaArrowDown />} size="sm" variant="outline" isDisabled colorScheme="gray" />
+                      <Text>{upload.dislikes}</Text>
+                    </Flex>
+
+                    <Flex gap={2}>
+                      <Button aria-label="Comments" onClick={() => toggleComments(upload._id)} colorScheme={showCommentSection[upload._id] ? "teal" : "gray"} size="sm" variant="outline" isLoading={loadingCommentSection[upload._id]} leftIcon={<FaComment />}>
+                        {comments[upload._id]?.length ?? upload.comments.length}
                       </Button>
-                      <Text>{comments[upload._id]?.length ?? upload.comments.length}</Text>
-                    </Box>
-                    <Button ml="auto" aria-label="Report" colorScheme="yellow" variant="outline">
-                      <FaFlag />
-                    </Button>
+
+                      <Button aria-label="Report" colorScheme="yellow" size="sm" variant="outline">
+                        <FaFlag />
+                      </Button>
+                    </Flex>
                   </Flex>
-                  <Collapse in={showCommentSection[upload._id]} animateOpacity>
+
+                  <Collapse in={showCommentSection[upload._id]} animateOpacity mt={3}>
                     {loadingComments[upload._id] ? (
                       <Box w="100%">
                         {[...Array(comments[upload._id]?.length || 3)].map((_, index) => (
@@ -367,34 +336,16 @@ export default function Dashboard() {
                       />
                     )}
                   </Collapse>
-                  <AlertDialog isOpen={isDeleteOpen} leastDestructiveRef={cancelRef} onClose={onDeleteClose} isCentered>
-                    <AlertDialogOverlay>
-                      <AlertDialogContent>
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                          Delete Upload
-                        </AlertDialogHeader>
-                        <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
-                        <AlertDialogFooter>
-                          <Button ref={cancelRef} onClick={onDeleteClose}>
-                            Cancel
-                          </Button>
-                          <Button colorScheme="red" onClick={handleRemoveUpload} ml={3}>
-                            Delete
-                          </Button>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialogOverlay>
-                  </AlertDialog>
                 </Box>
               ))
             ) : (
-              <>
-                <Text>Hey {username}, You have not posted anything yet, ready for your first post?</Text>
+              <Box textAlign="center" mt={6}>
+                <Text color="gray.400">Hey {username}, You have not posted anything yet, ready for your first post?</Text>
                 <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
-                <ChakraLink color="blue.400" onClick={() => openUpload()}>
+                <Button mt={3} colorScheme="blue" onClick={() => openUpload()}>
                   Upload Now
-                </ChakraLink>
-              </>
+                </Button>
+              </Box>
             )}
           </TabPanel>
         </TabPanels>

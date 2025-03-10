@@ -72,33 +72,39 @@ export default function Home() {
       {!isAuthenticated && (
         <>
           {/* HOW IT WORKS */}
-          <Box bg="background.light" py={20}>
-            <Heading textAlign="center" color="primary.700" fontSize="3xl" mb={10}>
+          <Box bg="background.light" py={{ base: 10, md: 20 }} px={4}>
+            <Heading textAlign="center" color="primary.700" fontSize={{ base: "2xl", md: "3xl" }} mb={{ base: 6, md: 10 }}>
               How It Works
             </Heading>
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} maxW="1000px" mx="auto">
-              <VStack spacing={4} textAlign="center">
-                <Icon as={FaShareAlt} boxSize={10} color="primary.500" />
-                <Text fontSize="xl" fontWeight="bold" color="text.light">
+            <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={{ base: 6, md: 8 }} maxW="1000px" mx="auto">
+              <VStack spacing={4} textAlign="center" px={4}>
+                <Icon as={FaShareAlt} boxSize={{ base: 8, md: 10 }} color="primary.500" />
+                <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="bold" color="text.light">
                   Share Your Recipes
                 </Text>
-                <Text color="text.light">Upload your favorite dishes and inspire food lovers worldwide.</Text>
+                <Text fontSize={{ base: "sm", md: "md" }} color="text.light">
+                  Upload your favorite dishes and inspire food lovers worldwide.
+                </Text>
               </VStack>
 
-              <VStack spacing={4} textAlign="center">
-                <Icon as={MdOutlineFastfood} boxSize={10} color="primary.500" />
-                <Text fontSize="xl" fontWeight="bold" color="text.light">
+              <VStack spacing={4} textAlign="center" px={4}>
+                <Icon as={MdOutlineFastfood} boxSize={{ base: 8, md: 10 }} color="primary.500" />
+                <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="bold" color="text.light">
                   Discover Trending Meals
                 </Text>
-                <Text color="text.light">Explore the best-rated and most loved recipes from the community.</Text>
+                <Text fontSize={{ base: "sm", md: "md" }} color="text.light">
+                  Explore the best-rated and most loved recipes from the community.
+                </Text>
               </VStack>
 
-              <VStack spacing={4} textAlign="center">
-                <Icon as={FaUsers} boxSize={10} color="primary.500" />
-                <Text fontSize="xl" fontWeight="bold" color="text.light">
+              <VStack spacing={4} textAlign="center" px={4}>
+                <Icon as={FaUsers} boxSize={{ base: 8, md: 10 }} color="primary.500" />
+                <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="bold" color="text.light">
                   Connect with Foodies
                 </Text>
-                <Text color="text.light">Like, Comment on dishes, and engage with food lovers.</Text>
+                <Text fontSize={{ base: "sm", md: "md" }} color="text.light">
+                  Like, Comment on dishes, and engage with food lovers.
+                </Text>
               </VStack>
             </SimpleGrid>
           </Box>
