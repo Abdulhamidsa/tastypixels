@@ -41,7 +41,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
       <Container maxW="lg" bg="transparent" p={{ base: 6, md: 8 }} textAlign="center">
         <VStack spacing={4} align="center">
           <Icon as={FiLogIn} boxSize={10} color="primary.500" />
-          <Heading fontSize={{ base: "2xl", md: "3xl" }} color="primary.700">
+          <Heading fontSize={{ base: "2xl", md: "3xl" }} color="white">
             Welcome Back!
           </Heading>
           <Text fontSize="md" color="gray.600">
@@ -66,7 +66,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
               <Field name="email">
                 {({ field, form }) => (
                   <FormControl isInvalid={errors.email && form.touched.email} mb={4}>
-                    <FormLabel htmlFor="email" color="secondary.700">
+                    <FormLabel htmlFor="email" color="background.light">
                       Email Address
                     </FormLabel>
                     <Input {...field} id="email" placeholder="Enter your email" borderColor="gray.300" _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }} size="lg" borderRadius="md" w="100%" />
@@ -78,7 +78,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
               <Field name="password">
                 {({ field, form }) => (
                   <FormControl isInvalid={errors.password && form.touched.password} mb={4}>
-                    <FormLabel htmlFor="password" color="secondary.700">
+                    <FormLabel htmlFor="password" color="background.light">
                       Password
                     </FormLabel>
                     <Input {...field} id="password" placeholder="Enter your password" type="password" borderColor="gray.300" _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }} size="lg" borderRadius="md" w="100%" />

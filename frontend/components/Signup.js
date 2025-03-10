@@ -25,10 +25,10 @@ const Signup = ({ onModalOpen, setFormType }) => {
 
   return (
     <Flex align="center" justify="center" bg="transparent">
-      <Container maxW="lg" bg="white" p={{ base: 6, md: 8 }} textAlign="center">
+      <Container maxW="lg" bg="Background" p={{ base: 6, md: 8 }} textAlign="center">
         <VStack spacing={4} align="center">
           <Icon as={FiUserPlus} boxSize={10} color="primary.500" />
-          <Heading fontSize={{ base: "2xl", md: "3xl" }} color="primary.700">
+          <Heading fontSize={{ base: "2xl", md: "3xl" }} color="white">
             Create an Account
           </Heading>
           <Text fontSize="md" color="gray.600">
@@ -87,7 +87,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
               <Field name="password">
                 {({ field, form }) => (
                   <FormControl isInvalid={form.errors.password && form.touched.password} mb={4}>
-                    <FormLabel htmlFor="password" color="secondary.700">
+                    <FormLabel htmlFor="password" color="background.light">
                       Password
                     </FormLabel>
                     <Tooltip label="Caps Lock is on" isOpen={isCapsLockActive} placement="left">
@@ -101,7 +101,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
               <Field name="repeatPassword">
                 {({ field, form }) => (
                   <FormControl isInvalid={form.errors.repeatPassword && form.touched.repeatPassword} mb={6}>
-                    <FormLabel htmlFor="repeatPassword" color="secondary.700">
+                    <FormLabel htmlFor="repeatPassword" color="background.light">
                       Confirm Password
                     </FormLabel>
                     <Tooltip label="Caps Lock is on" isOpen={isCapsLockActive} placement="left">
@@ -126,13 +126,6 @@ const Signup = ({ onModalOpen, setFormType }) => {
               <Button mt={4} w="100%" bg="primary.500" color="white" _hover={{ bg: "primary.600" }} _active={{ bg: "primary.700" }} size="lg" type="submit" isLoading={isSubmitting || loading} disabled={!isValid || isSubmitting || loading}>
                 Sign Up
               </Button>
-
-              <Text mt={4} fontSize="sm">
-                Already have an account?{" "}
-                <Text as="span" color="primary.500" fontWeight="bold" cursor="pointer" onClick={handleSignInClick}>
-                  Sign in here
-                </Text>
-              </Text>
             </Form>
           )}
         </Formik>
