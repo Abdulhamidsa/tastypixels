@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <Box bg="gray.900" color="white" py={8} textAlign="center">
+    <Box bg="gray.900" color="white" py={8} textAlign="center" position="absolute" bottom="0" width="100%">
       <Text fontSize="sm">&copy; {new Date().getFullYear()} Tasty Pixels. All Rights Reserved.</Text>
     </Box>
   );
