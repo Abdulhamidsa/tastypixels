@@ -1,20 +1,18 @@
-import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 const BackToPortfolioButton = () => {
+  const router = useRouter();
   const [isFromPortfolio, setIsFromPortfolio] = useState(false);
 
   useEffect(() => {
-    const referrer = document.referrer;
-
-    const portfolioUrl = "https://abdulhamid-sa.vercel.app/projects";
-
-    if (referrer.includes(portfolioUrl)) {
+    if (router.query.from === "portfolio") {
       setIsFromPortfolio(true);
     }
-  }, []);
+  }, [router.query]);
 
   const handleBackToPortfolio = () => {
-    window.location.href = "https://abdulhamid-sa.vercel.app/projects";
+    router.push("https://abdulhamid-sa.vercel.app/projects");
   };
 
   return (
