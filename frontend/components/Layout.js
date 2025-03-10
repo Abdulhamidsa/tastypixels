@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
 import { Box } from "@chakra-ui/react";
 import Footer from "./Footer";
-import TastyPixelsPage from "./BackToPortfolioButton";
+import BackToPortfolioButton from "./BackToPortfolioButton";
 
 export const LoginContext = createContext();
 
@@ -20,7 +20,7 @@ export default function Layout({ children }) {
     <>
       <Box display="flex" flexDirection="column" minHeight="100vh">
         <Navbar />
-        <TastyPixelsPage />
+        <BackToPortfolioButton />
         {children}
         <Footer />
       </Box>
