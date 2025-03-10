@@ -18,7 +18,7 @@ export const UsernameField = () => {
     <Field name="username">
       {({ field, form }) => (
         <FormControl isInvalid={form.errors.username && form.touched.username} mb={4}>
-          <FormLabel htmlFor="username" color="secondary.700">
+          <FormLabel htmlFor="username" color="background.light">
             Username
           </FormLabel>
           <Input
@@ -57,7 +57,7 @@ export const EmailField = () => {
     <Field name="email">
       {({ field, form }) => (
         <FormControl isInvalid={form.errors.email && form.touched.email} mb={4}>
-          <FormLabel htmlFor="email" color="secondary.700">
+          <FormLabel htmlFor="email" color="background.light">
             Email Address
           </FormLabel>
           <Input
