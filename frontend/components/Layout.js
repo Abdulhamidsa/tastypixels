@@ -2,15 +2,15 @@ import Navbar from "@/components/Navbar";
 import { createContext } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
-import Demo from "@/components/Demo";
-import { Box, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import Footer from "./Footer";
+import TastyPixelsPage from "./BackToPortfolioButton";
 
 export const LoginContext = createContext();
 
 export default function Layout({ children }) {
   const { state } = useAuth();
-  const { isAuthenticated, loading, isLoading, userName, friendlyId } = state;
+  const { isLoading, userName } = state;
 
   if (isLoading) {
     return <Loading />;
@@ -20,9 +20,9 @@ export default function Layout({ children }) {
     <>
       <Box display="flex" flexDirection="column" minHeight="100vh">
         <Navbar />
+        <TastyPixelsPage />
         {children}
         <Footer />
-        {/* <Demo /> */}
       </Box>
     </>
   );
