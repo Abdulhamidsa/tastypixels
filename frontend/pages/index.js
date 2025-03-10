@@ -42,7 +42,7 @@ export default function Home() {
       </Head>
 
       {/* HERO SECTION */}
-      <Box position="relative" w="100%" h={{ base: "70dvh", md: "80dvh", lg: "100dvh" }} bg="black">
+      <Box position="relative" w="100%" h="70dvh" bg="black">
         <Image src="/main-bg.png" alt="Delicious food collage" layout="fill" objectFit="cover" quality={100} priority style={{ filter: "brightness(0.3)" }} />
 
         <Flex position="absolute" top="0" left="0" right="0" bottom="0" align="center" justify="center" direction="column" textAlign="center" color="white" px={{ base: 4, md: 6 }}>
