@@ -12,7 +12,7 @@ const BackToPortfolioButton = () => {
 
     if (queryFrom === "portfolio") {
       setIsFromPortfolio(true);
-      sessionStorage.setItem("fromPortfolio", "true"); // Store in session storage
+      sessionStorage.setItem("fromPortfolio", "true");
     } else if (sessionStorage.getItem("fromPortfolio") === "true") {
       setIsFromPortfolio(true); // Retrieve on page refresh
     }
@@ -33,13 +33,12 @@ const BackToPortfolioButton = () => {
           bg={useColorModeValue("rgba(255, 255, 255, 0.15)", "rgba(0, 0, 0, 0.3)")}
           backdropFilter="blur(10px)"
           color={useColorModeValue("black", "white")}
-          size="lg"
+          size="md"
           rounded="full"
           shadow="lg"
           px={6}
           transition="all 0.3s"
           _hover={{
-            transform: "scale(1.1)",
             shadow: "xl",
             bg: useColorModeValue("rgba(255, 255, 255, 0.25)", "rgba(0, 0, 0, 0.4)"),
           }}
