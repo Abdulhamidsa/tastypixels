@@ -1,4 +1,5 @@
 ﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
+import { useRouter } from "next/router";
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
 import { jwtDecode } from "jwt-decode";
 
@@ -43,6 +44,20 @@ export const AuthProvider = ({ children }) => {
     loading: true,
   });
 
+  const router = useRouter();
+
+  useEffect(() => {
+    // Detect if "from=portfolio" is in the URL
+    if (router.query.from === "portfolio") {
+      sessionStorage.setItem("fromPortfolio", "true"); // Store it
+    }
+
+    // If "from=portfolio" is missing but exists in sessionStorage, restore it
+    if (!router.query.from && sessionStorage.getItem("fromPortfolio") === "true") {
+      router.replace({ pathname: router.pathname, query: { ...router.query, from: "portfolio" } }, undefined, { shallow: true });
+    }
+  }, [router.query]);
+
   useEffect(() => {
     const checkAuth = async () => {
       let accessToken = getAccessToken();
@@ -86,95 +101,7 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const signin = async (values) => {
-    dispatch({ type: "SET_LOADING", payload: true });
-
-    try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-        credentials: "include",
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const token = data.accessToken;
-        const decodedToken = jwtDecode(token);
-
-        setAccessToken(token);
-        dispatch({
-          type: "LOGIN",
-          payload: {
-            token,
-            userId: decodedToken.userId,
-            userRole: decodedToken.userRole,
-            userName: decodedToken.userName,
-          },
-        });
-
-        return { success: true };
-      } else {
-        throw new Error(data.message || "Login failed");
-      }
-    } catch (error) {
-      console.error("Signin error:", error);
-      throw error;
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  };
-
-  const logout = async () => {
-    dispatch({ type: "LOGOUT" });
-
-    try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (response.ok) {
-        removeAccessToken();
-        dispatch({ type: "LOGOUT" });
-      } else {
-        throw new Error("Logout failed");
-      }
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
-  };
-
-  const signup = async (signupData) => {
-    dispatch({ type: "SET_LOADING", payload: true });
-
-    try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signupData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Handle successful signup if needed
-      } else {
-        throw new Error(data.message || "Signup failed");
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-      throw error;
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  };
-
-  return <AuthContext.Provider value={{ state, dispatch, signin, logout, signup }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);
