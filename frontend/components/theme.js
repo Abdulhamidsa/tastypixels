@@ -10,7 +10,7 @@ const theme = extendTheme({
   styles: {
     global: (props) => ({
       body: {
-        bg: props.colorMode === "dark" ? "#121212" : "#F8F9FA", // Deep Charcoal for dark mode, Soft Ivory for light mode
+        bg: props.colorMode === "dark" ? "#121212" : "#F8F9FA",
         color: props.colorMode === "dark" ? "#E0E0E0" : "#1A1A1A",
         transition: "background-color 0.4s ease-in-out",
       },
@@ -99,17 +99,16 @@ const theme = extendTheme({
       },
       variants: {
         solid: {
-          bg: "primary.500", // **Deep Sapphire**
+          bg: "primary.500",
           color: "white",
           _hover: {
             bg: "primary.600",
           },
         },
         outline: {
-          borderColor: "accent.500",
-          color: "accent.500",
+          borderColor: "primary.500",
           _hover: {
-            bg: "accent.100",
+            bg: "primary.600",
           },
         },
         ghost: {
