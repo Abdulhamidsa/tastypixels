@@ -44,9 +44,10 @@ export default function Home() {
       </Head>
 
       {/* HERO SECTION */}
-      <Box position="relative" w="100%" h="100dvh" bg="black">
-        <Image src="/main-bg.png" alt="Delicious food collage" layout="fill" height="50px" objectFit="cover" priority style={{ filter: "brightness(0.3)" }} />
+      <Box position="relative" w="100%" h="50vh" bg="black">
+        <Image src="/main-bg.png" alt="Delicious food collage" layout="fill" objectFit="cover" priority quality={100} style={{ filter: "brightness(0.3)" }} />
 
+        {/* Text Content Changes Based on Authentication */}
         <Flex position="absolute" top="0" left="0" right="0" bottom="0" align="center" justify="center" direction="column" textAlign="center" color="white" px={{ base: 4, md: 6 }}>
           {isAuthenticated ? (
             <>
