@@ -11,10 +11,14 @@ import useVote from "@/hooks/useVote";
 import useComments from "@/hooks/useComments";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Head from "next/head";
+import Upload from "@/components/Upload";
+import { Button } from "@chakra-ui/react";
 
 export default function Home() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId, userName, userRole } = useFetchData();
   const { handleVote, loadingVote } = useVote(uploads, setUploads);
   const { comments, showComments, loadingComments, deletingCommentId, handleToggleComments, handleAddComment, handleDeleteComment } = useComments();
@@ -55,7 +59,6 @@ export default function Home() {
         <Heading textAlign="center" fontSize="3xl" color="primary.500" mb={6}>
           Feed
         </Heading>
-
         {loadingPosts ? (
           <Box display="grid" gap="10">
             <CardSkeleton />
@@ -68,7 +71,7 @@ export default function Home() {
             hasMore={hasMore}
             endMessage={
               <Text textAlign="center" color="text.dark" mt={4} mb={4}>
-                Yay! You have seen it all
+                You have seen it all
               </Text>
             }
           >
