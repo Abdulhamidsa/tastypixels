@@ -18,7 +18,7 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Box display="flex" flexDirection="column" h="100dvh">
+      <Box display="flex" flexDirection="column" minH="100dvh">
         <Navbar />
         <BackToPortfolioButton />
         {children}
