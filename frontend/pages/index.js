@@ -7,6 +7,8 @@ import Image from "next/legacy/image";
 import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
 import { fetchWithTokenRefresh } from "@/utils/auth";
+import NextLink from "next/link";
+import { Button } from "@chakra-ui/react";
 
 export default function Home() {
   const { state } = useAuth();
@@ -42,8 +44,8 @@ export default function Home() {
       </Head>
 
       {/* HERO SECTION */}
-      <Box position="relative" w="100%" h="70dvh" bg="black">
-        <Image src="/main-bg.png" alt="Delicious food collage" layout="fill" objectFit="cover" quality={100} priority style={{ filter: "brightness(0.3)" }} />
+      <Box position="relative" w="100%" h="100dvh" bg="black">
+        <Image src="/main-bg.png" alt="Delicious food collage" layout="fill" height="50px" objectFit="cover" priority style={{ filter: "brightness(0.3)" }} />
 
         <Flex position="absolute" top="0" left="0" right="0" bottom="0" align="center" justify="center" direction="column" textAlign="center" color="white" px={{ base: 4, md: 6 }}>
           {isAuthenticated ? (
@@ -54,6 +56,9 @@ export default function Home() {
               <Text fontSize={{ base: "md", sm: "lg" }} mt={3} maxW={{ base: "90%", sm: "600px" }} textAlign="center">
                 Ready to share your next recipe or explore new dishes?
               </Text>
+              <Button as={NextLink} mt="3" href="/home" borderColor="primary.700" variant="solid" size="md">
+                Food Gallery
+              </Button>
             </>
           ) : (
             <>
@@ -68,7 +73,6 @@ export default function Home() {
         </Flex>
       </Box>
 
-      {/* SHOW FULL PAGE ONLY IF NOT LOGGED IN */}
       {!isAuthenticated && (
         <>
           {/* HOW IT WORKS */}
