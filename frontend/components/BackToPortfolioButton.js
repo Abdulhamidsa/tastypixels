@@ -3,18 +3,27 @@ import { useState, useEffect } from "react";
 import { ArrowLeftCircle } from "lucide-react";
 import { Box, Button, Icon, useColorModeValue, SlideFade } from "@chakra-ui/react";
 
+const STORAGE_KEY = "fromPortfolio";
+const EXPIRATION_TIME = 5 * 60 * 1000;
+
 const BackToPortfolioButton = () => {
   const router = useRouter();
   const [isFromPortfolio, setIsFromPortfolio] = useState(false);
 
   useEffect(() => {
     const queryFrom = router.query.from;
+    const storedData = sessionStorage.getItem(STORAGE_KEY);
 
     if (queryFrom === "portfolio") {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ timestamp: Date.now() }));
       setIsFromPortfolio(true);
-      sessionStorage.setItem("fromPortfolio", "true");
-    } else if (sessionStorage.getItem("fromPortfolio") === "true") {
-      setIsFromPortfolio(true); // Retrieve on page refresh
+    } else if (storedData) {
+      const { timestamp } = JSON.parse(storedData);
+      if (Date.now() - timestamp < EXPIRATION_TIME) {
+        setIsFromPortfolio(true);
+      } else {
+        sessionStorage.removeItem(STORAGE_KEY);
+      }
     }
   }, [router.query]);
 
