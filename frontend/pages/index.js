@@ -44,7 +44,7 @@ export default function Home() {
       </Head>
 
       {/* HERO SECTION */}
-      <Box position="relative" w="100%" h="50vh" bg="black">
+      <Box position="relative" w="100%" h="100dvh" bg="black">
         <Image src="/main-bg.png" alt="Delicious food collage" layout="fill" objectFit="cover" priority quality={100} style={{ filter: "brightness(0.3)" }} />
 
         {/* Text Content Changes Based on Authentication */}
@@ -58,7 +58,7 @@ export default function Home() {
                 Ready to share your next recipe or explore new dishes?
               </Text>
               <Button as={NextLink} mt="3" href="/home" borderColor="primary.700" variant="solid" size="md">
-                Food Gallery
+                Explore recipes
               </Button>
             </>
           ) : (

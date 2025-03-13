@@ -84,11 +84,10 @@ const Navbar = () => {
               >
                 <FiUpload />
               </IconButton>
-
-              <IconButton aria-label="Open menu" icon={<HamburgerIcon />} size="md" color="white" variant="solid" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />
             </>
           )}
           {!isAuthenticated && <IconButton aria-label="Open menu" icon={<HamburgerIcon />} size="md" color="white" variant="solid" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />}
+          {isAuthenticated && <IconButton aria-label="Open menu" icon={<HamburgerIcon />} size="md" color="white" variant="solid" onClick={onMenuOpen} display={{ base: "block", md: "none" }} />}
         </Flex>
 
         {/* Mobile Drawer */}
