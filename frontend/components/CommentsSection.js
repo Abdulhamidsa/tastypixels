@@ -36,7 +36,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
     if (!isAuthenticated) {
       toast({
         title: "Not authenticated",
-        description: "Please log in to comment",
+        description: "Please log in to comment.",
         status: "warning",
         isClosable: true,
       });
