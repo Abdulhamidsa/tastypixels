@@ -20,7 +20,7 @@ const editPostRoutes = require("@/routes/editPostRoutes");
 const userValidationRoutes = require("@/routes/userValidationRoutes");
 
 const app = express();
-const port = process.env.SERVER_PORT;
+const port = process.env.SERVER_PORT || 3000;
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",

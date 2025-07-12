@@ -15,7 +15,7 @@ const useComments = () => {
   const fetchComments = async (uploadId) => {
     setLoadingComments((prev) => ({ ...prev, [uploadId]: true }));
     try {
-      const response = await fetchWithTokenRefresh(`https://tastypixels-backend.up.railway.app/api/comments?uploadId=${uploadId}`);
+      const response = await fetchWithTokenRefresh(`https://api.norpus.com/api/comments?uploadId=${uploadId}`);
       if (!response.ok) throw new Error("Failed to fetch comments");
 
       const fetchedComments = await response.json();
@@ -43,7 +43,7 @@ const useComments = () => {
     setAddingComment(true);
 
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/api/add-comment", {
+      const response = await fetch("https://api.norpus.com/api/add-comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +88,7 @@ const useComments = () => {
 
     setDeletingCommentId(commentId);
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/delete-comment", {
+      const response = await fetchWithTokenRefresh("https://api.norpus.com/api/delete-comment", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ commentId }),

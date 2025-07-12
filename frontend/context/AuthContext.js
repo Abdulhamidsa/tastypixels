@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/login", {
+      const response = await fetch("https://api.norpus.com/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -144,7 +144,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "LOGOUT" });
 
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/logout", {
+      const response = await fetch("https://api.norpus.com/auth/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -163,7 +163,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("https://tastypixels-backend.up.railway.app/auth/signup", {
+      const response = await fetch("https://api.norpus.com/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

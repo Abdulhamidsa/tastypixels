@@ -48,7 +48,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
     setAddingComment(true);
 
     try {
-      const response = await fetchWithTokenRefresh("https://tastypixels-backend.up.railway.app/api/add-comment", {
+      const response = await fetchWithTokenRefresh("https://api.norpus.com/api/add-comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

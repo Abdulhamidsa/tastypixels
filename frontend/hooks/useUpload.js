@@ -52,12 +52,12 @@ const useUpload = (initialUploadData, onClose) => {
       ...(uploadData.selectedCategory && { category: uploadData.selectedCategory }),
     };
 
-    let url = "https://tastypixels-backend.up.railway.app/api/upload";
+    let url = "https://api.norpus.com/api/upload";
     let method = "POST";
 
     if (editedUpload) {
       dataToSave.uploadId = editedUpload._id;
-      url = "https://tastypixels-backend.up.railway.app/api/edit-post";
+      url = "https://api.norpus.com/api/edit-post";
       method = "PUT";
     }
     try {
