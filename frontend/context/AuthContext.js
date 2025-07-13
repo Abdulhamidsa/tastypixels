@@ -44,6 +44,14 @@ export const AuthProvider = ({ children }) => {
     userName: null,
     loading: true,
   });
+  const isTokenExpired = (token) => {
+    try {
+      const { exp } = jwtDecode(token);
+      return exp * 1000 < Date.now();
+    } catch {
+      return true; // if decode fails, treat as expired
+    }
+  };
 
   const router = useRouter();
 
@@ -78,7 +86,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         try {
           accessToken = await refreshAccessToken();
-          if (accessToken) {
+          if (accessToken && !isTokenExpired(accessToken)) {
             const decodedToken = jwtDecode(accessToken);
             dispatch({
               type: "LOGIN",
@@ -89,6 +97,26 @@ export const AuthProvider = ({ children }) => {
                 userName: decodedToken.userName,
               },
             });
+          } else {
+            try {
+              const refreshedToken = await refreshAccessToken();
+              if (refreshedToken && !isTokenExpired(refreshedToken)) {
+                const decodedToken = jwtDecode(refreshedToken);
+                dispatch({
+                  type: "LOGIN",
+                  payload: {
+                    token: refreshedToken,
+                    userId: decodedToken.userId,
+                    userRole: decodedToken.userRole,
+                    userName: decodedToken.userName,
+                  },
+                });
+              } else {
+                dispatch({ type: "LOGOUT" });
+              }
+            } catch {
+              dispatch({ type: "LOGOUT" });
+            }
           }
         } catch {
           dispatch({ type: "LOGOUT" });
