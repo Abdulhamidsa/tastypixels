@@ -5,6 +5,7 @@ import { MdSend } from "react-icons/md";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useAuth } from "@/context/AuthContext";
 import useComments from "@/hooks/useComments";
+import { getApiUrlapi } from "@/utils/api";
 
 const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId, friendlyId, userRole }) => {
   const [newComment, setNewComment] = useState("");
@@ -48,7 +49,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
     setAddingComment(true);
 
     try {
-      const response = await fetchWithTokenRefresh("https://api.norpus.com/tastypixels/api/add-comment", {
+      const response = await fetchWithTokenRefresh(getApiUrlapi("/add-comment"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
