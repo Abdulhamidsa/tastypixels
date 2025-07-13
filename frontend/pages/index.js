@@ -19,7 +19,7 @@ export default function Home() {
   useEffect(() => {
     const fetchTrendingRecipes = async () => {
       try {
-        const response = await fetchWithTokenRefresh("https://api.norpus.com/recipes/trending-posts");
+        const response = await fetchWithTokenRefresh("https://api.norpus.com/tastypixels/recipes/trending-posts");
         const data = await response.json();
         setRecipes(data.recipes);
       } catch (error) {

@@ -1,6 +1,6 @@
 export const checkExistingUsername = async (username) => {
   try {
-    const response = await fetch("https://api.norpus.com/api/validation/check-username", {
+    const response = await fetch("https://api.norpus.com/tastypixels/api/validation/check-username", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export const checkExistingUsername = async (username) => {
 
 export const checkExistingEmail = async (email) => {
   try {
-    const response = await fetch("https://api.norpus.com/api/validation/check-email", {
+    const response = await fetch("https://api.norpus.com/tastypixels/api/validation/check-email", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

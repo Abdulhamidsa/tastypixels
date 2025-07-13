@@ -19,7 +19,7 @@ const EditUserInfo = ({ user, onClose, stateChanger, setUpdate }) => {
     };
 
     try {
-      const response = await fetchWithTokenRefresh("https://api.norpus.com/api/edit-post", {
+      const response = await fetchWithTokenRefresh("https://api.norpus.com/tastypixels/api/edit-post", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

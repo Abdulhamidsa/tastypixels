@@ -16,7 +16,7 @@ export const removeAccessToken = () => {
 
 export const refreshAccessToken = async () => {
   try {
-    const response = await fetch("https://api.norpus.com/auth/refresh-token", {
+    const response = await fetch("https://api.norpus.com/tastypixels/auth/refresh-token", {
       method: "POST",
       credentials: "include",
     });
