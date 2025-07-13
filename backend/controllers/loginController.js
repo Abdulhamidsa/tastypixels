@@ -14,7 +14,7 @@ const generateAccessToken = (user) => {
       userRole: user.userRole,
     },
     process.env.JWT_SECRET_KEY,
-    { expiresIn: "15m" } // Shorter lifespan for access tokens
+    { expiresIn: "1d" } // Shorter lifespan for access tokens
   );
 };
 
