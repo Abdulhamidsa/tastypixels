@@ -57,6 +57,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(cookieParser());
 app.use(corsConfig);
+app.options("*", corsConfig);
 app.use(bodyParser.json());
 
 app.use("/recipes", recipeRoutes);
