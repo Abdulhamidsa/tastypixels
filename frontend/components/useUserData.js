@@ -21,7 +21,8 @@ const useFetchData = () => {
       let dislikedPosts = [];
 
       if (isAuthenticated) {
-        const userResponse = await fetchWithTokenRefresh("https://api.norpus.com/tastypixels/users/profile");
+        const userResponse = await fetchWithTokenRefresh(getApiUrlapi("/users/profile"));
+
         if (!userResponse.ok) {
           throw new Error("Failed to fetch user data");
         }
@@ -32,7 +33,7 @@ const useFetchData = () => {
       }
 
       if (isAuthenticated && userData) {
-        const postsResponse = await fetchWithTokenRefresh(`https://api.norpus.com/tastypixels/recipes/all-posts?page=${page}`);
+        const postsResponse = await fetchWithTokenRefresh(getApiUrlapi(`/recipes/all-posts?page=${page}`));
         if (!postsResponse.ok) {
           throw new Error("Failed to fetch recipes");
         }

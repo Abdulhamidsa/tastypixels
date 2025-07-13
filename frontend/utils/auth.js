@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import { getApiUrlapi } from "@/utils/api";
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -16,7 +17,7 @@ export const removeAccessToken = () => {
 
 export const refreshAccessToken = async () => {
   try {
-    const response = await fetch("https://api.norpus.com/tastypixels/auth/refresh-token", {
+    const response = await fetch(getApiUrlapi("/auth/refresh-token"), {
       method: "POST",
       credentials: "include",
     });
@@ -60,9 +61,7 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
         },
         credentials: "include",
       });
-    } catch (error) {
-      // Handle the error gracefully without logging or throwing anything
-    }
+    } catch (error) {}
   }
 
   return response;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
+import { getApiUrlapi } from "@/utils/api";
 
 const useUpload = (initialUploadData, onClose) => {
   const [imageUrl, setImageUrl] = useState(initialUploadData ? initialUploadData.imageUrl : "");
@@ -52,12 +53,12 @@ const useUpload = (initialUploadData, onClose) => {
       ...(uploadData.selectedCategory && { category: uploadData.selectedCategory }),
     };
 
-    let url = "https://api.norpus.com/tastypixels/api/upload";
+    let url = getApiUrlapi("/api/upload");
     let method = "POST";
 
     if (editedUpload) {
       dataToSave.uploadId = editedUpload._id;
-      url = "https://api.norpus.com/tastypixels/api/edit-post";
+      url = getApiUrlapi("/api/edit-post");
       method = "PUT";
     }
     try {

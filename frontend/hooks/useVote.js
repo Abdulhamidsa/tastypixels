@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useAuth } from "@/context/AuthContext";
+import { getApiUrlapi } from "@/utils/api";
 
 const useVote = (uploads, setUploads) => {
   const {
@@ -25,7 +26,7 @@ const useVote = (uploads, setUploads) => {
     setLoadingVote((prev) => ({ ...prev, [uploadId]: action }));
 
     try {
-      const response = await fetchWithTokenRefresh("https://api.norpus.com/tastypixels/api/update-like-dislike", {
+      const response = await fetchWithTokenRefresh(getApiUrlapi("/api/update-like-dislike"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
