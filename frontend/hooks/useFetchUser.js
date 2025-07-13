@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
+import { getApiUrlapi } from "@/utils/api";
 
 export const useFetch = () => {
   const [user, setUser] = useState(null);

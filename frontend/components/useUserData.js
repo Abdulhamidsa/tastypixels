@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useToast } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthContext";
+import { getApiUrlapi } from "@/utils/api";
 
 const useFetchData = () => {
   const { state } = useAuth();
