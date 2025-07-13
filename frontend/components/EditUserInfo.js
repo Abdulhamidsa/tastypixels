@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, Button, Input, FormControl, FormLabel } from "@chakra-ui/react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 const EditUserInfo = ({ user, onClose, stateChanger, setUpdate }) => {
   const [username, setUsername] = useState(user.username);
@@ -20,7 +20,7 @@ const EditUserInfo = ({ user, onClose, stateChanger, setUpdate }) => {
     };
 
     try {
-      const response = await fetchWithTokenRefresh(getApiUrlapi("/api/edit-post"), {
+      const response = await fetchWithTokenRefresh(getApiUrl("/api/edit-post"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

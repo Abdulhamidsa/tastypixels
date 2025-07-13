@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 const ACCESS_TOKEN_KEY = "accessToken";
 
@@ -17,7 +17,7 @@ export const removeAccessToken = () => {
 
 export const refreshAccessToken = async () => {
   try {
-    const response = await fetch(getApiUrlapi("/auth/refresh-token"), {
+    const response = await fetch(getApiUrl("/auth/refresh-token"), {
       method: "POST",
       credentials: "include",
     });

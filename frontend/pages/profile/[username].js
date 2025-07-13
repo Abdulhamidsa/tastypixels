@@ -47,7 +47,7 @@ import { fetchWithTokenRefresh } from "@/utils/auth";
 import Loading from "@/components/Loading";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 export default function Dashboard() {
   const { user, loading, uploadList, updateUpload, deleteUpload } = useFetch();
@@ -156,7 +156,7 @@ export default function Dashboard() {
     };
 
     try {
-      const response = await fetchWithTokenRefresh(getApiUrlapi("/api/edit-post"), {
+      const response = await fetchWithTokenRefresh(getApiUrl("/api/edit-post"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

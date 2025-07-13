@@ -1,8 +1,8 @@
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 export const checkExistingUsername = async (username) => {
   try {
-    const response = await fetch(getApiUrlapi("/api/validation/check-username"), {
+    const response = await fetch(getApiUrl("/api/validation/check-username"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export const checkExistingUsername = async (username) => {
 
 export const checkExistingEmail = async (email) => {
   try {
-    const response = await fetch(getApiUrlapi("/api/validation/check-email"), {
+    const response = await fetch(getApiUrl("/api/validation/check-email"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useAuth } from "@/context/AuthContext";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 const useComments = () => {
   const { state } = useAuth();
@@ -16,7 +16,7 @@ const useComments = () => {
   const fetchComments = async (uploadId) => {
     setLoadingComments((prev) => ({ ...prev, [uploadId]: true }));
     try {
-      const response = await fetchWithTokenRefresh(getApiUrlapi(`/api/comments?uploadId=${uploadId}`));
+      const response = await fetchWithTokenRefresh(getApiUrl(`/api/comments?uploadId=${uploadId}`));
       if (!response.ok) throw new Error("Failed to fetch comments");
 
       const fetchedComments = await response.json();
@@ -44,7 +44,7 @@ const useComments = () => {
     setAddingComment(true);
 
     try {
-      const response = await fetch(getApiUrlapi("/api/add-comment"), {
+      const response = await fetch(getApiUrl("/api/add-comment"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +89,7 @@ const useComments = () => {
 
     setDeletingCommentId(commentId);
     try {
-      const response = await fetchWithTokenRefresh(getApiUrlapi("/api/delete-comment"), {
+      const response = await fetchWithTokenRefresh(getApiUrl("/api/delete-comment"), {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ commentId }),

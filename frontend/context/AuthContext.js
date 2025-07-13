@@ -2,7 +2,7 @@
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/router";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 const AuthContext = createContext();
 
@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch(getApiUrlapi("/auth/login"), {
+      const response = await fetch(getApiUrl("/auth/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -173,7 +173,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "LOGOUT" });
 
     try {
-      const response = await fetch(getApiUrlapi("/auth/logout"), {
+      const response = await fetch(getApiUrl("/auth/logout"), {
         method: "POST",
         credentials: "include",
       });
@@ -192,7 +192,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch(getApiUrlapi("/auth/signup"), {
+      const response = await fetch(getApiUrl("/auth/signup"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

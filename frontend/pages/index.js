@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import NextLink from "next/link";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 import { Button } from "@chakra-ui/react";
 
 export default function Home() {
@@ -20,7 +20,7 @@ export default function Home() {
   useEffect(() => {
     const fetchTrendingRecipes = async () => {
       try {
-        const response = await fetchWithTokenRefresh(getApiUrlapi("/recipes/trending-posts"));
+        const response = await fetchWithTokenRefresh(getApiUrl("/recipes/trending-posts"));
         const data = await response.json();
         setRecipes(data.recipes);
       } catch (error) {

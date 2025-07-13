@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
 import { useToast } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthContext";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 const useFetchData = () => {
   const { state } = useAuth();
@@ -22,7 +22,7 @@ const useFetchData = () => {
       let dislikedPosts = [];
 
       if (isAuthenticated) {
-        const userResponse = await fetchWithTokenRefresh(getApiUrlapi("/users/profile"));
+        const userResponse = await fetchWithTokenRefresh(getApiUrl("/users/profile"));
 
         if (!userResponse.ok) {
           throw new Error("Failed to fetch user data");
@@ -34,7 +34,7 @@ const useFetchData = () => {
       }
 
       if (isAuthenticated && userData) {
-        const postsResponse = await fetchWithTokenRefresh(getApiUrlapi(`/recipes/all-posts?page=${page}`));
+        const postsResponse = await fetchWithTokenRefresh(getApiUrl(`/recipes/all-posts?page=${page}`));
         if (!postsResponse.ok) {
           throw new Error("Failed to fetch recipes");
         }

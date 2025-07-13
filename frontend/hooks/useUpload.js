@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 const useUpload = (initialUploadData, onClose) => {
   const [imageUrl, setImageUrl] = useState(initialUploadData ? initialUploadData.imageUrl : "");
@@ -53,12 +53,12 @@ const useUpload = (initialUploadData, onClose) => {
       ...(uploadData.selectedCategory && { category: uploadData.selectedCategory }),
     };
 
-    let url = getApiUrlapi("/api/upload");
+    let url = getApiUrl("/api/upload");
     let method = "POST";
 
     if (editedUpload) {
       dataToSave.uploadId = editedUpload._id;
-      url = getApiUrlapi("/api/edit-post");
+      url = getApiUrl("/api/edit-post");
       method = "PUT";
     }
     try {

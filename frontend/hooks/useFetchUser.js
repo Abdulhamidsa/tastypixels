@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchWithTokenRefresh } from "@/utils/auth";
-import { getApiUrlapi } from "@/utils/api";
+import { getApiUrl } from "@/utils/api";
 
 export const useFetch = () => {
   const [user, setUser] = useState(null);
@@ -15,7 +15,7 @@ export const useFetch = () => {
   const fetchUserData = async () => {
     setLoading(true);
     try {
-      const res = await fetchWithTokenRefresh(getApiUrlapi("/users/profile"));
+      const res = await fetchWithTokenRefresh(getApiUrl("/users/profile"));
       if (!res.ok) throw new Error("Failed to fetch user data");
       const data = await res.json();
       setUser(data);
@@ -29,7 +29,7 @@ export const useFetch = () => {
 
   const deleteUpload = async (selectedUploadId) => {
     try {
-      const response = await fetchWithTokenRefresh(getApiUrlapi("/api/delete-post"), {
+      const response = await fetchWithTokenRefresh(getApiUrl("/api/delete-post"), {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
