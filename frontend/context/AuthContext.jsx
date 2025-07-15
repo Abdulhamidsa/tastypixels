@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
         shallow: true,
       });
     }
-  }, [router.query]);
+  }, [router, router.query]);
   useEffect(() => {
     const checkAuth = async () => {
       let accessToken = getAccessToken();

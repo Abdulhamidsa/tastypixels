@@ -2,7 +2,6 @@ import React from 'react';
 import {
   IconButton,
   Textarea,
-  Flex,
   Tooltip,
   Modal,
   ModalOverlay,

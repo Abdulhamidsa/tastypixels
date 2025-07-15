@@ -1,7 +1,7 @@
-import { jwtDecode } from "jwt-decode";
-import { getApiUrl } from "@/utils/api";
+import { jwtDecode } from 'jwt-decode';
+import { getApiUrl } from '@/utils/api';
 
-const ACCESS_TOKEN_KEY = "accessToken";
+const ACCESS_TOKEN_KEY = 'accessToken';
 
 export const getAccessToken = () => {
   return sessionStorage.getItem(ACCESS_TOKEN_KEY);
@@ -17,20 +17,20 @@ export const removeAccessToken = () => {
 
 export const refreshAccessToken = async () => {
   try {
-    const response = await fetch(getApiUrl("/auth/refresh-token"), {
-      method: "POST",
-      credentials: "include",
+    const response = await fetch(getApiUrl('/auth/refresh-token'), {
+      method: 'POST',
+      credentials: 'include',
     });
 
     if (!response.ok) {
-      throw new Error("Failed to refresh access token");
+      throw new Error('Failed to refresh access token');
     }
 
     const data = await response.json();
     setAccessToken(data.accessToken);
     return data.accessToken;
   } catch (error) {
-    console.error("Failed to refresh access token:", error);
+    console.error('Failed to refresh access token:', error);
     throw error;
   }
 };
@@ -47,7 +47,7 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
       ...options.headers,
       Authorization: `Bearer ${accessToken}`,
     },
-    credentials: "include",
+    credentials: 'include',
   });
 
   if (response.status === 401) {
@@ -59,9 +59,13 @@ export const fetchWithTokenRefresh = async (url, options = {}) => {
           ...options.headers,
           Authorization: `Bearer ${accessToken}`,
         },
-        credentials: "include",
+        credentials: 'include',
       });
-    } catch (error) {}
+    } catch {
+      console.error('Failed to refresh token, redirecting to login');
+      window.location.href = '/login';
+      return;
+    }
   }
 
   return response;

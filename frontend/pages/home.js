@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, useDisclosure, useToast, IconButton, Heading, Text } from '@chakra-ui/react';
+import { Box, useDisclosure, IconButton, Heading, Text } from '@chakra-ui/react';
 import { ArrowUpIcon } from '@chakra-ui/icons';
 import { useAuth } from '@/context/AuthContext';
 import FilterDrawer from '@/components/FilterDrawer';
@@ -11,25 +11,12 @@ import useVote from '@/hooks/useVote';
 import useComments from '@/hooks/useComments';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Head from 'next/head';
-import { getApiUrl } from '@/utils/api';
 
 export default function Home() {
   const { state } = useAuth();
   const { isAuthenticated } = state;
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
-  const {
-    uploads,
-    loadingPosts,
-    loadingMore,
-    userData,
-    setUploads,
-    loadMorePosts,
-    hasMore,
-    friendlyId,
-    userName,
-    userRole,
-  } = useFetchData();
+  const { uploads, loadingPosts, loadingMore, userData, setUploads, loadMorePosts, hasMore, friendlyId, userRole } =
+    useFetchData();
   const { handleVote, loadingVote } = useVote(uploads, setUploads);
   const {
     comments,
@@ -40,12 +27,11 @@ export default function Home() {
     handleAddComment,
     handleDeleteComment,
   } = useComments();
-  const [selectedUploadId, setSelectedUploadId] = useState(null);
+  const [selectedUploadId] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
   const [sortOrder, setSortOrder] = useState('a-z');
-  const [currentFilter, setCurrentFilter] = useState('Filter by');
+  const [currentFilter] = useState('Filter by');
 
   const [showGoToTop, setShowGoToTop] = useState(false);
 
