@@ -3,8 +3,8 @@ import { createContext } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Loading from '@/components/Loading';
 import { Box } from '@chakra-ui/react';
-import Footer from './Footer';
-import BackToPortfolioButton from './BackToPortfolioButton';
+import Footer from '@/components/Footer';
+import BackToPortfolioButton from '@/components/BackToPortfolioButton';
 
 import { Analytics } from '@vercel/analytics/next';
 
