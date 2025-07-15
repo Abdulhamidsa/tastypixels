@@ -1,12 +1,9 @@
 import '@/styles/globals.css';
-import dynamic from 'next/dynamic';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import theme from '@/components/theme';
 import { AuthProvider } from '@/context/AuthContext';
 
-const Layout = dynamic(() => import('@/components/Layout'), {
-  ssr: false,
-});
+import Layout from '@/components/Layout';
 
 export default function App({ Component, pageProps }) {
   return (
