@@ -1,50 +1,65 @@
-import React from "react";
-import { IconButton, Textarea, Flex, Tooltip, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Text, Button, Box } from "@chakra-ui/react";
-import { InfoIcon } from "@chakra-ui/icons";
-import { useDisclosure } from "@chakra-ui/hooks";
-import { useState } from "react";
-import { useToast } from "@chakra-ui/react";
+import React from 'react';
+import {
+  IconButton,
+  Textarea,
+  Flex,
+  Tooltip,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Text,
+  Button,
+  Box,
+} from '@chakra-ui/react';
+import { InfoIcon } from '@chakra-ui/icons';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { useState } from 'react';
+import { useToast } from '@chakra-ui/react';
 
 function Demo() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [feedback, setFeedback] = useState("");
+  const [feedback, setFeedback] = useState('');
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const toast = useToast();
   const handleFeedbackSubmit = async () => {
     try {
-      const response = await fetch("/api/api-send-feedback", {
-        method: "POST",
+      const response = await fetch('/api/api-send-feedback', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ feedback }),
       });
 
       if (response.ok) {
         toast({
-          title: "Feedback sent.",
-          description: "Thank you for your feedback!",
-          status: "success",
+          title: 'Feedback sent.',
+          description: 'Thank you for your feedback!',
+          status: 'success',
           duration: 9000,
           isClosable: true,
         });
-        setFeedback("");
+        setFeedback('');
         setIsFeedbackOpen(false);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to send feedback. Please try again.",
-          status: "error",
+          title: 'Error',
+          description: 'Failed to send feedback. Please try again.',
+          status: 'error',
           duration: 9000,
           isClosable: true,
         });
       }
     } catch (error) {
-      console.error("Error sending feedback:", error);
+      console.error('Error sending feedback:', error);
       toast({
-        title: "Error",
-        description: "An error occurred while sending feedback. Please try again.",
-        status: "error",
+        title: 'Error',
+        description: 'An error occurred while sending feedback. Please try again.',
+        status: 'error',
         duration: 9000,
         isClosable: true,
       });
@@ -53,7 +68,22 @@ function Demo() {
   return (
     <>
       <Tooltip label="Demo Info" fontSize="md">
-        <IconButton pl={3} bg="red.500" color="" size="lg" aria-label="About this demo" icon={<InfoIcon />} top={150} onClick={onOpen} position="fixed" left="-4" _hover={{ left: "0px" }} transform="translateY(-50%)" borderRadius="0%" transition="all 0.2s ease-in-out" />
+        <IconButton
+          pl={3}
+          bg="red.500"
+          color=""
+          size="lg"
+          aria-label="About this demo"
+          icon={<InfoIcon />}
+          top={150}
+          onClick={onOpen}
+          position="fixed"
+          left="-4"
+          _hover={{ left: '0px' }}
+          transform="translateY(-50%)"
+          borderRadius="0%"
+          transition="all 0.2s ease-in-out"
+        />
       </Tooltip>
       <Modal size="2xl" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -65,7 +95,9 @@ function Demo() {
               Welcome to our Food Dish Sharing Community!
             </Text>
             <Box display="flex" flexDirection="column" gap={2}>
-              <Text mb={2}>This demo website allows you to share your favorite dishes with the community. You can:</Text>
+              <Text mb={2}>
+                This demo website allows you to share your favorite dishes with the community. You can:
+              </Text>
               <Text>• Sign up to create an account and log in to manage your uploads.</Text>
               <Text>• Upload your favorite dishes along with images, titles, and descriptions.</Text>
               <Text>• View your uploads on your profile page.</Text>
@@ -77,9 +109,13 @@ function Demo() {
             </Box>
 
             <Text mt={4} fontWeight="bold">
-              Note: This is only a demo, so everything is just a prototype. All features and content will be finalized in the final version.
+              Note: This is only a demo, so everything is just a prototype. All features and content will be finalized
+              in the final version.
             </Text>
-            <Text mt={2}>This website is an ongoing project for my school exam. Your feedback and participation are greatly appreciated!</Text>
+            <Text mt={2}>
+              This website is an ongoing project for my school exam. Your feedback and participation are greatly
+              appreciated!
+            </Text>
           </ModalBody>
 
           <ModalFooter>
@@ -99,14 +135,20 @@ function Demo() {
           <ModalHeader>Send Feedback</ModalHeader>
           <ModalBody>
             <Text textAlign="center" fontSize="lg" mb={4}>
-              We'd love to hear your thoughts!
+              We&apos;d love to hear your thoughts!
             </Text>
-            <Text mb={2}>Please share your feedback, suggestions, and any issues you encountered while using this demo website.</Text>
+            <Text mb={2}>
+              Please share your feedback, suggestions, and any issues you encountered while using this demo website.
+            </Text>
             <Text mb={2}>Your feedback is anonymous, so feel free to be as harsh or as detailed as you like :) </Text>
           </ModalBody>
           <ModalCloseButton />
           <ModalBody>
-            <Textarea placeholder="Enter your feedback here..." value={feedback} onChange={(e) => setFeedback(e.target.value)} />
+            <Textarea
+              placeholder="Enter your feedback here..."
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+            />
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" onClick={handleFeedbackSubmit}>
