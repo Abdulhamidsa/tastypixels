@@ -1,22 +1,33 @@
-import { Formik, Field, Form } from "formik";
-import * as Yup from "yup";
-import { FormControl, Text, FormLabel, Input, FormErrorMessage, Button, useToast, Box, VStack, Heading, Divider, Flex, Icon, Container } from "@chakra-ui/react";
-import { FiLogIn } from "react-icons/fi";
-import { useAuth } from "@/context/AuthContext";
+import { Formik, Field, Form } from 'formik';
+import * as Yup from 'yup';
+import {
+  FormControl,
+  Text,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  Button,
+  useToast,
+  Box,
+  VStack,
+  Heading,
+  Divider,
+  Flex,
+  Icon,
+  Container,
+} from '@chakra-ui/react';
+import { FiLogIn } from 'react-icons/fi';
+import { useAuth } from '@/context/AuthContext';
 
 const validationSchema = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Required"),
-  password: Yup.string().required("Required"),
+  email: Yup.string().email('Invalid email address').required('Required'),
+  password: Yup.string().required('Required'),
+  loginError: Yup.string(),
 });
 
-const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
+const Signin = ({ onModalClose }) => {
   const { signin } = useAuth();
   const toast = useToast();
-
-  const handleSignUpClick = () => {
-    setFormType("signup");
-    onModalOpen();
-  };
 
   const handleLogin = async (values, setErrors) => {
     try {
@@ -24,11 +35,11 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
       if (result.success) {
         onModalClose();
         toast({
-          title: "Signin Successful! Redirecting...",
-          status: "success",
+          title: 'Signin Successful! Redirecting...',
+          status: 'success',
           duration: 1000,
           isClosable: true,
-          position: "middle",
+          position: 'top',
         });
       }
     } catch (error) {
@@ -41,7 +52,7 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
       <Container maxW="lg" bg="transparent" p={{ base: 6, md: 8 }} textAlign="center">
         <VStack spacing={4} align="center">
           <Icon as={FiLogIn} boxSize={10} color="primary.500" />
-          <Heading fontSize={{ base: "2xl", md: "3xl" }} color="white">
+          <Heading fontSize={{ base: '2xl', md: '3xl' }} color="white">
             Welcome Back!
           </Heading>
           <Text fontSize="md" color="gray.600">
@@ -50,9 +61,8 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
         </VStack>
 
         <Divider my={6} />
-
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ email: '', password: '', loginError: '' }}
           validationSchema={validationSchema}
           validateOnBlur={true}
           validateOnChange={false}
@@ -69,7 +79,16 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
                     <FormLabel htmlFor="email" color="background.light">
                       Email Address
                     </FormLabel>
-                    <Input {...field} id="email" placeholder="Enter your email" borderColor="gray.300" _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }} size="lg" borderRadius="md" w="100%" />
+                    <Input
+                      {...field}
+                      id="email"
+                      placeholder="Enter your email"
+                      borderColor="gray.300"
+                      _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 2px primary.100' }}
+                      size="lg"
+                      borderRadius="md"
+                      w="100%"
+                    />
                     <FormErrorMessage>{errors.email}</FormErrorMessage>
                   </FormControl>
                 )}
@@ -81,7 +100,17 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
                     <FormLabel htmlFor="password" color="background.light">
                       Password
                     </FormLabel>
-                    <Input {...field} id="password" placeholder="Enter your password" type="password" borderColor="gray.300" _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }} size="lg" borderRadius="md" w="100%" />
+                    <Input
+                      {...field}
+                      id="password"
+                      placeholder="Enter your password"
+                      type="password"
+                      borderColor="gray.300"
+                      _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 2px primary.100' }}
+                      size="lg"
+                      borderRadius="md"
+                      w="100%"
+                    />
                     <FormErrorMessage>{errors.password}</FormErrorMessage>
                   </FormControl>
                 )}
@@ -93,7 +122,17 @@ const Signin = ({ onModalOpen, onModalClose, setFormType }) => {
                 </Box>
               )}
 
-              <Button mt={6} w="100%" bg="primary.500" color="white" _hover={{ bg: "primary.600" }} _active={{ bg: "primary.700" }} size="lg" type="submit" isLoading={isSubmitting}>
+              <Button
+                mt={6}
+                w="100%"
+                bg="primary.500"
+                color="white"
+                _hover={{ bg: 'primary.600' }}
+                _active={{ bg: 'primary.700' }}
+                size="lg"
+                type="submit"
+                isLoading={isSubmitting}
+              >
                 Sign In
               </Button>
             </Form>

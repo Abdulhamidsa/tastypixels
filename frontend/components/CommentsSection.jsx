@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import useComments from "@/hooks/useComments";
 import { getApiUrl } from "@/utils/api";
 
-const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId, friendlyId, userRole }) => {
+const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId, friendlyId }) => {
   const [newComment, setNewComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const toast = useToast();

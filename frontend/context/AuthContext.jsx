@@ -1,14 +1,14 @@
-﻿import React, { createContext, useReducer, useContext, useEffect } from "react";
-import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from "@/utils/auth";
-import { jwtDecode } from "jwt-decode";
-import { useRouter } from "next/router";
-import { getApiUrl } from "@/utils/api";
+﻿import React, { createContext, useReducer, useContext, useEffect } from 'react';
+import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from '@/utils/auth';
+import { jwtDecode } from 'jwt-decode';
+import { useRouter } from 'next/router';
+import { getApiUrl } from '@/utils/api';
 
 const AuthContext = createContext();
 
 const authReducer = (state, action) => {
   switch (action.type) {
-    case "LOGIN":
+    case 'LOGIN':
       return {
         ...state,
         isAuthenticated: true,
@@ -18,7 +18,7 @@ const authReducer = (state, action) => {
         userName: action.payload.userName,
         loading: false,
       };
-    case "LOGOUT":
+    case 'LOGOUT':
       return {
         ...state,
         isAuthenticated: false,
@@ -28,7 +28,7 @@ const authReducer = (state, action) => {
         userName: null,
         loading: false,
       };
-    case "SET_LOADING":
+    case 'SET_LOADING':
       return { ...state, loading: action.payload };
     default:
       return state;
@@ -56,12 +56,14 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (router.query.from === "portfolio") {
-      sessionStorage.setItem("fromPortfolio", "true"); // Store it
+    if (router.query.from === 'portfolio') {
+      sessionStorage.setItem('fromPortfolio', 'true'); // Store it
     }
 
-    if (!router.query.from && sessionStorage.getItem("fromPortfolio") === "true") {
-      router.replace({ pathname: router.pathname, query: { ...router.query, from: "portfolio" } }, undefined, { shallow: true });
+    if (!router.query.from && sessionStorage.getItem('fromPortfolio') === 'true') {
+      router.replace({ pathname: router.pathname, query: { ...router.query, from: 'portfolio' } }, undefined, {
+        shallow: true,
+      });
     }
   }, [router.query]);
   useEffect(() => {
@@ -72,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         try {
           const decodedToken = jwtDecode(accessToken);
           dispatch({
-            type: "LOGIN",
+            type: 'LOGIN',
             payload: {
               token: accessToken,
               userId: decodedToken.userId,
@@ -81,7 +83,7 @@ export const AuthProvider = ({ children }) => {
             },
           });
         } catch (error) {
-          console.error("Failed to decode access token:", error);
+          console.error('Failed to decode access token:', error);
         }
       } else {
         try {
@@ -89,7 +91,7 @@ export const AuthProvider = ({ children }) => {
           if (accessToken && !isTokenExpired(accessToken)) {
             const decodedToken = jwtDecode(accessToken);
             dispatch({
-              type: "LOGIN",
+              type: 'LOGIN',
               payload: {
                 token: accessToken,
                 userId: decodedToken.userId,
@@ -103,7 +105,7 @@ export const AuthProvider = ({ children }) => {
               if (refreshedToken && !isTokenExpired(refreshedToken)) {
                 const decodedToken = jwtDecode(refreshedToken);
                 dispatch({
-                  type: "LOGIN",
+                  type: 'LOGIN',
                   payload: {
                     token: refreshedToken,
                     userId: decodedToken.userId,
@@ -112,14 +114,14 @@ export const AuthProvider = ({ children }) => {
                   },
                 });
               } else {
-                dispatch({ type: "LOGOUT" });
+                dispatch({ type: 'LOGOUT' });
               }
             } catch {
-              dispatch({ type: "LOGOUT" });
+              dispatch({ type: 'LOGOUT' });
             }
           }
         } catch {
-          dispatch({ type: "LOGOUT" });
+          dispatch({ type: 'LOGOUT' });
         }
       }
     };
@@ -128,16 +130,16 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signin = async (values) => {
-    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: 'SET_LOADING', payload: true });
 
     try {
-      const response = await fetch(getApiUrl("/auth/login"), {
-        method: "POST",
+      const response = await fetch(getApiUrl('/auth/login'), {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(values),
-        credentials: "include",
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -148,7 +150,7 @@ export const AuthProvider = ({ children }) => {
 
         setAccessToken(token);
         dispatch({
-          type: "LOGIN",
+          type: 'LOGIN',
           payload: {
             token,
             userId: decodedToken.userId,
@@ -159,43 +161,43 @@ export const AuthProvider = ({ children }) => {
 
         return { success: true };
       } else {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || 'Login failed');
       }
     } catch (error) {
-      console.error("Signin error:", error);
+      console.error('Signin error:', error);
       throw error;
     } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
   const logout = async () => {
-    dispatch({ type: "LOGOUT" });
+    dispatch({ type: 'LOGOUT' });
 
     try {
-      const response = await fetch(getApiUrl("/auth/logout"), {
-        method: "POST",
-        credentials: "include",
+      const response = await fetch(getApiUrl('/auth/logout'), {
+        method: 'POST',
+        credentials: 'include',
       });
       if (response.ok) {
         removeAccessToken();
-        dispatch({ type: "LOGOUT" });
+        dispatch({ type: 'LOGOUT' });
       } else {
-        throw new Error("Logout failed");
+        throw new Error('Logout failed');
       }
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error('Error logging out:', error);
     }
   };
 
   const signup = async (signupData) => {
-    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: 'SET_LOADING', payload: true });
 
     try {
-      const response = await fetch(getApiUrl("/auth/signup"), {
-        method: "POST",
+      const response = await fetch(getApiUrl('/auth/signup'), {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(signupData),
       });
@@ -204,13 +206,13 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
       } else {
-        throw new Error(data.message || "Signup failed");
+        throw new Error(data.message || 'Signup failed');
       }
     } catch (error) {
-      console.error("Signup error:", error);
+      console.error('Signup error:', error);
       throw error;
     } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 

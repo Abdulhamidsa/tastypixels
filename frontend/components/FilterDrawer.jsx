@@ -1,6 +1,7 @@
 import { Drawer, IconButton, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, Menu, MenuButton, MenuList, MenuItem, Button, useDisclosure } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { MdFilterList } from "react-icons/md";
+import React from "react";
 
 const FilterDrawer = ({ sortOrder, handleSortChange, currentFilter, filterMostLiked, filterMostDisliked, filterMostCommented, filterHotPosts, filterPostedRecently, saveFilterAndCloseDrawer }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
