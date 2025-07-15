@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -22,7 +22,6 @@ import {
   Badge,
   useDisclosure,
   Collapse,
-  Spinner,
   Skeleton,
   useToast,
   AlertDialog,
@@ -35,55 +34,41 @@ import {
   FormLabel,
   Input,
   Link as ChakraLink,
-} from "@chakra-ui/react";
-import { FaUser, FaList, FaEdit, FaTrash, FaComment, FaFlag, FaArrowUp, FaArrowDown } from "react-icons/fa";
-import CardSkeleton from "@/components/CardSkeleton";
-import CommentsSection from "@/components/CommentsSection";
-import Upload from "@/components/Upload";
-import useComments from "@/hooks/useComments";
-import { useFetch } from "@/hooks/useFetchUser";
-import Image from "next/legacy/image";
-import { fetchWithTokenRefresh } from "@/utils/auth";
-import Loading from "@/components/Loading";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/router";
-import { getApiUrl } from "@/utils/api";
+} from '@chakra-ui/react';
+import { FaUser, FaList, FaTrash, FaComment, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import CardSkeleton from '@/components/CardSkeleton';
+import CommentsSection from '@/components/CommentsSection';
+import Upload from '@/components/Upload';
+import useComments from '@/hooks/useComments';
+import { useFetch } from '@/hooks/useFetchUser';
+import Image from 'next/legacy/image';
+import { fetchWithTokenRefresh } from '@/utils/auth';
+import Loading from '@/components/Loading';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/router';
+import { getApiUrl } from '@/utils/api';
 
 export default function Dashboard() {
-  const { user, loading, uploadList, updateUpload, deleteUpload } = useFetch();
-  const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } = useComments();
+  const { user, loading, uploadList, deleteUpload } = useFetch();
+  const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } =
+    useComments();
   const toast = useToast();
   const { state } = useAuth();
   const { isAuthenticated, isLoading } = state;
   const [selectedUploadId, setSelectedUploadId] = useState(null);
   const [showCommentSection, setShowCommentSection] = useState({});
   const [loadingCommentSection, setLoadingCommentSection] = useState({});
-  const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const cancelRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [userData, setUserData] = useState(null);
   const [loadingUserUpdate, setLoadingUserUpdate] = useState(false);
-  const [username, setUsername] = useState(user?.username || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState(user?.username || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [password, setPassword] = useState('');
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
+  const { onClose: onMenuClose } = useDisclosure();
   const router = useRouter();
-
-  if (!isAuthenticated) {
-    router.push("/");
-  }
-  if (isLoading || !isAuthenticated) {
-    return <Loading />;
-  }
-  const openUpload = () => {
-    setIsUploadOpen(true);
-  };
-  const handleEditUpload = (upload) => {
-    setSelectedUploadId(upload._id);
-    onEditOpen();
-  };
 
   useEffect(() => {
     if (user) {
@@ -93,44 +78,58 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  const handleSaveEdit = async (editedUpload) => {
-    try {
-      await updateUpload(user._id, editedUpload);
-      onEditClose();
-      toast({
-        title: "Upload updated.",
-        description: "The upload has been successfully updated.",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-      });
-    }
+  if (!isAuthenticated) {
+    router.push('/');
+  }
+  if (isLoading || !isAuthenticated) {
+    return <Loading />;
+  }
+  const openUpload = () => {
+    setIsUploadOpen(true);
   };
+  // const handleEditUpload = (upload) => {
+  //   setSelectedUploadId(upload._id);
+  //   onEditOpen();
+  // };
+
+  // const handleSaveEdit = async (editedUpload) => {
+  //   try {
+  //     await updateUpload(user._id, editedUpload);
+  //     onEditClose();
+  //     toast({
+  //       title: 'Upload updated.',
+  //       description: 'The upload has been successfully updated.',
+  //       status: 'success',
+  //       duration: 2000,
+  //       isClosable: true,
+  //     });
+  //   } catch (error) {
+  //     toast({
+  //       title: 'Error',
+  //       description: error.message,
+  //       status: 'error',
+  //       duration: 2000,
+  //       isClosable: true,
+  //     });
+  //   }
+  // };
 
   const handleRemoveUpload = async () => {
     try {
       await deleteUpload(selectedUploadId);
       onDeleteClose();
       toast({
-        title: "Upload deleted.",
-        description: "The upload has been successfully deleted.",
-        status: "success",
+        title: 'Upload deleted.',
+        description: 'The upload has been successfully deleted.',
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
     } catch (error) {
       toast({
-        title: "Error",
+        title: 'Error',
         description: error.message,
-        status: "error",
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
@@ -156,10 +155,10 @@ export default function Dashboard() {
     };
 
     try {
-      const response = await fetchWithTokenRefresh(getApiUrl("/api/edit-post"), {
-        method: "PUT",
+      const response = await fetchWithTokenRefresh(getApiUrl('/api/edit-post'), {
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedUser),
       });
@@ -172,12 +171,12 @@ export default function Dashboard() {
           email: data.email,
         }));
 
-        setPassword("");
+        setPassword('');
         setTimeout(() => {
           toast({
-            title: "User updated.",
-            description: "Your user information has been successfully updated.",
-            status: "success",
+            title: 'User updated.',
+            description: 'Your user information has been successfully updated.',
+            status: 'success',
             duration: 2000,
             isClosable: true,
           });
@@ -185,10 +184,10 @@ export default function Dashboard() {
           window.location.reload();
         }, 500);
       } else {
-        console.error("Error updating user:", data.errors);
+        console.error('Error updating user:', data.errors);
       }
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error('Error updating user:', error);
     } finally {
       setLoadingUserUpdate(false);
     }
@@ -226,7 +225,12 @@ export default function Dashboard() {
                         <Box as="form" onSubmit={handleUserUpdate}>
                           <FormControl id="username" mb={4}>
                             <FormLabel>Username</FormLabel>
-                            <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                            <Input
+                              type="text"
+                              value={username}
+                              onChange={(e) => setUsername(e.target.value)}
+                              required
+                            />
                           </FormControl>
                           <FormControl id="email" mb={4}>
                             <FormLabel>Email</FormLabel>
@@ -270,7 +274,21 @@ export default function Dashboard() {
               </Box>
             ) : uploadList && uploadList.length > 0 ? (
               uploadList.map((upload) => (
-                <Box key={upload._id} position="relative" borderWidth="1px" borderRadius="lg" overflow="hidden" width="100%" maxW="450px" mx="auto" my="4" boxShadow="lg" bg="gray.800" transition="all 0.3s" _hover={{ boxShadow: "xl" }}>
+                <Box
+                  key={upload._id}
+                  position="relative"
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  overflow="hidden"
+                  width="100%"
+                  maxW="450px"
+                  mx="auto"
+                  my="4"
+                  boxShadow="lg"
+                  bg="gray.800"
+                  transition="all 0.3s"
+                  _hover={{ boxShadow: 'xl' }}
+                >
                   {/* User Info */}
                   <Box bg="gray.900" p="4" display="flex" alignItems="center">
                     <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
@@ -305,7 +323,7 @@ export default function Dashboard() {
                         colorScheme="red"
                         bg="gray.700"
                         borderRadius="full"
-                        _hover={{ bg: "red.500" }}
+                        _hover={{ bg: 'red.500' }}
                       />
                     </Flex>
                   </Box>
@@ -331,7 +349,13 @@ export default function Dashboard() {
 
                   {/* Image Section */}
                   <Box position="relative" overflow="hidden" w="100%" height="250px">
-                    <Image alt={upload.title} src={upload.imageUrl} layout="fill" objectFit="cover" style={{ borderRadius: "8px" }} />
+                    <Image
+                      alt={upload.title}
+                      src={upload.imageUrl}
+                      layout="fill"
+                      objectFit="cover"
+                      style={{ borderRadius: '8px' }}
+                    />
                   </Box>
 
                   {/* Category Badge */}
@@ -359,7 +383,14 @@ export default function Dashboard() {
 
                     {/* Comments */}
                     <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                      <Button aria-label="Comments" onClick={() => toggleComments(upload._id)} colorScheme={showCommentSection[upload._id] ? "teal" : "gray"} variant="outline" disabled="true" isLoading={loadingCommentSection[upload._id]}>
+                      <Button
+                        aria-label="Comments"
+                        onClick={() => toggleComments(upload._id)}
+                        colorScheme={showCommentSection[upload._id] ? 'teal' : 'gray'}
+                        variant="outline"
+                        disabled="true"
+                        isLoading={loadingCommentSection[upload._id]}
+                      >
                         <FaComment />
                       </Button>
                       <Text fontSize="sm">{comments[upload._id]?.length ?? upload.comments.length}</Text>
