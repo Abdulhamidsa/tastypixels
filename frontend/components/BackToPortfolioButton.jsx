@@ -1,42 +1,36 @@
-"use client";
+import { useEffect, useState } from 'react';
+import { Button, Box } from '@chakra-ui/react';
+import { ArrowLeftCircle } from 'lucide-react';
+import { useRouter } from 'next/router';
 
-import { Suspense, useEffect, useState } from "react";
-import { Button, Box } from "@chakra-ui/react";
-import { ArrowLeftCircle } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-
-const STORAGE_KEY = "fromPortfolio";
+const STORAGE_KEY = 'fromPortfolio';
 const EXPIRATION_TIME = 2 * 60 * 1000;
 
 const BackToPortfolioButton = () => {
-  return (
-    <Suspense fallback={null}>
-      <BackToPortfolioLogic />
-    </Suspense>
-  );
-};
-
-const BackToPortfolioLogic = () => {
-  const searchParams = useSearchParams();
-  const [isFromPortfolio, setIsFromPortfolio] = useState(() => {
-    const storedData = sessionStorage.getItem(STORAGE_KEY);
-    if (!storedData) return false;
-    const { timestamp } = JSON.parse(storedData);
-    return Date.now() - timestamp < EXPIRATION_TIME;
-  });
+  const router = useRouter();
+  const [isFromPortfolio, setIsFromPortfolio] = useState(false);
 
   useEffect(() => {
-    const queryFrom = searchParams?.get("from");
+    if (typeof window === 'undefined') return;
 
-    if (queryFrom === "portfolio") {
+    const storedData = sessionStorage.getItem(STORAGE_KEY);
+    if (storedData) {
+      const { timestamp } = JSON.parse(storedData);
+      if (Date.now() - timestamp < EXPIRATION_TIME) {
+        setIsFromPortfolio(true);
+      }
+    }
+
+    const queryFrom = router.query.from;
+    if (queryFrom === 'portfolio') {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ timestamp: Date.now() }));
       setIsFromPortfolio(true);
     }
-  }, [searchParams]);
+  }, [router.query]);
 
   const handleBackToPortfolio = () => {
     sessionStorage.removeItem(STORAGE_KEY);
-    window.location.href = "https://abdulhamid-sa.vercel.app/projects";
+    window.location.href = 'https://abdulhamid-sa.vercel.app/projects';
   };
 
   if (!isFromPortfolio) return null;
@@ -50,10 +44,10 @@ const BackToPortfolioLogic = () => {
         px={6}
         py={2}
         boxShadow="lg"
-        sx={{ backdropFilter: "blur(10px)", backgroundColor: "rgba(255,255,255,0.15)" }}
+        sx={{ backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255,255,255,0.15)' }}
         transition="all 0.2s ease"
-        _hover={{ boxShadow: "xl", backgroundColor: "rgba(255,255,255,0.25)" }}
-        _active={{ transform: "scale(0.95)" }}
+        _hover={{ boxShadow: 'xl', backgroundColor: 'rgba(255,255,255,0.25)' }}
+        _active={{ transform: 'scale(0.95)' }}
       >
         Back to Portfolio
       </Button>

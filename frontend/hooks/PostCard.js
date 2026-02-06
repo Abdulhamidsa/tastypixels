@@ -1,17 +1,39 @@
-import { useState } from "react";
-import { Box, Avatar, Heading, Text, Badge, IconButton, Flex, Button, Collapse, Skeleton } from "@chakra-ui/react";
-import { FaComment, FaFlag } from "react-icons/fa";
-import Image from "next/legacy/image";
-import { SearchIcon } from "@chakra-ui/icons";
-import VoteButton from "@/hooks/VoteButton";
-import CommentsSection from "@/components/CommentsSection";
-import useComments from "@/hooks/useComments";
-import ImageModal from "@/hooks/ImageModal";
+import { useState } from 'react';
+import {
+  Box,
+  Avatar,
+  Heading,
+  Text,
+  Badge,
+  IconButton,
+  Flex,
+  Button,
+  Collapse,
+  Skeleton,
+  Tooltip,
+} from '@chakra-ui/react';
+import { FaComment, FaFlag } from 'react-icons/fa';
+import Image from 'next/legacy/image';
+import { SearchIcon } from '@chakra-ui/icons';
+import VoteButton from '@/hooks/VoteButton';
+import CommentsSection from '@/components/CommentsSection';
+import useComments from '@/hooks/useComments';
+import ImageModal from '@/hooks/ImageModal';
 // import { useFetchData } from "@/hooks/useFetchData";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from '@/context/AuthContext';
 
-const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthenticated, loadingVote, friendlyId, userRole }) => {
-  const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } = useComments();
+const PostCard = ({
+  upload,
+  userData,
+  handleVote,
+  handleReportClick,
+  isAuthenticated,
+  loadingVote,
+  friendlyId,
+  userRole,
+}) => {
+  const { comments, loadingComments, deletingCommentId, fetchComments, handleAddComment, handleDeleteComment } =
+    useComments();
   // const { uploads } = useFetchData();
   const { state } = useAuth();
   const [showCommentSection, setShowCommentSection] = useState(false);
@@ -26,7 +48,7 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
     setShowCommentSection(!showCommentSection);
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentImage, setCurrentImage] = useState("");
+  const [currentImage, setCurrentImage] = useState('');
 
   const handleOpen = (imageUrl) => {
     setCurrentImage(imageUrl);
@@ -35,16 +57,29 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setCurrentImage("");
+    setCurrentImage('');
   };
   return (
-    <Box position="relative" key={upload._id} borderWidth="1px" borderRadius="lg" borderBottomRadius="none" overflow="hidden" width="100%" maxW="600px" mx="auto" my="4" boxShadow="md" bg="gray.800">
+    <Box
+      position="relative"
+      key={upload._id}
+      borderWidth="1px"
+      borderRadius="lg"
+      borderBottomRadius="none"
+      overflow="hidden"
+      width="100%"
+      maxW="600px"
+      mx="auto"
+      my="4"
+      boxShadow="md"
+      bg="gray.800"
+    >
       <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
         <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
         <Box color="black">
           <Heading fontSize="xl" fontWeight="bold">
             {upload.username}
-            {upload.userRole === "admin" && (
+            {upload.userRole === 'admin' && (
               <Badge ml={2} colorScheme="red">
                 Admin
               </Badge>
@@ -70,8 +105,27 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
         </Box>
       </Box>
       <Box position="relative" overflow="hidden">
-        <Image alt={upload.imageUrl} src={upload.imageUrl} sizes="40vw" width={600} height={350} objectFit="cover" layout="responsive" priority={false} loading="lazy" />
-        <IconButton aria-label="Zoom image" icon={<SearchIcon />} position="absolute" top="0" right="0" onClick={() => handleOpen(upload.imageUrl)} borderRadius="100%" colorScheme="orange" />
+        <Image
+          alt={upload.imageUrl}
+          src={upload.imageUrl}
+          sizes="40vw"
+          width={600}
+          height={350}
+          objectFit="cover"
+          layout="responsive"
+          priority={false}
+          loading="lazy"
+        />
+        <IconButton
+          aria-label="Zoom image"
+          icon={<SearchIcon />}
+          position="absolute"
+          top="0"
+          right="0"
+          onClick={() => handleOpen(upload.imageUrl)}
+          borderRadius="100%"
+          colorScheme="orange"
+        />
       </Box>
       <ImageModal isOpen={isModalOpen} onClose={handleClose} selectedImage={currentImage} />
 
@@ -80,23 +134,37 @@ const PostCard = ({ upload, userData, handleVote, handleReportClick, isAuthentic
       </Badge>
       <Flex p={4} gap={3}>
         {/* Upvote & Downvote Section */}
-        <VoteButton upload={upload} handleVote={handleVote} loadingVote={loadingVote} isAuthenticated={isAuthenticated} upvoteColor={upload.hasUpvoted ? "primary.500" : "gray.500"} downvoteColor={upload.hasDownvoted ? "secondary.500" : "gray.500"} />
+        <VoteButton
+          upload={upload}
+          handleVote={handleVote}
+          loadingVote={loadingVote}
+          isAuthenticated={isAuthenticated}
+          upvoteColor={upload.hasUpvoted ? 'primary.500' : 'gray.500'}
+          downvoteColor={upload.hasDownvoted ? 'secondary.500' : 'gray.500'}
+        />
 
         {/* Comments Button */}
         <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-          <Button
-            aria-label="Comments"
-            onClick={toggleComments}
-            bg={showCommentSection ? "accent.500" : "transparent"}
-            color={showCommentSection ? "white" : "gray.500"}
-            border="1px solid"
-            borderColor={showCommentSection ? "accent.500" : "gray.500"}
-            _hover={{ bg: "accent.600", color: "white" }}
-            isLoading={loadingCommentSection}
-            disabled={!isAuthenticated}
+          <Tooltip
+            label={!isAuthenticated ? 'Please log in to view and add comments' : ''}
+            hasArrow
+            placement="top"
+            isDisabled={isAuthenticated}
           >
-            <FaComment />
-          </Button>
+            <Button
+              aria-label="Comments"
+              onClick={toggleComments}
+              bg={showCommentSection ? 'accent.500' : 'transparent'}
+              color={showCommentSection ? 'white' : 'gray.500'}
+              border="1px solid"
+              borderColor={showCommentSection ? 'accent.500' : 'gray.500'}
+              _hover={{ bg: 'accent.600', color: 'white' }}
+              isLoading={loadingCommentSection}
+              disabled={!isAuthenticated}
+            >
+              <FaComment />
+            </Button>
+          </Tooltip>
           <Text color="gray.400">{comments[upload._id]?.length ?? upload.comments.length}</Text>
         </Box>
 

@@ -71,9 +71,21 @@ const Navbar = () => {
         {/* Desktop Nav Links */}
         <Flex align="center" gap={4} mr={4} display={{ base: 'none', md: 'flex' }}>
           {!isAuthenticated ? (
-            <Button bg="transparent" borderColor="primary.700" colorScheme="primary" size="md" onClick={onModalOpen}>
-              Sign Up
-            </Button>
+            <>
+              <Button
+                as={NextLink}
+                href="/home"
+                bg="transparent"
+                borderColor="primary.700"
+                colorScheme="primary"
+                size="md"
+              >
+                Browse Meals
+              </Button>
+              <Button bg="transparent" borderColor="primary.700" colorScheme="primary" size="md" onClick={onModalOpen}>
+                Sign In
+              </Button>
+            </>
           ) : (
             <>
               <Button
@@ -190,15 +202,26 @@ const Navbar = () => {
                     <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="default" />
                   </>
                 ) : (
-                  <Button
-                    variant="default"
-                    onClick={() => {
-                      onModalOpen();
-                      onMenuClose();
-                    }}
-                  >
-                    Sign Up
-                  </Button>
+                  <>
+                    <Button
+                      as={NextLink}
+                      href="/home"
+                      variant="default"
+                      width={['50%', '180px', '200px']}
+                      onClick={onMenuClose}
+                    >
+                      Browse Meals
+                    </Button>
+                    <Button
+                      variant="default"
+                      onClick={() => {
+                        onModalOpen();
+                        onMenuClose();
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                  </>
                 )}
               </VStack>
             </DrawerBody>

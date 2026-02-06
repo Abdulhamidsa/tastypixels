@@ -2,10 +2,10 @@
   "compilerOptions": {
     "jsx": "preserve",
     "allowJs": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": ["**/*.js", "**/*.jsx"]
+  "include": ["**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules", "dist"]
 }

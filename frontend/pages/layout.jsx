@@ -6,7 +6,7 @@ import { Box } from '@chakra-ui/react';
 import Footer from '@/components/Footer';
 import BackToPortfolioButton from '@/components/BackToPortfolioButton';
 
-import { Analytics } from '@vercel/analytics/next';
+import { Analytics } from '@vercel/analytics/react';
 
 export const LoginContext = createContext();
 
@@ -19,14 +19,12 @@ export default function Layout({ children }) {
   }
 
   return (
-    <>
-      <Box display="flex" flexDirection="column" minH="100dvh">
-        <Navbar />
-        <BackToPortfolioButton />
-        {children}
-        <Analytics />
-        <Footer />
-      </Box>
-    </>
+    <Box display="flex" flexDirection="column" minH="100dvh">
+      {/* <Navbar /> */}
+      {/* <BackToPortfolioButton /> */}
+      {children}
+      {/* <Analytics /> */}
+      {/* <Footer /> */}
+    </Box>
   );
 }
