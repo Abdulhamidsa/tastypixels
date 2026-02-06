@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useRef, useState, useEffect } from 'react';
 import {
   Box,
@@ -80,12 +78,14 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  if (!isAuthenticated) {
-    router.push('/');
-  }
-  if (isLoading || !isAuthenticated) {
-    return <Loading />;
-  }
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/');
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  if (isLoading) return <Loading />;
+  if (!isAuthenticated) return <Loading />;
   const openUpload = () => {
     setIsUploadOpen(true);
   };
@@ -390,7 +390,7 @@ export default function Dashboard() {
                         onClick={() => toggleComments(upload._id)}
                         colorScheme={showCommentSection[upload._id] ? 'teal' : 'gray'}
                         variant="outline"
-                        disabled="true"
+                        isDisabled
                         isLoading={loadingCommentSection[upload._id]}
                       >
                         <FaComment />
