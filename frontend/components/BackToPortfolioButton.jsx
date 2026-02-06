@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState } from 'react';
 import { Button, Box } from '@chakra-ui/react';
 import { ArrowLeftCircle } from 'lucide-react';

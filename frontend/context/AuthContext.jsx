@@ -1,4 +1,6 @@
-﻿import React, { createContext, useReducer, useContext, useEffect } from 'react';
+﻿'use client';
+
+import React, { createContext, useReducer, useContext, useEffect } from 'react';
 import { getAccessToken, refreshAccessToken, setAccessToken, removeAccessToken } from '@/utils/auth';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/router';
