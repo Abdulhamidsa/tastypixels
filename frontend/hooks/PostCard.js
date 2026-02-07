@@ -63,54 +63,81 @@ const PostCard = ({
     <Box
       position="relative"
       key={upload._id}
-      borderWidth="1px"
-      borderRadius="lg"
-      borderBottomRadius="none"
+      borderRadius="xl"
       overflow="hidden"
       width="100%"
       maxW="600px"
       mx="auto"
       my="4"
-      boxShadow="md"
-      bg="gray.800"
+      bg="#0f172a"
+      border="1px solid"
+      borderColor="gray.700"
+      boxShadow="sm"
+      transition="all 0.2s ease"
+      _hover={{
+        boxShadow: 'md',
+      }}
     >
-      <Box bg="white" p="4" pb="2" display="flex" alignItems="center">
-        <Avatar w="45px" h="45px" name={upload.username} src={upload.userAvatar} mr="3" />
-        <Box color="black">
-          <Heading fontSize="xl" fontWeight="bold">
-            {upload.username}
+      {/* User Header */}
+      <Box bg="#111827" p="4" display="flex" alignItems="center" borderBottom="1px solid" borderColor="gray.700">
+        <Avatar w="48px" h="48px" name={upload.username} src={upload.userAvatar} mr="3" />
+        <Box flex="1">
+          <Flex alignItems="center" gap={2}>
+            <Heading fontSize="md" fontWeight="600" color="gray.100">
+              {upload.username}
+            </Heading>
             {upload.userRole === 'admin' && (
-              <Badge ml={2} colorScheme="red">
+              <Badge colorScheme="blue" fontSize="xs" px={2} borderRadius="md" fontWeight="500">
                 Admin
               </Badge>
             )}
-          </Heading>
-          <Text pt="1" fontSize="xs" color="gray.600">
-            Posted at: {new Date(upload.postedAt).toLocaleDateString()}
+          </Flex>
+          <Text fontSize="xs" color="gray.400">
+            {new Date(upload.postedAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })}
           </Text>
         </Box>
       </Box>
 
-      <Box p={3} bg="white" color="black">
-        <Heading fontSize="xl">{upload.title}</Heading>
-        <Text fontSize="md" mb={5}>
+      {/* Content Section */}
+      <Box p={4} bg="#0f172a">
+        <Heading fontSize="lg" fontWeight="600" color="gray.100" mb={2}>
+          {upload.title}
+        </Heading>
+        <Text fontSize="sm" color="gray.300" lineHeight="1.5">
           {upload.description}
         </Text>
-        <Box position="relative" display="flex" gap={1}>
+
+        {/* Tags */}
+        <Flex flexWrap="wrap" gap={2} mt={3}>
           {upload.tags.map((tag, index) => (
-            <Text fontSize="sm" color="gray.600" pb="2" key={`${tag}-${index}`}>
-              {tag}
-            </Text>
+            <Badge
+              key={`${tag}-${index}`}
+              fontSize="xs"
+              px={2}
+              py={1}
+              borderRadius="md"
+              bg="gray.800"
+              color="gray.200"
+              fontWeight="500"
+            >
+              #{tag}
+            </Badge>
           ))}
-        </Box>
+        </Flex>
       </Box>
-      <Box position="relative" overflow="hidden">
+
+      {/* Image Section */}
+      <Box position="relative" overflow="hidden" bg="gray.900">
         <Image
-          alt={upload.imageUrl}
+          alt={upload.title}
           src={upload.imageUrl}
           sizes="40vw"
           width={600}
-          height={350}
+          height={400}
           objectFit="cover"
           layout="responsive"
           priority={false}
@@ -120,19 +147,37 @@ const PostCard = ({
           aria-label="Zoom image"
           icon={<SearchIcon />}
           position="absolute"
-          top="0"
-          right="0"
+          top="3"
+          right="3"
           onClick={() => handleOpen(upload.imageUrl)}
-          borderRadius="100%"
-          colorScheme="orange"
+          borderRadius="full"
+          size="sm"
+          bg="blackAlpha.700"
+          color="white"
+          _hover={{ bg: 'blackAlpha.800' }}
         />
       </Box>
       <ImageModal isOpen={isModalOpen} onClose={handleClose} selectedImage={currentImage} />
 
-      <Badge textAlign="center" position="" bottom="0" borderRadius="0" p="3" colorScheme="orange">
+      {/* Category Badge */}
+      <Box
+        bg="#111827"
+        color="blue.300"
+        textAlign="center"
+        py={2}
+        px={4}
+        fontWeight="600"
+        fontSize="xs"
+        letterSpacing="wide"
+        textTransform="uppercase"
+        borderBottom="1px solid"
+        borderColor="gray.700"
+      >
         {upload.category}
-      </Badge>
-      <Flex p={4} gap={3}>
+      </Box>
+
+      {/* Actions Section */}
+      <Flex p={4} gap={4} bg="#0f172a" alignItems="center" justifyContent="flex-start">
         {/* Upvote & Downvote Section */}
         <VoteButton
           upload={upload}

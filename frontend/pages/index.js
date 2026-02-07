@@ -71,37 +71,87 @@ export default function Home() {
           px={{ base: 4, md: 6 }}
         >
           {isAuthenticated ? (
-            <>
+            <VStack spacing={6} maxW="800px">
               <Heading
-                fontSize={{ base: '3xl', sm: '4xl', md: '5xl', lg: '6xl' }}
-                fontWeight="bold"
-                color="primary"
+                fontSize={{ base: '4xl', sm: '5xl', md: '6xl', lg: '7xl' }}
+                fontWeight="700"
+                color="white"
                 textAlign="center"
+                lineHeight="1.2"
               >
                 Welcome Back, {userName}!
               </Heading>
-              <Text fontSize={{ base: 'md', sm: 'lg' }} mt={3} maxW={{ base: '90%', sm: '600px' }} textAlign="center">
-                Ready to share your next recipe or explore new dishes?
-              </Text>
-              <Button as={NextLink} mt="3" href="/home" borderColor="primary.700" variant="solid" size="md">
-                Explore recipes
-              </Button>
-            </>
-          ) : (
-            <>
-              <Heading
-                fontSize={{ base: '3xl', sm: '4xl', md: '5xl', lg: '6xl' }}
-                fontWeight="bold"
-                color="primary"
+              <Text
+                fontSize={{ base: 'lg', sm: 'xl', md: '2xl' }}
+                maxW={{ base: '90%', sm: '700px' }}
                 textAlign="center"
+                fontWeight="400"
+                color="whiteAlpha.900"
               >
-                Share. Discover. Enjoy.
-              </Heading>
-              <Text fontSize={{ base: 'md', sm: 'lg' }} mt={3} maxW={{ base: '90%', sm: '600px' }} textAlign="center">
-                Join the ultimate food-sharing platform. Post your favorite dishes, explore trending recipes, and
-                connect with fellow food lovers!
+                Ready to share your next culinary masterpiece?
               </Text>
-            </>
+              <Button
+                as={NextLink}
+                href="/home"
+                size="lg"
+                bg="white"
+                color="gray.900"
+                px={8}
+                py={6}
+                fontSize="lg"
+                fontWeight="600"
+                borderRadius="full"
+                _hover={{
+                  bg: 'gray.100',
+                }}
+                transition="all 0.2s"
+              >
+                Explore Recipes
+              </Button>
+            </VStack>
+          ) : (
+            <VStack spacing={6} maxW="900px">
+              <Heading
+                fontSize={{ base: '4xl', sm: '5xl', md: '6xl', lg: '7xl' }}
+                fontWeight="700"
+                color="white"
+                textAlign="center"
+                lineHeight="1.2"
+              >
+                Share. Discover. Savor.
+              </Heading>
+              <Text
+                fontSize={{ base: 'lg', sm: 'xl', md: '2xl' }}
+                maxW={{ base: '90%', sm: '700px' }}
+                textAlign="center"
+                fontWeight="400"
+                color="whiteAlpha.900"
+                lineHeight="1.6"
+              >
+                Join the ultimate food-sharing community. Upload dishes, explore trending recipes, and connect with
+                passionate food lovers worldwide!
+              </Text>
+              <Flex gap={4} flexWrap="wrap" justifyContent="center" mt={4}>
+                <Button
+                  as={NextLink}
+                  href="/home"
+                  size="lg"
+                  bg="white"
+                  color="gray.900"
+                  px={8}
+                  py={6}
+                  fontSize="lg"
+                  fontWeight="600"
+                  borderRadius="full"
+                  _hover={{
+                    bg: 'gray.100',
+                  }}
+                  transition="all 0.2s"
+                >
+                  Browse Meals
+                </Button>
+              </Flex>
+            </VStack>
           )}
         </Flex>
       </Box>
@@ -109,67 +159,137 @@ export default function Home() {
       {!isAuthenticated && (
         <>
           {/* HOW IT WORKS */}
-          <Box bg="background.light" py={{ base: 10, md: 20 }} px={4}>
+          <Box bg="#0f172a" py={{ base: 16, md: 24 }} px={4}>
             <Heading
               textAlign="center"
-              color="primary.700"
-              fontSize={{ base: '2xl', md: '3xl' }}
-              mb={{ base: 6, md: 10 }}
+              color="gray.100"
+              fontSize={{ base: '3xl', md: '4xl' }}
+              mb={{ base: 8, md: 12 }}
+              fontWeight="700"
             >
               How It Works
             </Heading>
-            <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={{ base: 6, md: 8 }} maxW="1000px" mx="auto">
-              <VStack spacing={4} textAlign="center" px={4}>
-                <Icon as={FaShareAlt} boxSize={{ base: 8, md: 10 }} color="primary.500" />
-                <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="text.light">
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 8, md: 10 }} maxW="1200px" mx="auto">
+              <Box
+                bg="#111827"
+                p={8}
+                borderRadius="xl"
+                textAlign="center"
+                border="1px solid"
+                borderColor="gray.700"
+                transition="all 0.2s"
+                _hover={{
+                  boxShadow: 'md',
+                }}
+              >
+                <Box
+                  bg="blue.500"
+                  borderRadius="full"
+                  w="16"
+                  h="16"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  mx="auto"
+                  mb={4}
+                >
+                  <Icon as={FaShareAlt} boxSize={7} color="white" />
+                </Box>
+                <Text fontSize="xl" fontWeight="600" color="gray.100" mb={3}>
                   Share Your Recipes
                 </Text>
-                <Text fontSize={{ base: 'sm', md: 'md' }} color="text.light">
-                  Upload your favorite dishes and inspire food lovers worldwide.
+                <Text fontSize="md" color="gray.300" lineHeight="1.6">
+                  Upload your favorite dishes and inspire food lovers worldwide with your culinary creations.
                 </Text>
-              </VStack>
+              </Box>
 
-              <VStack spacing={4} textAlign="center" px={4}>
-                <Icon as={MdOutlineFastfood} boxSize={{ base: 8, md: 10 }} color="primary.500" />
-                <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="text.light">
+              <Box
+                bg="#111827"
+                p={8}
+                borderRadius="xl"
+                textAlign="center"
+                border="1px solid"
+                borderColor="gray.700"
+                transition="all 0.2s"
+                _hover={{
+                  boxShadow: 'md',
+                }}
+              >
+                <Box
+                  bg="green.500"
+                  borderRadius="full"
+                  w="16"
+                  h="16"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  mx="auto"
+                  mb={4}
+                >
+                  <Icon as={MdOutlineFastfood} boxSize={7} color="white" />
+                </Box>
+                <Text fontSize="xl" fontWeight="600" color="gray.100" mb={3}>
                   Discover Trending Meals
                 </Text>
-                <Text fontSize={{ base: 'sm', md: 'md' }} color="text.light">
-                  Explore the best-rated and most loved recipes from the community.
+                <Text fontSize="md" color="gray.300" lineHeight="1.6">
+                  Explore the best-rated and most loved recipes from our vibrant food community.
                 </Text>
-              </VStack>
+              </Box>
 
-              <VStack spacing={4} textAlign="center" px={4}>
-                <Icon as={FaUsers} boxSize={{ base: 8, md: 10 }} color="primary.500" />
-                <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="bold" color="text.light">
+              <Box
+                bg="#111827"
+                p={8}
+                borderRadius="xl"
+                textAlign="center"
+                border="1px solid"
+                borderColor="gray.700"
+                transition="all 0.2s"
+                _hover={{
+                  boxShadow: 'md',
+                }}
+              >
+                <Box
+                  bg="purple.500"
+                  borderRadius="full"
+                  w="16"
+                  h="16"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  mx="auto"
+                  mb={4}
+                >
+                  <Icon as={FaUsers} boxSize={7} color="white" />
+                </Box>
+                <Text fontSize="xl" fontWeight="600" color="gray.100" mb={3}>
                   Connect with Foodies
                 </Text>
-                <Text fontSize={{ base: 'sm', md: 'md' }} color="text.light">
-                  Like, Comment on dishes, and engage with food lovers.
+                <Text fontSize="md" color="gray.300" lineHeight="1.6">
+                  Like, comment on dishes, and engage with passionate food enthusiasts from around the globe.
                 </Text>
-              </VStack>
+              </Box>
             </SimpleGrid>
           </Box>
 
           {/* TRENDING RECIPES */}
-          <Box bg="background.dark" py={20}>
-            <Heading textAlign="center" color="white" fontSize="3xl" mb={6}>
+          <Box bg="#0b1220" py={{ base: 16, md: 20 }}>
+            <Heading textAlign="center" color="gray.100" fontSize={{ base: '3xl', md: '4xl' }} mb={10} fontWeight="700">
               Trending Recipes
             </Heading>
 
             {isLoading ? (
-              <Text textAlign="center" color="white">
+              <Text textAlign="center" color="gray.300" fontSize="lg">
                 Loading trending recipes...
               </Text>
             ) : recipes.length === 0 ? (
-              <Text textAlign="center" color="white">
+              <Text textAlign="center" color="gray.300" fontSize="lg">
                 No trending recipes available.
               </Text>
             ) : (
               <SimpleGrid
-                columns={{ base: 1, sm: 2, md: 3, lg: 3 }}
-                spacing={8}
-                maxW="1000px"
+                columns={{ base: 1, sm: 2, lg: 3 }}
+                spacing={6}
+                maxW="1200px"
                 mx="auto"
                 px={5}
                 justifyItems="center"
@@ -178,34 +298,39 @@ export default function Home() {
                   <Box
                     w="100%"
                     key={recipe._id}
-                    bg="white"
-                    borderRadius="lg"
+                    bg="#111827"
+                    borderRadius="xl"
                     overflow="hidden"
                     textAlign="center"
-                    maxW="280px"
-                    transition="transform 0.3s ease-in-out"
+                    maxW="320px"
+                    border="1px solid"
+                    borderColor="gray.700"
+                    boxShadow="sm"
+                    transition="all 0.2s ease"
+                    _hover={{
+                      boxShadow: 'md',
+                    }}
                   >
-                    <Box position="relative" w="100%" h="180px">
-                      <Image
-                        src={recipe.pic}
-                        alt={recipe.username}
-                        layout="fill"
-                        objectFit="cover"
-                        quality={100}
-                        style={{ borderRadius: '10px 10px 0 0' }}
-                      />
+                    <Box position="relative" w="100%" h="220px" overflow="hidden">
+                      <Image src={recipe.pic} alt={recipe.username} layout="fill" objectFit="cover" quality={100} />
                     </Box>
 
                     {/* Content Below Image */}
-                    <Box p={4}>
-                      <Flex align="center" justify="center" mt={-8}>
-                        <Avatar src={recipe.avatar} name={recipe.username} size="lg" border="4px solid white" />
+                    <Box p={6}>
+                      <Flex align="center" justify="center" mt={-12} mb={4}>
+                        <Avatar
+                          src={recipe.avatar}
+                          name={recipe.username}
+                          size="xl"
+                          border="4px solid white"
+                          boxShadow="md"
+                        />
                       </Flex>
 
-                      <Text fontSize="lg" color="black" fontWeight="bold" mt={3}>
+                      <Text fontSize="lg" color="gray.100" fontWeight="600" mb={1}>
                         {recipe.username}
                       </Text>
-                      <Text fontSize="sm" color="gray.600">
+                      <Text fontSize="sm" color="gray.300" noOfLines={2}>
                         {recipe.title || 'Delicious Recipe'}
                       </Text>
                     </Box>

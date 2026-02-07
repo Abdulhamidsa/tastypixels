@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, useDisclosure, IconButton, Heading, Text } from '@chakra-ui/react';
+import { Box, useDisclosure, IconButton, Heading, Text, VStack } from '@chakra-ui/react';
 import { ArrowUpIcon } from '@chakra-ui/icons';
 import { useAuth } from '@/context/AuthContext';
 import FilterDrawer from '@/components/FilterDrawer';
@@ -59,74 +59,119 @@ export default function Home() {
       </Head>
 
       {/* Page Container */}
-      <Box p={5} maxW="500px" width="100%" mx="auto" bg="background.dark" color="text.dark">
-        <Heading textAlign="center" fontSize="3xl" color="primary.500" mb={6}>
-          Feed
-        </Heading>
-        {loadingPosts ? (
-          <Box display="grid" gap="10">
-            <CardSkeleton />
-            <CardSkeleton />
-          </Box>
-        ) : (
-          <InfiniteScroll
-            dataLength={uploads.length}
-            next={loadMorePosts}
-            hasMore={hasMore}
-            endMessage={
-              <Text textAlign="center" color="text.dark" mt={4} mb={4}>
-                You have seen it all
-              </Text>
-            }
+      <Box
+        minH="100vh"
+        bg="linear-gradient(180deg, #0b1220 0%, #0f172a 60%, #111827 100%)"
+        py={6}
+        px={{ base: 3, md: 5 }}
+      >
+        <Box maxW="700px" mx="auto">
+          {/* Header */}
+          <Box
+            bg="rgba(17, 24, 39, 0.9)"
+            p={6}
+            borderRadius="xl"
+            mb={6}
+            textAlign="center"
+            boxShadow="lg"
+            border="1px solid"
+            borderColor="gray.700"
           >
-            <Box display="grid" gap="10">
-              {uploads.map((upload) => (
-                <PostCard
-                  key={upload._id}
-                  upload={upload}
-                  userData={userData}
-                  handleVote={handleVote}
-                  handleToggleComments={handleToggleComments}
-                  comments={comments}
-                  showComments={showComments}
-                  loadingComments={loadingComments}
-                  handleAddComment={handleAddComment}
-                  handleDeleteComment={handleDeleteComment}
-                  deletingCommentId={deletingCommentId}
-                  isAuthenticated={isAuthenticated}
-                  loadingVote={loadingVote}
-                  selectedUploadId={selectedUploadId}
-                  isOpen={isOpen}
-                  onClose={onClose}
-                  onOpen={onOpen}
-                  friendlyId={friendlyId}
-                  userRole={userRole}
-                />
-              ))}
-              {loadingMore && (
-                <>
-                  <CardSkeleton />
-                  <CardSkeleton />
-                </>
-              )}
-            </Box>
-          </InfiniteScroll>
-        )}
+            <Heading fontSize={{ base: '2xl', md: '3xl' }} color="gray.100" fontWeight="700" mb={2}>
+              Feed
+            </Heading>
+            <Text color="gray.300" fontSize="sm">
+              {isAuthenticated
+                ? 'Discover delicious meals from our community'
+                : 'Browse amazing recipes - Sign in to interact!'}
+            </Text>
+          </Box>
+          {/* Feed Content */}
+          {loadingPosts ? (
+            <VStack spacing={6}>
+              <CardSkeleton />
+              <CardSkeleton />
+            </VStack>
+          ) : (
+            <InfiniteScroll
+              dataLength={uploads.length}
+              next={loadMorePosts}
+              hasMore={hasMore}
+              endMessage={
+                <Box
+                  textAlign="center"
+                  py={6}
+                  px={4}
+                  bg="rgba(17, 24, 39, 0.9)"
+                  borderRadius="xl"
+                  border="1px solid"
+                  borderColor="gray.700"
+                  mt={4}
+                  mb={4}
+                >
+                  <Text color="gray.200" fontSize="md" fontWeight="500">
+                    You've seen all posts
+                  </Text>
+                  <Text color="gray.400" fontSize="sm" mt={1}>
+                    Check back later for more content
+                  </Text>
+                </Box>
+              }
+            >
+              <VStack spacing={4}>
+                {uploads.map((upload) => (
+                  <PostCard
+                    key={upload._id}
+                    upload={upload}
+                    userData={userData}
+                    handleVote={handleVote}
+                    handleToggleComments={handleToggleComments}
+                    comments={comments}
+                    showComments={showComments}
+                    loadingComments={loadingComments}
+                    handleAddComment={handleAddComment}
+                    handleDeleteComment={handleDeleteComment}
+                    deletingCommentId={deletingCommentId}
+                    isAuthenticated={isAuthenticated}
+                    loadingVote={loadingVote}
+                    selectedUploadId={selectedUploadId}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    onOpen={onOpen}
+                    friendlyId={friendlyId}
+                    userRole={userRole}
+                  />
+                ))}
+                {loadingMore && (
+                  <VStack spacing={4}>
+                    <CardSkeleton />
+                    <CardSkeleton />
+                  </VStack>
+                )}
+              </VStack>
+            </InfiniteScroll>
+          )}
+        </Box>
       </Box>
 
       {/* Scroll to Top Button */}
       {showGoToTop && (
         <IconButton
           position="fixed"
-          bottom="50px"
-          right="30px"
+          bottom={{ base: '20px', md: '30px' }}
+          right={{ base: '20px', md: '30px' }}
           zIndex="1000"
-          bg="primary.500"
+          size="lg"
+          borderRadius="full"
+          bg="blue.500"
           color="white"
-          icon={<ArrowUpIcon />}
+          icon={<ArrowUpIcon boxSize={5} />}
           onClick={scrollToTop}
-          _hover={{ bg: 'primary.600' }}
-          _active={{ bg: 'primary.700' }}
+          boxShadow="lg"
+          _hover={{
+            bg: 'blue.600',
+          }}
+          transition="all 0.2s"
         />
       )}
 
