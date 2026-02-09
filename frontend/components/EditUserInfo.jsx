@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Box, Button, Input, FormControl, FormLabel } from "@chakra-ui/react";
-import { fetchWithTokenRefresh } from "@/utils/auth";
-import { getApiUrl } from "@/utils/api";
+import { useState } from 'react';
+import { Box, Button, Input, FormControl, FormLabel } from '@chakra-ui/react';
+import { fetchWithTokenRefresh } from '@/utils/auth';
+import { getApiUrl } from '@/utils/api';
 
 const EditUserInfo = ({ user, onClose, stateChanger, setUpdate }) => {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -20,26 +20,26 @@ const EditUserInfo = ({ user, onClose, stateChanger, setUpdate }) => {
     };
 
     try {
-      const response = await fetchWithTokenRefresh(getApiUrl("/api/edit-post"), {
-        method: "PUT",
+      const response = await fetchWithTokenRefresh(getApiUrl('/api/edit-post'), {
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedUser),
       });
 
       const data = await response.json();
       if (response.ok) {
-        console.log(data);
+        // console.log(data);
         stateChanger(data);
         setUpdate(false);
         // This should update the userData state in the parent component
         onClose();
       } else {
-        console.error("Error updating user:", data.errors);
+        console.error('Error updating user:', data.errors);
       }
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error('Error updating user:', error);
     } finally {
       setLoading(false);
     }

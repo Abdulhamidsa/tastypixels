@@ -1,7 +1,7 @@
-import { useRef, useCallback } from "react";
-import { Box, Skeleton } from "@chakra-ui/react";
-import PostCard from "@/components/PostCard";
-import useFetchData from "@/hooks/useFetchData";
+import { useRef, useCallback } from 'react';
+import { Box, Skeleton } from '@chakra-ui/react';
+import PostCard from '@/components/PostCard';
+import useFetchData from '@/hooks/useFetchData';
 
 const PostList = () => {
   const { uploads, loadingPosts, userData, loadMorePosts, hasMore } = useFetchData();
@@ -13,7 +13,7 @@ const PostList = () => {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          console.log("Load more posts triggered");
+          // console.log("Load more posts triggered");
           loadMorePosts();
         }
       });
@@ -28,11 +28,30 @@ const PostList = () => {
         if (uploads.length === index + 1) {
           return (
             <div ref={lastPostElementRef} key={upload._id}>
-              <PostCard upload={upload} userData={userData} isAuthenticated={true} handleVote={() => {}} handleReportClick={() => {}} loadingVote={false} handleOpen={() => {}} />
+              <PostCard
+                upload={upload}
+                userData={userData}
+                isAuthenticated={true}
+                handleVote={() => {}}
+                handleReportClick={() => {}}
+                loadingVote={false}
+                handleOpen={() => {}}
+              />
             </div>
           );
         } else {
-          return <PostCard key={upload._id} upload={upload} userData={userData} isAuthenticated={true} handleVote={() => {}} handleReportClick={() => {}} loadingVote={false} handleOpen={() => {}} />;
+          return (
+            <PostCard
+              key={upload._id}
+              upload={upload}
+              userData={userData}
+              isAuthenticated={true}
+              handleVote={() => {}}
+              handleReportClick={() => {}}
+              loadingVote={false}
+              handleOpen={() => {}}
+            />
+          );
         }
       })}
       {loadingPosts && <Skeleton height="100px" />}

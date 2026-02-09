@@ -18,7 +18,7 @@ const addUpload = async (req, res) => {
       return res.status(404).json({ errors: ["User not found"] });
     }
 
-    console.log("Current number of uploads:", user.uploads.length);
+    // console.log("Current number of uploads:", user.uploads.length);
 
     if (user.uploads.length >= 88) {
       return res.status(400).json({ errors: ["Uploads Limit reached! Remove some uploads from your profile to add more."] });

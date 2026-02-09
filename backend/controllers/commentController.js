@@ -5,7 +5,7 @@ const connectToMongoDB = require("../database/db");
 const handleComments = async (req, res) => {
   await connectToMongoDB();
   const { uploadId } = req.query;
-  console.log("Upload ID:", uploadId);
+  // console.log("Upload ID:", uploadId);
 
   if (!mongoose.Types.ObjectId.isValid(uploadId)) {
     console.error("Invalid uploadId:", uploadId);
@@ -33,7 +33,7 @@ const handleComments = async (req, res) => {
           friendlyId: user ? user.friendlyId : null,
           createdAt: comment.createdAt,
         };
-      })
+      }),
     );
 
     return res.status(200).json(comments);

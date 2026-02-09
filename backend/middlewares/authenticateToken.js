@@ -26,7 +26,7 @@ const authenticateToken = async (req, res, next) => {
         req.user = jwt.verify(newAccessToken, process.env.JWT_SECRET_KEY);
         next();
       } catch (refreshError) {
-        console.log("Refresh token verification error:", refreshError);
+        // console.log("Refresh token verification error:", refreshError);
         return res.status(403).json({ message: "Forbidden: Invalid refresh token" });
       }
     } else {

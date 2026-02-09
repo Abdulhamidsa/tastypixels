@@ -39,7 +39,7 @@ const addComment = async (req, res) => {
     upload.comments.push(newComment);
     await userWithUpload.save();
     const { userId: _, ...responseComment } = newComment;
-    console.log(responseComment);
+    // console.log(responseComment);
     return res.status(200).json({
       message: "Comment added successfully",
       comment: responseComment,
