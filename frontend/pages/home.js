@@ -79,7 +79,12 @@ export default function Home() {
             border="1px solid"
             borderColor="gray.700"
           >
-            <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'flex-start', md: 'center' }} gap={4}>
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              justify="space-between"
+              align={{ base: 'flex-start', md: 'center' }}
+              gap={4}
+            >
               <Box flex="1">
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} color="gray.100" fontWeight="700" mb={2}>
                   Feed
@@ -129,7 +134,7 @@ export default function Home() {
                   mb={4}
                 >
                   <Text color="gray.200" fontSize="md" fontWeight="500">
-                    You've seen all posts
+                    You have seen all posts
                   </Text>
                   <Text color="gray.400" fontSize="sm" mt={1}>
                     Check back later for more content

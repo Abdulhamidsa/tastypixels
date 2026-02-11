@@ -20,11 +20,11 @@ export default function Layout({ children }) {
 
   return (
     <Box display="flex" flexDirection="column" minH="100dvh">
-      {/* <Navbar /> */}
-      {/* <BackToPortfolioButton /> */}
+      <Navbar />
+      <BackToPortfolioButton />
       {children}
-      {/* <Analytics /> */}
-      {/* <Footer /> */}
+      <Analytics />
+      <Footer />
     </Box>
   );
 }
