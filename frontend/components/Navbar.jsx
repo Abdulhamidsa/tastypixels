@@ -131,7 +131,7 @@ const Navbar = () => {
               >
                 Profile
               </Button>
-              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="link" />
+              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} color="black" variant="link" />
             </>
           )}
         </Flex>
@@ -241,7 +241,13 @@ const Navbar = () => {
                     >
                       Profile
                     </Button>
-                    <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="link" />
+                    <IconButton
+                      aria-label="Logout"
+                      icon={<FiLogOut />}
+                      onClick={handleLogout}
+                      color="black"
+                      variant="link"
+                    />
                   </>
                 ) : (
                   <>
