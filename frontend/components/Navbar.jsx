@@ -89,14 +89,21 @@ const Navbar = () => {
               >
                 Browse Meals
               </Button>
-              <Button bg="transparent" borderColor="primary.700" colorScheme="primary" size="md" onClick={onModalOpen}>
+              <Button
+                bg="transparent"
+                borderColor="primary.700"
+                color="black"
+                colorScheme="primary"
+                size="md"
+                onClick={onModalOpen}
+              >
                 Sign In
               </Button>
             </>
           ) : (
             <>
               <Button
-                color="white"
+                color="black"
                 variant="ghost"
                 size="md"
                 leftIcon={<FiUpload />}
@@ -266,6 +273,7 @@ const Navbar = () => {
                     </Button>
                     <Button
                       variant="link"
+                      color="black"
                       onClick={() => {
                         onModalOpen();
                         onMenuClose();
