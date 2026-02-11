@@ -171,7 +171,7 @@ export default function Home() {
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 8, md: 10 }} maxW="1200px" mx="auto">
               <Box
-                bg="#111827"
+                bg="#000000df"
                 p={8}
                 borderRadius="xl"
                 textAlign="center"
@@ -204,7 +204,7 @@ export default function Home() {
               </Box>
 
               <Box
-                bg="#111827"
+                bg="#000000df"
                 p={8}
                 borderRadius="xl"
                 textAlign="center"
@@ -237,7 +237,7 @@ export default function Home() {
               </Box>
 
               <Box
-                bg="#111827"
+                bg="#000000df"
                 p={8}
                 borderRadius="xl"
                 textAlign="center"
@@ -272,7 +272,7 @@ export default function Home() {
           </Box>
 
           {/* TRENDING RECIPES */}
-          <Box bg="#0b1220" py={{ base: 16, md: 20 }}>
+          <Box bg="#000000df" py={{ base: 16, md: 20 }}>
             <Heading textAlign="center" color="gray.100" fontSize={{ base: '3xl', md: '4xl' }} mb={10} fontWeight="700">
               Trending Recipes
             </Heading>
@@ -298,7 +298,7 @@ export default function Home() {
                   <Box
                     w="100%"
                     key={recipe._id}
-                    bg="#111827"
+                    bg="#000000df"
                     borderRadius="xl"
                     overflow="hidden"
                     textAlign="center"

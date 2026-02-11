@@ -88,6 +88,7 @@ const Signin = ({ onModalClose }) => {
                       size="lg"
                       borderRadius="md"
                       w="100%"
+                      color="white"
                     />
                     <FormErrorMessage>{errors.email}</FormErrorMessage>
                   </FormControl>
@@ -110,6 +111,7 @@ const Signin = ({ onModalClose }) => {
                       size="lg"
                       borderRadius="md"
                       w="100%"
+                      color="white"
                     />
                     <FormErrorMessage>{errors.password}</FormErrorMessage>
                   </FormControl>

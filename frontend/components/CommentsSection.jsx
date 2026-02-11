@@ -1,14 +1,41 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Box, Flex, Button, Avatar, Text, Skeleton, IconButton, Textarea, Spinner, Badge, useToast, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from "@chakra-ui/react";
-import { FaTimes } from "react-icons/fa";
-import { MdSend } from "react-icons/md";
-import { fetchWithTokenRefresh } from "@/utils/auth";
-import { useAuth } from "@/context/AuthContext";
-import useComments from "@/hooks/useComments";
-import { getApiUrl } from "@/utils/api";
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  Box,
+  Flex,
+  Button,
+  Avatar,
+  Text,
+  Skeleton,
+  IconButton,
+  Textarea,
+  Spinner,
+  Badge,
+  useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+} from '@chakra-ui/react';
+import { FaTimes } from 'react-icons/fa';
+import { MdSend } from 'react-icons/md';
+import { fetchWithTokenRefresh } from '@/utils/auth';
+import { useAuth } from '@/context/AuthContext';
+import useComments from '@/hooks/useComments';
+import { getApiUrl } from '@/utils/api';
 
-const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, handleDeleteComment, loadingComments, deletingCommentId, friendlyId }) => {
-  const [newComment, setNewComment] = useState("");
+const CommentsSection = ({
+  disableFeatures,
+  uploadId,
+  comments,
+  fetchComments,
+  handleDeleteComment,
+  loadingComments,
+  deletingCommentId,
+  friendlyId,
+}) => {
+  const [newComment, setNewComment] = useState('');
   const [addingComment, setAddingComment] = useState(false);
   const toast = useToast();
   const { getTimeAgo } = useComments();
@@ -22,7 +49,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
     if (commentsContainerRef.current) {
       commentsContainerRef.current.scrollTo({
         top: commentsContainerRef.current.scrollHeight,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
     }
   };
@@ -36,9 +63,9 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
   const handleAddCommentClick = async () => {
     if (!isAuthenticated) {
       toast({
-        title: "Not authenticated",
-        description: "Please log in to comment.",
-        status: "warning",
+        title: 'Not authenticated',
+        description: 'Please log in to comment.',
+        status: 'warning',
         isClosable: true,
       });
       return;
@@ -49,10 +76,10 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
     setAddingComment(true);
 
     try {
-      const response = await fetchWithTokenRefresh(getApiUrl("/add-comment"), {
-        method: "POST",
+      const response = await fetchWithTokenRefresh(getApiUrl('/add-comment'), {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           uploadId,
@@ -61,25 +88,25 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add comment");
+        throw new Error('Failed to add comment');
       }
-      setNewComment("");
+      setNewComment('');
       await fetchComments(uploadId);
 
       toast({
-        title: "Comment added",
-        status: "success",
+        title: 'Comment added',
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
 
       scrollToBottom();
     } catch (error) {
-      console.error("Error adding comment:", error);
+      console.error('Error adding comment:', error);
       toast({
-        title: "Error",
-        description: "Failed to add comment",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to add comment',
+        status: 'error',
         isClosable: true,
       });
     } finally {
@@ -122,28 +149,34 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
             borderWidth="1px"
             p={2}
             sx={{
-              "::-webkit-scrollbar": {
-                width: "6px",
+              '::-webkit-scrollbar': {
+                width: '6px',
               },
-              "::-webkit-scrollbar-track": {
-                background: "#f1f1f1",
+              '::-webkit-scrollbar-track': {
+                background: '#f1f1f1',
               },
-              "::-webkit-scrollbar-thumb": {
-                background: "#888",
-                borderRadius: "10px",
+              '::-webkit-scrollbar-thumb': {
+                background: '#888',
+                borderRadius: '10px',
               },
-              "::-webkit-scrollbar-thumb:hover": {
-                background: "#555",
+              '::-webkit-scrollbar-thumb:hover': {
+                background: '#555',
               },
             }}
           >
-            {comments.map((comment) => (
-              <Box key={comment._id} p={3} borderWidth="1px" w="100%">
+            {comments.map((comment, index) => (
+              <Box
+                key={comment._id}
+                p={3}
+                w="100%"
+                borderBottom={index !== comments.length - 1 ? '1px solid' : 'none'}
+                borderColor="gray.200"
+              >
                 <Flex alignItems="center" mb={2}>
                   <Avatar size="sm" name={comment.username} />
                   <Box ml={3}>
                     <Text fontWeight="bold">{comment.username}</Text>
-                    {comment.username === "Abdulhamid" && (
+                    {comment.username === 'Abdulhamid' && (
                       <Badge ml={2} colorScheme="purple">
                         Admin
                       </Badge>
@@ -156,7 +189,16 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
                     {deletingCommentId === comment._id && comment.username === friendlyId ? (
                       <Spinner size="xs" />
                     ) : (
-                      comment.friendlyId === friendlyId && <IconButton aria-label="Delete comment" icon={<FaTimes />} onClick={() => onDeleteClick(comment._id)} size="xs" variant="ghost" colorScheme="red" />
+                      comment.friendlyId === friendlyId && (
+                        <IconButton
+                          aria-label="Delete comment"
+                          icon={<FaTimes />}
+                          onClick={() => onDeleteClick(comment._id)}
+                          size="xs"
+                          variant="ghost"
+                          colorScheme="red"
+                        />
+                      )
                     )}
                   </Flex>
                 </Flex>
@@ -173,7 +215,7 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
+                  if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     handleAddCommentClick();
                   }
@@ -187,12 +229,12 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
                 width="40px"
                 borderRadius="none"
                 alignSelf="flex-end"
-                icon={addingComment ? <Spinner size="sm" /> : <MdSend style={{ transform: "rotate(-45deg)" }} />}
+                icon={addingComment ? <Spinner size="sm" /> : <MdSend style={{ transform: 'rotate(-45deg)' }} />}
                 aria-label="Send Comment"
                 onClick={handleAddCommentClick}
                 variant="outline"
                 isDisabled={!isAuthenticated}
-              />{" "}
+              />{' '}
             </Box>
           )}
         </Box>
@@ -205,7 +247,9 @@ const CommentsSection = ({ disableFeatures, uploadId, comments, fetchComments, h
               Delete Comment
             </AlertDialogHeader>
 
-            <AlertDialogBody>Are you sure you want to delete this comment? This action cannot be undone.</AlertDialogBody>
+            <AlertDialogBody>
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onCloseAlert}>

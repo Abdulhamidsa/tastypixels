@@ -1,10 +1,26 @@
-import { useState } from "react";
-import { Formik, Form, Field } from "formik";
-import { signupValidationSchema } from "@/utils/validationSchemas";
-import { FormControl, Tooltip, Text, FormLabel, Input, FormErrorMessage, Button, Box, useToast, VStack, Heading, Divider, Flex, Icon, Container } from "@chakra-ui/react";
-import { useAuth } from "@/context/AuthContext";
-import { UsernameField, EmailField } from "@/components/FormFields";
-import { FiUserPlus } from "react-icons/fi";
+import { useState } from 'react';
+import { Formik, Form, Field } from 'formik';
+import { signupValidationSchema } from '@/utils/validationSchemas';
+import {
+  FormControl,
+  Tooltip,
+  Text,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  Button,
+  Box,
+  useToast,
+  VStack,
+  Heading,
+  Divider,
+  Flex,
+  Icon,
+  Container,
+} from '@chakra-ui/react';
+import { useAuth } from '@/context/AuthContext';
+import { UsernameField, EmailField } from '@/components/FormFields';
+import { FiUserPlus } from 'react-icons/fi';
 
 const Signup = ({ onModalOpen, setFormType }) => {
   const {
@@ -15,12 +31,12 @@ const Signup = ({ onModalOpen, setFormType }) => {
   const [isCapsLockActive, setIsCapsLockActive] = useState(false);
 
   const handleSignInClick = () => {
-    setFormType("signin");
+    setFormType('signin');
     onModalOpen();
   };
 
   const handleKeyUp = (e) => {
-    setIsCapsLockActive(e.getModifierState("CapsLock"));
+    setIsCapsLockActive(e.getModifierState('CapsLock'));
   };
 
   return (
@@ -28,10 +44,10 @@ const Signup = ({ onModalOpen, setFormType }) => {
       <Container maxW="lg" bg="Background" p={{ base: 6, md: 8 }} textAlign="center">
         <VStack spacing={4} align="center">
           <Icon as={FiUserPlus} boxSize={10} color="primary.500" />
-          <Heading fontSize={{ base: "2xl", md: "3xl" }} color="white">
+          <Heading fontSize={{ base: '2xl', md: '3xl' }} color="white">
             Create an Account
           </Heading>
-          <Text fontSize="md" color="gray.600">
+          <Text fontSize="md" color="gray.400">
             Join the Food Community
           </Text>
         </VStack>
@@ -39,7 +55,7 @@ const Signup = ({ onModalOpen, setFormType }) => {
         <Divider my={6} />
 
         <Formik
-          initialValues={{ username: "", email: "", password: "", repeatPassword: "" }}
+          initialValues={{ username: '', email: '', password: '', repeatPassword: '' }}
           validationSchema={signupValidationSchema}
           onSubmit={async (values, { setSubmitting, setFieldError, validateForm }) => {
             const errors = await validateForm();
@@ -51,27 +67,27 @@ const Signup = ({ onModalOpen, setFormType }) => {
             try {
               await signup(values);
               toast({
-                title: "Signup Successful! Redirecting...",
-                status: "success",
+                title: 'Signup Successful! Redirecting...',
+                status: 'success',
                 duration: 2000,
                 isClosable: true,
-                position: "middle",
+                position: 'middle',
                 onCloseComplete: handleSignInClick,
               });
             } catch (error) {
-              const errorMessage = error.message || "Error signing up";
-              if (errorMessage.includes("Username already exists")) {
-                setFieldError("username", errorMessage);
-              } else if (errorMessage.includes("Email already exists")) {
-                setFieldError("email", errorMessage);
+              const errorMessage = error.message || 'Error signing up';
+              if (errorMessage.includes('Username already exists')) {
+                setFieldError('username', errorMessage);
+              } else if (errorMessage.includes('Email already exists')) {
+                setFieldError('email', errorMessage);
               } else {
                 toast({
-                  title: "Error",
+                  title: 'Error',
                   description: errorMessage,
-                  status: "error",
+                  status: 'error',
                   duration: 3000,
                   isClosable: true,
-                  position: "top",
+                  position: 'top',
                 });
               }
             } finally {
@@ -91,7 +107,19 @@ const Signup = ({ onModalOpen, setFormType }) => {
                       Password
                     </FormLabel>
                     <Tooltip label="Caps Lock is on" isOpen={isCapsLockActive} placement="left">
-                      <Input {...field} id="password" placeholder="Enter your password" type="password" onKeyUp={handleKeyUp} autoComplete="true" borderColor="gray.300" _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }} size="lg" borderRadius="md" />
+                      <Input
+                        {...field}
+                        id="password"
+                        color="white"
+                        placeholder="Enter your password"
+                        type="password"
+                        onKeyUp={handleKeyUp}
+                        autoComplete="true"
+                        borderColor="gray.300"
+                        _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 2px primary.100' }}
+                        size="lg"
+                        borderRadius="md"
+                      />
                     </Tooltip>
                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                   </FormControl>
@@ -113,8 +141,9 @@ const Signup = ({ onModalOpen, setFormType }) => {
                         onKeyUp={handleKeyUp}
                         autoComplete="true"
                         borderColor="gray.300"
-                        _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }}
+                        _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 2px primary.100' }}
                         size="lg"
+                        color="white"
                         borderRadius="md"
                       />
                     </Tooltip>
@@ -123,7 +152,18 @@ const Signup = ({ onModalOpen, setFormType }) => {
                 )}
               </Field>
 
-              <Button mt={4} w="100%" bg="primary.500" color="white" _hover={{ bg: "primary.600" }} _active={{ bg: "primary.700" }} size="lg" type="submit" isLoading={isSubmitting || loading} disabled={!isValid || isSubmitting || loading}>
+              <Button
+                mt={4}
+                w="100%"
+                bg="primary.500"
+                color="white"
+                _hover={{ bg: 'primary.600' }}
+                _active={{ bg: 'primary.700' }}
+                size="lg"
+                type="submit"
+                isLoading={isSubmitting || loading}
+                disabled={!isValid || isSubmitting || loading}
+              >
                 Sign Up
               </Button>
             </Form>

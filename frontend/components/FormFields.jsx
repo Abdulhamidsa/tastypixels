@@ -1,6 +1,6 @@
-import { Field, useFormikContext } from "formik";
-import { FormControl, FormLabel, Input, FormErrorMessage } from "@chakra-ui/react";
-import { checkExistingUsername, checkExistingEmail } from "@/utils/authUtils";
+import { Field, useFormikContext } from 'formik';
+import { FormControl, FormLabel, Input, FormErrorMessage } from '@chakra-ui/react';
+import { checkExistingUsername, checkExistingEmail } from '@/utils/authUtils';
 
 export const UsernameField = () => {
   const { setFieldError } = useFormikContext();
@@ -9,7 +9,7 @@ export const UsernameField = () => {
     if (value) {
       const exists = await checkExistingUsername(value);
       if (exists) {
-        setFieldError("username", "Username already exists");
+        setFieldError('username', 'Username already exists');
       }
     }
   };
@@ -26,9 +26,10 @@ export const UsernameField = () => {
             id="username"
             placeholder="Enter your username"
             borderColor="gray.300"
-            _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }}
+            _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 2px primary.100' }}
             size="lg"
             borderRadius="md"
+            color="white"
             onBlur={async (e) => {
               form.handleBlur(e);
               await validateUsername(e.target.value);
@@ -48,7 +49,7 @@ export const EmailField = () => {
     if (value) {
       const exists = await checkExistingEmail(value);
       if (exists) {
-        setFieldError("email", "Email already exists");
+        setFieldError('email', 'Email already exists');
       }
     }
   };
@@ -65,9 +66,10 @@ export const EmailField = () => {
             id="email"
             placeholder="Enter your email"
             borderColor="gray.300"
-            _focus={{ borderColor: "primary.500", boxShadow: "0 0 0 2px primary.100" }}
+            _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 2px primary.100' }}
             size="lg"
             borderRadius="md"
+            color="white"
             onBlur={async (e) => {
               form.handleBlur(e);
               await validateEmail(e.target.value);
