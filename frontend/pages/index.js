@@ -159,7 +159,7 @@ export default function Home() {
       {!isAuthenticated && (
         <>
           {/* HOW IT WORKS */}
-          <Box bg="#0f172a" py={{ base: 16, md: 24 }} px={4}>
+          <Box bg="#000000df" py={{ base: 16, md: 24 }} px={4}>
             <Heading
               textAlign="center"
               color="gray.100"
