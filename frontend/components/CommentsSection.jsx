@@ -167,50 +167,76 @@ const CommentsSection = ({
             {comments.map((comment, index) => (
               <Box
                 key={comment._id}
-                p={3}
                 w="100%"
-                borderBottom={index !== comments.length - 1 ? '1px solid' : 'none'}
+                p={3}
+                mb={3}
+                borderWidth="1px"
                 borderColor="gray.200"
+                borderRadius="lg"
+                bg="gray.50"
+                _hover={{ bg: 'gray.100' }}
+                boxShadow="sm"
               >
-                <Flex alignItems="center" mb={2}>
+                <Flex alignItems="flex-start" gap={3}>
                   <Avatar size="sm" name={comment.username} />
-                  <Box ml={3}>
-                    <Text fontWeight="bold">{comment.username}</Text>
-                    {comment.username === 'Abdulhamid' && (
-                      <Badge ml={2} colorScheme="purple">
-                        Admin
-                      </Badge>
-                    )}
-                    <Text fontSize="xs" color="gray.500">
-                      {getTimeAgo(comment.createdAt)}
+
+                  <Box flex="1">
+                    <Flex align="center" gap={2} wrap="wrap">
+                      <Text fontWeight="semibold" lineHeight="1">
+                        {comment.username}
+                      </Text>
+
+                      {comment.username === 'Abdulhamid' && (
+                        <Badge colorScheme="red" variant="subtle">
+                          Admin
+                        </Badge>
+                      )}
+
+                      <Text fontSize="xs" color="gray.500">
+                        {getTimeAgo(comment.createdAt)}
+                      </Text>
+
+                      <Box ml="auto">
+                        {deletingCommentId === comment._id && comment.friendlyId === friendlyId ? (
+                          <Spinner size="xs" color="red.500" />
+                        ) : (
+                          comment.friendlyId === friendlyId && (
+                            <IconButton
+                              aria-label="Delete comment"
+                              icon={<FaTimes />}
+                              onClick={() => onDeleteClick(comment._id)}
+                              size="xs"
+                              variant="ghost"
+                              colorScheme="red"
+                            />
+                          )
+                        )}
+                      </Box>
+                    </Flex>
+
+                    <Text mt={2} whiteSpace="pre-wrap" color="gray.800">
+                      {comment.text}
                     </Text>
                   </Box>
-                  <Flex justifyContent="space-between" alignItems="center" ml="auto">
-                    {deletingCommentId === comment._id && comment.username === friendlyId ? (
-                      <Spinner size="xs" />
-                    ) : (
-                      comment.friendlyId === friendlyId && (
-                        <IconButton
-                          aria-label="Delete comment"
-                          icon={<FaTimes />}
-                          onClick={() => onDeleteClick(comment._id)}
-                          size="xs"
-                          variant="ghost"
-                          colorScheme="red"
-                        />
-                      )
-                    )}
-                  </Flex>
                 </Flex>
-                <Text>{comment.text}</Text>
               </Box>
             ))}
           </Box>
 
           {!disableFeatures && (
-            <Box display="flex" alignItems="center" mt={3}>
+            <Box
+              display="flex"
+              alignItems="center"
+              mt={3}
+              borderWidth="1px"
+              p={2}
+              borderColor="gray.200"
+              borderRadius="md"
+            >
               <Textarea
                 placeholder="Add a comment..."
+                color="gray.800"
+                _placeholder={{ color: 'gray.400' }}
                 size="sm"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
@@ -229,11 +255,18 @@ const CommentsSection = ({
                 width="40px"
                 borderRadius="none"
                 alignSelf="flex-end"
-                icon={addingComment ? <Spinner size="sm" /> : <MdSend style={{ transform: 'rotate(-45deg)' }} />}
+                icon={
+                  addingComment ? (
+                    <Spinner size="sm" color="primary.500" />
+                  ) : (
+                    <MdSend style={{ transform: 'rotate(-45deg)' }} />
+                  )
+                }
                 aria-label="Send Comment"
                 onClick={handleAddCommentClick}
                 variant="outline"
                 isDisabled={!isAuthenticated}
+                color="primary.500"
               />{' '}
             </Box>
           )}
