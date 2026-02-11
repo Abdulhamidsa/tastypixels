@@ -41,6 +41,8 @@ const Navbar = () => {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const router = useRouter();
   const isSpecificPage = router.pathname === '/home';
+  const isHomePage = router.pathname === '/home';
+  const isProfilePage = router.pathname.includes('/profile');
 
   const handleLogout = () => {
     logout();
@@ -53,11 +55,13 @@ const Navbar = () => {
       <Flex
         zIndex="10"
         height="fit-content"
-        position="relative"
+        position="fixed"
+        top="0"
+        width="100%"
         bg="background"
         as="nav"
         align="center"
-        p={2}
+        p={1}
         justify="space-between"
         backdropFilter="blur(5px)"
         boxShadow="lg"
@@ -77,8 +81,10 @@ const Navbar = () => {
                 as={NextLink}
                 href="/home"
                 bg="transparent"
-                borderColor="primary.700"
-                colorScheme="primary"
+                border="2px solid"
+                borderColor={isHomePage ? 'primary.500' : 'transparent'}
+                color={isHomePage ? 'primary.500' : 'gray.700'}
+                _hover={{ borderColor: 'primary.400' }}
                 size="md"
               >
                 Browse Meals
@@ -90,36 +96,42 @@ const Navbar = () => {
           ) : (
             <>
               <Button
-                as={NextLink}
-                href="/home"
-                bg="transparent"
-                borderColor="primary.700"
-                colorScheme="primary"
-                size="md"
-              >
-                Food Gallery
-              </Button>
-              <Button
-                bg="primary.500"
                 color="white"
+                variant="ghost"
                 size="md"
                 leftIcon={<FiUpload />}
-                _hover={{ bg: 'primary.600' }}
+                _hover={{ borderColor: 'primary.400' }}
+                border="1px solid"
+                borderColor="transparent"
                 onClick={() => setIsUploadOpen(true)}
               >
                 Upload
               </Button>
               <Button
                 as={NextLink}
+                href="/home"
+                bg="transparent"
+                border="2px solid"
+                borderColor={isHomePage ? 'primary.500' : 'transparent'}
+                color={isHomePage ? 'primary.500' : 'gray.400'}
+                _hover={{ borderColor: 'primary.400' }}
+                size="md"
+              >
+                Food Gallery
+              </Button>
+              <Button
+                as={NextLink}
                 href={`/profile/${userName}`}
                 bg="transparent"
-                borderColor="primary.700"
-                colorScheme="primary"
+                border="2px solid"
+                borderColor={isProfilePage ? 'primary.500' : 'transparent'}
+                color={isProfilePage ? 'primary.500' : 'gray.400'}
+                _hover={{ borderColor: 'primary.400' }}
                 size="md"
               >
                 Profile
               </Button>
-              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="outline" />
+              <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="link" />
             </>
           )}
         </Flex>
@@ -136,15 +148,13 @@ const Navbar = () => {
                 alignItems="center"
                 justifyContent="center"
                 borderRadius="md"
-                bg="primary.500"
                 color="white"
                 p={2}
                 transition="all 0.3s ease"
-                _hover={{
-                  bg: 'primary.600',
-                }}
+                _hover={{ borderColor: 'primary.400' }}
                 _active={{
-                  bg: 'primary.700',
+                  border: '1px solid',
+                  borderColor: 'primary.700',
                   transform: 'scale(0.95)',
                 }}
                 onClick={() => {
@@ -194,7 +204,11 @@ const Navbar = () => {
                     <Button
                       as={NextLink}
                       href="/home"
-                      variant="default"
+                      bg="transparent"
+                      border="2px solid"
+                      borderColor={isHomePage ? 'primary.500' : 'transparent'}
+                      color={isHomePage ? 'primary.500' : 'white'}
+                      _hover={{ borderColor: 'primary.400' }}
                       width={['50%', '180px', '200px']}
                       onClick={onMenuClose}
                     >
@@ -202,7 +216,6 @@ const Navbar = () => {
                     </Button>
 
                     <Button
-                      bg="primary.500"
                       color="white"
                       width={['50%', '180px', '200px']}
                       leftIcon={<FiUpload />}
@@ -217,27 +230,35 @@ const Navbar = () => {
                     <Button
                       as={NextLink}
                       href={`/profile/${userName}`}
-                      variant="default"
+                      bg="transparent"
+                      border="2px solid"
+                      borderColor={isProfilePage ? 'primary.500' : 'transparent'}
+                      color={isProfilePage ? 'primary.500' : 'white'}
+                      _hover={{ borderColor: 'primary.400' }}
                       width={['50%', '180px', '200px']}
                       onClick={onMenuClose}
                     >
                       Profile
                     </Button>
-                    <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="default" />
+                    <IconButton aria-label="Logout" icon={<FiLogOut />} onClick={handleLogout} variant="link" />
                   </>
                 ) : (
                   <>
                     <Button
                       as={NextLink}
                       href="/home"
-                      variant="default"
+                      bg="transparent"
+                      border="2px solid"
+                      borderColor={isHomePage ? 'primary.500' : 'transparent'}
+                      color={isHomePage ? 'primary.500' : 'white'}
+                      _hover={{ borderColor: 'primary.400' }}
                       width={['50%', '180px', '200px']}
                       onClick={onMenuClose}
                     >
                       Browse Meals
                     </Button>
                     <Button
-                      variant="default"
+                      variant="link"
                       onClick={() => {
                         onModalOpen();
                         onMenuClose();

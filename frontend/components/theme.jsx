@@ -1,7 +1,7 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme } from '@chakra-ui/react';
 
 const config = {
-  initialColorMode: "dark",
+  initialColorMode: 'dark',
   useSystemColorMode: true,
 };
 
@@ -10,111 +10,111 @@ const theme = extendTheme({
   styles: {
     global: (props) => ({
       body: {
-        bg: props.colorMode === "dark" ? "#121212" : "#F8F9FA",
-        color: props.colorMode === "dark" ? "#E0E0E0" : "#1A1A1A",
-        transition: "background-color 0.4s ease-in-out",
+        bg: '#FFFFFF',
+        color: '#2D2D2D',
+        transition: 'background-color 0.4s ease-in-out',
       },
     }),
   },
 
   colors: {
     primary: {
-      50: "#EAF2FE",
-      100: "#C7D8FB",
-      200: "#A4BEF9",
-      300: "#809FF6",
-      400: "#fffff",
-      500: "#3A5CDB",
-      600: "#2F4BB8",
-      700: "#233795",
-      800: "#182572",
-      900: "#0E154F",
+      50: '#FFF4E6',
+      100: '#FFE0B2',
+      200: '#FFCC80',
+      300: '#FFB74D',
+      400: '#FFA726',
+      500: '#FF9800',
+      600: '#FB8C00',
+      700: '#F57C00',
+      800: '#EF6C00',
+      900: '#E65100',
     },
     secondary: {
-      50: "#FAEAEF",
-      100: "#EFC7D1",
-      200: "#E4A4B2",
-      300: "#D97F92",
-      400: "#CC5A72",
-      500: "#B33E56",
-      600: "#902D42",
-      700: "#6E1E2E",
-      800: "#4C0F1B",
-      900: "#2A0309",
+      50: '#FFF3E0',
+      100: '#FFE0B2',
+      200: '#FFCC80',
+      300: '#FFB74D',
+      400: '#FFA726',
+      500: '#FF9800',
+      600: '#FB8C00',
+      700: '#F57C00',
+      800: '#EF6C00',
+      900: '#E65100',
     },
     accent: {
-      50: "#FBF4E0",
-      100: "#F5E0B3",
-      200: "#EFCB84",
-      300: "#E9B756",
-      400: "#E3A332",
-      500: "#CC8A00",
-      600: "#A07000",
-      700: "#745000",
-      800: "#493000",
-      900: "#1F1000",
+      50: '#FBE9E7',
+      100: '#FFCCBC',
+      200: '#FFAB91',
+      300: '#FF8A65',
+      400: '#FF7043',
+      500: '#FF5722',
+      600: '#F4511E',
+      700: '#E64A19',
+      800: '#D84315',
+      900: '#BF360C',
     },
     background: {
-      dark: "#121212",
-      light: "#F8F9FA",
+      dark: '#FFFFFF',
+      light: '#FFFFFF',
     },
     text: {
-      light: "#1A1A1A",
-      dark: "#E0E0E0",
+      light: '#2D2D2D',
+      dark: '#2D2D2D',
     },
   },
 
   components: {
     Link: {
       baseStyle: {
-        color: "primary.400",
+        color: 'primary.400',
         _hover: {
-          textDecoration: "none",
-          color: "primary.500",
+          textDecoration: 'none',
+          color: 'primary.500',
         },
       },
     },
     Modal: {
       baseStyle: (props) => ({
         dialog: {
-          bg: props.colorMode === "dark" ? "background.dark" : "background.light",
-          color: props.colorMode === "dark" ? "text.dark" : "text.light",
-          boxShadow: "xl",
-          borderRadius: "md",
+          bg: props.colorMode === 'dark' ? 'background.dark' : 'background.light',
+          color: props.colorMode === 'dark' ? 'text.dark' : 'text.light',
+          boxShadow: 'xl',
+          borderRadius: 'md',
         },
       }),
     },
     Drawer: {
       baseStyle: (props) => ({
         dialog: {
-          bg: props.colorMode === "dark" ? "background.dark" : "background.light",
-          color: props.colorMode === "dark" ? "text.dark" : "text.light",
+          bg: props.colorMode === 'dark' ? 'background.dark' : 'background.light',
+          color: props.colorMode === 'dark' ? 'text.dark' : 'text.light',
         },
       }),
     },
     Button: {
       baseStyle: {
-        fontWeight: "bold",
-        borderRadius: "md",
+        fontWeight: 'bold',
+        borderRadius: 'md',
       },
       variants: {
         solid: {
-          bg: "primary.500",
-          color: "white",
+          bg: 'primary.500',
+          color: 'white',
           _hover: {
-            bg: "primary.600",
+            bg: 'primary.600',
           },
         },
         outline: {
-          borderColor: "primary.500",
+          borderColor: 'primary.500',
           _hover: {
-            bg: "primary.600",
+            bg: 'primary.600',
           },
         },
         ghost: {
-          color: "secondary.500",
+          color: 'secondary.500',
           _hover: {
-            bg: "secondary.100",
+            bg: 'secondary.100',
           },
         },
       },

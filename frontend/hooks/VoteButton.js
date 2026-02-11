@@ -27,7 +27,7 @@ const VoteButton = ({ upload, handleVote, loadingVote, isAuthenticated }) => {
             {loadingVote[upload._id] === 'like' ? <Spinner size="sm" /> : <FaArrowUp />}
           </Button>
         </Tooltip>
-        <Text color="gray.400">{upload.likes}</Text>
+        <Text color="gray.600">{upload.likes}</Text>
       </Box>
 
       {/* Downvote Button */}
@@ -51,7 +51,7 @@ const VoteButton = ({ upload, handleVote, loadingVote, isAuthenticated }) => {
             {loadingVote[upload._id] === 'dislike' ? <Spinner size="sm" /> : <FaArrowDown />}
           </Button>
         </Tooltip>
-        <Text color="gray.400">{upload.dislikes}</Text>
+        <Text color="gray.600">{upload.dislikes}</Text>
       </Box>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 import {
   InputGroup,
   InputRightElement,
@@ -25,17 +25,17 @@ import {
   ModalFooter,
   Spinner,
   Box,
-} from "@chakra-ui/react";
-import { ArrowUpIcon } from "@chakra-ui/icons";
-import useUpload from "@/hooks/useUpload";
+} from '@chakra-ui/react';
+import { ArrowUpIcon } from '@chakra-ui/icons';
+import useUpload from '@/hooks/useUpload';
 
 const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
-  const [title, setTitle] = useState(editedUpload ? editedUpload.title : "");
-  const [description, setDescription] = useState(editedUpload ? editedUpload.description : "");
+  const [title, setTitle] = useState(editedUpload ? editedUpload.title : '');
+  const [description, setDescription] = useState(editedUpload ? editedUpload.description : '');
   const [selectedTags, setSelectedTags] = useState(editedUpload ? editedUpload.tags : []);
-  const [selectedCategory, setSelectedCategory] = useState(editedUpload ? editedUpload.category : "");
-  const [tagInput, setTagInput] = useState("");
-  const [tagError, setTagError] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(editedUpload ? editedUpload.category : '');
+  const [tagInput, setTagInput] = useState('');
+  const [tagError, setTagError] = useState('');
   const fileInputRef = useRef(undefined);
   const inputRef = useRef();
 
@@ -43,26 +43,26 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
   const [isImageUpdated, setIsImageUpdated] = useState(false);
 
   const predefinedCategories = [
-    "Appetizers & Snacks",
-    "Main Courses",
-    "Desserts",
-    "Salads",
-    "Soups & Stews",
-    "Beverages",
-    "Breads & Baked Goods",
-    "Pasta & Noodles",
-    "Rice & Grains",
-    "Vegetarian",
-    "Vegan",
-    "Gluten-Free",
-    "Low-Carb",
-    "High-Protein",
-    "International Cuisine",
-    "Holiday Specials",
-    "Healthy Choices",
-    "Quick & Easy",
-    "Comfort Food",
-    "Kids Favorites",
+    'Appetizers & Snacks',
+    'Main Courses',
+    'Desserts',
+    'Salads',
+    'Soups & Stews',
+    'Beverages',
+    'Breads & Baked Goods',
+    'Pasta & Noodles',
+    'Rice & Grains',
+    'Vegetarian',
+    'Vegan',
+    'Gluten-Free',
+    'Low-Carb',
+    'High-Protein',
+    'International Cuisine',
+    'Holiday Specials',
+    'Healthy Choices',
+    'Quick & Easy',
+    'Comfort Food',
+    'Kids Favorites',
   ];
 
   useEffect(() => {
@@ -80,27 +80,27 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
   };
 
   const handleAddTag = () => {
-    if (tagInput.trim() === "") {
-      setTagError("Tag input is empty");
+    if (tagInput.trim() === '') {
+      setTagError('Tag input is empty');
       return;
     }
 
     if (selectedTags.length >= 4) {
-      setTagError("Only 4 tags are allowed");
+      setTagError('Only 4 tags are allowed');
       return;
     }
 
     if (selectedTags.includes(`#${tagInput.trim()}`)) {
-      setTagError("Tag already exists");
+      setTagError('Tag already exists');
       return;
     }
 
     if (tagInput.trim().length <= 10) {
       const formattedTag = `#${tagInput.trim()}`;
       setSelectedTags([...selectedTags, formattedTag]);
-      setTagInput("");
+      setTagInput('');
     } else {
-      setTagError("Tag input cannot exceed 10 characters");
+      setTagError('Tag input cannot exceed 10 characters');
     }
     inputRef.current.focus();
   };
@@ -108,9 +108,9 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
   const handleTagInputChange = (e) => {
     if (e.target.value.length <= 10) {
       setTagInput(e.target.value);
-      setTagError("");
+      setTagError('');
     } else {
-      setTagError("Tag input cannot exceed 10 characters");
+      setTagError('Tag input cannot exceed 10 characters');
     }
   };
 
@@ -152,22 +152,37 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
       <ModalOverlay />
       <ModalContent bg="background.dark" color="text.dark" borderRadius="lg" p={6}>
         <ModalHeader fontSize="xl" fontWeight="bold" color="primary.500">
-          {editedUpload ? "Edit Post" : "Upload Post"}
+          {editedUpload ? 'Edit Post' : 'Upload Post'}
         </ModalHeader>
         <ModalCloseButton />
 
         <ModalBody>
           <FormControl>
             <FormLabel color="text.dark">Title</FormLabel>
-            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Dish Title" disabled={isUploading} />
+            <Input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter Dish Title"
+              disabled={isUploading}
+              borderColor="gray.400"
+              _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+            />
           </FormControl>
 
           <FormControl mt={4}>
             <FormLabel color="text.dark">Description</FormLabel>
-            <Textarea value={description} onChange={handleDescriptionChange} placeholder="Enter description of your dish" disabled={isUploading} />
+            <Textarea
+              value={description}
+              onChange={handleDescriptionChange}
+              placeholder="Enter description of your dish"
+              disabled={isUploading}
+              borderColor="gray.400"
+              _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+            />
           </FormControl>
 
-          <FormControl mt={4} isInvalid={tagError !== ""}>
+          <FormControl mt={4} isInvalid={tagError !== ''}>
             <FormLabel color="text.dark">Custom Tags</FormLabel>
             <Wrap>
               {selectedTags.map((tag) => (
@@ -185,12 +200,14 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
                 onChange={handleTagInputChange}
                 placeholder="Enter custom tags"
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     e.preventDefault();
                     handleAddTag();
                   }
                 }}
                 disabled={isUploading}
+                borderColor="gray.400"
+                _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
               />
               <InputRightElement>
                 <IconButton aria-label="Add tag" icon={<ArrowUpIcon />} onClick={handleAddTag} disabled={isUploading} />
@@ -201,7 +218,13 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
 
           <FormControl mt={4}>
             <FormLabel color="text.dark">Category</FormLabel>
-            <ChakraSelect value={selectedCategory} onChange={handleCategorySelect} disabled={isUploading}>
+            <ChakraSelect
+              value={selectedCategory}
+              onChange={handleCategorySelect}
+              disabled={isUploading}
+              borderColor="gray.400"
+              _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+            >
               <option value="">Select Category</option>
               {predefinedCategories.map((category) => (
                 <option key={category} value={category}>
@@ -213,14 +236,30 @@ const Upload = ({ imageUrl, isOpen, onClose, editedUpload, addNewUpload }) => {
 
           <FormControl position="relative">
             <FormLabel>Image</FormLabel>
-            <Input p={1} type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} disabled={isUploading} />
+            <Input
+              p={1}
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              disabled={isUploading}
+              borderColor="gray.400"
+              _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+            />
             {isFileLoading && <Spinner position="absolute" top="55%" right="5%" transform="translate(-50%, -50%)" />}
           </FormControl>
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={handleSave} isLoading={isUploading} loadingText="Uploading" bg="primary.500" color="white" _hover={{ bg: "primary.600" }}>
-            {editedUpload ? "SAVE CHANGES" : "UPLOAD"}
+          <Button
+            onClick={handleSave}
+            isLoading={isUploading}
+            loadingText="Uploading"
+            bg="primary.500"
+            color="white"
+            _hover={{ bg: 'primary.600' }}
+          >
+            {editedUpload ? 'SAVE CHANGES' : 'UPLOAD'}
           </Button>
         </ModalFooter>
       </ModalContent>

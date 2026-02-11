@@ -196,17 +196,23 @@ export default function Dashboard() {
   };
 
   return (
-    <Box mx="auto" pt="10" width="100%" maxW="1000px">
-      <Heading as="h1" m={0} textAlign="center">
+    <Box mx="auto" pt="10" width="100%" minH="100vh" bg="#000000df" px={4}>
+      <Heading as="h1" m={0} textAlign="center" color="white" mb={24}>
         User Dashboard
       </Heading>
       <Tabs variant="enclosed">
         <TabList mb={4}>
-          <Tab>
+          <Tab
+            _selected={{ borderBottom: '3px solid', borderColor: 'primary.500', color: 'primary.500' }}
+            color="gray.400"
+          >
             <FaUser />
             <Text ml={2}>User Info</Text>
           </Tab>
-          <Tab>
+          <Tab
+            _selected={{ borderBottom: '3px solid', borderColor: 'primary.500', color: 'primary.500' }}
+            color="gray.400"
+          >
             <FaList />
             <Text ml={2}>Posts</Text>
           </Tab>
@@ -232,17 +238,32 @@ export default function Dashboard() {
                               value={username}
                               onChange={(e) => setUsername(e.target.value)}
                               required
+                              borderColor="gray.400"
+                              _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
                             />
                           </FormControl>
                           <FormControl id="email" mb={4}>
                             <FormLabel>Email</FormLabel>
-                            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            <Input
+                              type="email"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              required
+                              borderColor="gray.400"
+                              _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+                            />
                           </FormControl>
                           <FormControl id="password" mb={4}>
                             <FormLabel>Password</FormLabel>
-                            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <Input
+                              type="password"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              borderColor="gray.400"
+                              _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+                            />
                           </FormControl>
-                          <Button type="submit" colorScheme="blue" isLoading={loadingUserUpdate}>
+                          <Button type="submit" colorScheme="orange" isLoading={loadingUserUpdate}>
                             Save Changes
                           </Button>
                         </Box>
@@ -255,15 +276,15 @@ export default function Dashboard() {
                   <Flex align="center">
                     <Avatar size="xl" name={userData.username} src={userData.userAvatar} />
                     <Box ml={4}>
-                      <Heading as="h2" size="lg">
+                      <Heading as="h2" size="lg" color="white">
                         {userData.username}
                       </Heading>
-                      <Text>Email: {userData.email}</Text>
-                      <Text>Username: {userData.username}</Text>
+                      <Text color="gray.300">Email: {userData.email}</Text>
+                      <Text color="gray.300">Username: {userData.username}</Text>
                     </Box>
                   </Flex>
                 )}
-                <Button width="150px" onClick={onOpen} colorScheme="blue">
+                <Button width="150px" onClick={onOpen} colorScheme="orange">
                   Edit User Info
                 </Button>
               </Stack>
@@ -287,7 +308,7 @@ export default function Dashboard() {
                   mx="auto"
                   my="4"
                   boxShadow="lg"
-                  bg="gray.800"
+                  bg="#000000df"
                   transition="all 0.3s"
                   _hover={{ boxShadow: 'xl' }}
                 >
@@ -309,10 +330,10 @@ export default function Dashboard() {
           aria-label="Edit upload"
           icon={<FaEdit />}
           onClick={() => handleEditUpload(upload)}
-          colorScheme="blue"
+          colorScheme="orange"
           bg="gray.700"
           borderRadius="full"
-          _hover={{ bg: "blue.500" }}
+          _hover={{ bg: "orange.500" }}
         />
         */}
                       <IconButton
@@ -331,7 +352,7 @@ export default function Dashboard() {
                   </Box>
 
                   {/* Upload Details */}
-                  <Box p={4} bg="white" color="black">
+                  <Box p={4} bg="#000000df" color="white">
                     <Heading fontSize="lg" fontWeight="semibold">
                       {upload.title}
                     </Heading>
@@ -456,9 +477,9 @@ export default function Dashboard() {
               ))
             ) : (
               <>
-                <Text>Hey {username}, You have not posted anything yet, ready for your first post?</Text>
+                <Text color="white">Hey {username}, You have not posted anything yet, ready for your first post?</Text>
                 <Upload isOpen={isUploadOpen} closeMenu={onMenuClose} onClose={() => setIsUploadOpen(false)} />
-                <ChakraLink color="blue.400" onClick={() => openUpload()}>
+                <ChakraLink color="orange.400" onClick={() => openUpload()}>
                   Upload Now
                 </ChakraLink>
               </>

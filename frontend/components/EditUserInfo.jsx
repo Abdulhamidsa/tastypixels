@@ -46,20 +46,40 @@ const EditUserInfo = ({ user, onClose, stateChanger, setUpdate }) => {
   };
 
   return (
-    <Box as="form" onSubmit={handleSubmit}>
+    <Box as="form" onSubmit={handleSubmit} bg="#000000df">
       <FormControl id="username" mb={4}>
         <FormLabel>Username</FormLabel>
-        <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        <Input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          borderColor="gray.400"
+          _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+        />
       </FormControl>
       <FormControl id="email" mb={4}>
         <FormLabel>Email</FormLabel>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <Input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          borderColor="gray.400"
+          _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+        />
       </FormControl>
       <FormControl id="password" mb={4}>
         <FormLabel>Password</FormLabel>
-        <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          borderColor="gray.400"
+          _focus={{ borderColor: 'primary.500', boxShadow: '0 0 0 1px' }}
+        />
       </FormControl>
-      <Button type="submit" colorScheme="blue" isLoading={loading}>
+      <Button type="submit" colorScheme="orange" isLoading={loading}>
         Save Changes
       </Button>
     </Box>

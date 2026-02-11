@@ -118,7 +118,7 @@ function Demo() {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" onClick={onClose}>
+            <Button colorScheme="orange" onClick={onClose}>
               Close
             </Button>
             <Button colorScheme="teal" onClick={() => setIsFeedbackOpen(true)} ml={3}>
@@ -150,7 +150,7 @@ function Demo() {
             />
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleFeedbackSubmit}>
+            <Button colorScheme="orange" onClick={handleFeedbackSubmit}>
               Submit
             </Button>
             <Button onClick={() => setIsFeedbackOpen(false)} ml={3}>

@@ -183,7 +183,7 @@ export default function Home() {
                 }}
               >
                 <Box
-                  bg="blue.500"
+                  bg="orange.500"
                   borderRadius="full"
                   w="16"
                   h="16"
@@ -216,7 +216,7 @@ export default function Home() {
                 }}
               >
                 <Box
-                  bg="green.500"
+                  bg="orange.500"
                   borderRadius="full"
                   w="16"
                   h="16"

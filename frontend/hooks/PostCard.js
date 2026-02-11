@@ -66,12 +66,12 @@ const PostCard = ({
       borderRadius="xl"
       overflow="hidden"
       width="100%"
-      maxW="600px"
+      maxW="500px"
       mx="auto"
       my="4"
-      bg="#0f172a"
+      bg="white"
       border="1px solid"
-      borderColor="gray.700"
+      borderColor="gray.200"
       boxShadow="sm"
       transition="all 0.2s ease"
       _hover={{
@@ -79,20 +79,20 @@ const PostCard = ({
       }}
     >
       {/* User Header */}
-      <Box bg="#111827" p="4" display="flex" alignItems="center" borderBottom="1px solid" borderColor="gray.700">
+      <Box bg="gray.50" p="4" display="flex" alignItems="center" borderBottom="1px solid" borderColor="gray.200">
         <Avatar w="48px" h="48px" name={upload.username} src={upload.userAvatar} mr="3" />
         <Box flex="1">
           <Flex alignItems="center" gap={2}>
-            <Heading fontSize="md" fontWeight="600" color="gray.100">
+            <Heading fontSize="md" fontWeight="600" color="gray.800">
               {upload.username}
             </Heading>
             {upload.userRole === 'admin' && (
-              <Badge colorScheme="blue" fontSize="xs" px={2} borderRadius="md" fontWeight="500">
+              <Badge colorScheme="orange" fontSize="xs" px={2} borderRadius="md" fontWeight="500">
                 Admin
               </Badge>
             )}
           </Flex>
-          <Text fontSize="xs" color="gray.400">
+          <Text fontSize="xs" color="gray.600">
             {new Date(upload.postedAt).toLocaleDateString('en-US', {
               month: 'short',
               day: 'numeric',
@@ -103,11 +103,11 @@ const PostCard = ({
       </Box>
 
       {/* Content Section */}
-      <Box p={4} bg="#0f172a">
-        <Heading fontSize="lg" fontWeight="600" color="gray.100" mb={2}>
+      <Box p={4} bg="white">
+        <Heading fontSize="lg" fontWeight="600" color="gray.800" mb={2}>
           {upload.title}
         </Heading>
-        <Text fontSize="sm" color="gray.300" lineHeight="1.5">
+        <Text fontSize="sm" color="gray.700" lineHeight="1.5">
           {upload.description}
         </Text>
 
@@ -120,8 +120,8 @@ const PostCard = ({
               px={2}
               py={1}
               borderRadius="md"
-              bg="gray.800"
-              color="gray.200"
+              bg="gray.100"
+              color="gray.700"
               fontWeight="500"
             >
               #{tag}
@@ -161,8 +161,8 @@ const PostCard = ({
 
       {/* Category Badge */}
       <Box
-        bg="#111827"
-        color="blue.300"
+        bg="primary.50"
+        color="primary.700"
         textAlign="center"
         py={2}
         px={4}
@@ -171,13 +171,13 @@ const PostCard = ({
         letterSpacing="wide"
         textTransform="uppercase"
         borderBottom="1px solid"
-        borderColor="gray.700"
+        borderColor="gray.200"
       >
         {upload.category}
       </Box>
 
       {/* Actions Section */}
-      <Flex p={4} gap={4} bg="#0f172a" alignItems="center" justifyContent="flex-start">
+      <Flex p={4} gap={4} bg="white" alignItems="center" justifyContent="flex-start">
         {/* Upvote & Downvote Section */}
         <VoteButton
           upload={upload}
@@ -210,7 +210,7 @@ const PostCard = ({
               <FaComment />
             </Button>
           </Tooltip>
-          <Text color="gray.400">{comments[upload._id]?.length ?? upload.comments.length}</Text>
+          <Text color="gray.600">{comments[upload._id]?.length ?? upload.comments.length}</Text>
         </Box>
 
         {/* Report Button */}
