@@ -56,9 +56,9 @@ const Navbar = () => {
         zIndex="10"
         height="fit-content"
         position="fixed"
-        top="0"
+        top="-1"
+        bg="Background"
         width="100%"
-        bg="background"
         as="nav"
         align="center"
         p={1}
@@ -194,7 +194,7 @@ const Navbar = () => {
 
         <Drawer isOpen={isMenuOpen} placement="right" onClose={onMenuClose} size="sm">
           <DrawerOverlay />
-          <DrawerContent bg="background.dark" color="white">
+          <DrawerContent bg="background.dark" color="black">
             <DrawerCloseButton />
             <DrawerHeader></DrawerHeader>
             <DrawerBody>
@@ -216,7 +216,8 @@ const Navbar = () => {
                     </Button>
 
                     <Button
-                      color="white"
+                      color="black"
+                      variant="ghost"
                       width={['50%', '180px', '200px']}
                       leftIcon={<FiUpload />}
                       onClick={() => {
@@ -233,7 +234,7 @@ const Navbar = () => {
                       bg="transparent"
                       border="2px solid"
                       borderColor={isProfilePage ? 'primary.500' : 'transparent'}
-                      color={isProfilePage ? 'primary.500' : 'white'}
+                      color={isProfilePage ? 'primary.500' : 'black'}
                       _hover={{ borderColor: 'primary.400' }}
                       width={['50%', '180px', '200px']}
                       onClick={onMenuClose}
@@ -250,7 +251,7 @@ const Navbar = () => {
                       bg="transparent"
                       border="2px solid"
                       borderColor={isHomePage ? 'primary.500' : 'transparent'}
-                      color={isHomePage ? 'primary.500' : 'white'}
+                      color={isHomePage ? 'primary.500' : 'black'}
                       _hover={{ borderColor: 'primary.400' }}
                       width={['50%', '180px', '200px']}
                       onClick={onMenuClose}
