@@ -100,6 +100,16 @@ const Navbar = () => {
                 Food Gallery
               </Button>
               <Button
+                bg="primary.500"
+                color="white"
+                size="md"
+                leftIcon={<FiUpload />}
+                _hover={{ bg: 'primary.600' }}
+                onClick={() => setIsUploadOpen(true)}
+              >
+                Upload
+              </Button>
+              <Button
                 as={NextLink}
                 href={`/profile/${userName}`}
                 bg="transparent"
@@ -192,6 +202,19 @@ const Navbar = () => {
                     </Button>
 
                     <Button
+                      bg="primary.500"
+                      color="white"
+                      width={['50%', '180px', '200px']}
+                      leftIcon={<FiUpload />}
+                      onClick={() => {
+                        setIsUploadOpen(true);
+                        onMenuClose();
+                      }}
+                    >
+                      Upload
+                    </Button>
+
+                    <Button
                       as={NextLink}
                       href={`/profile/${userName}`}
                       variant="default"
@@ -252,6 +275,9 @@ const Navbar = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      {/* Upload Modal */}
+      {isAuthenticated && <Upload isOpen={isUploadOpen} onClose={() => setIsUploadOpen(false)} />}
     </>
   );
 };

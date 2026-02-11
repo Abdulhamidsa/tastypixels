@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Box, useDisclosure, IconButton, Heading, Text, VStack } from '@chakra-ui/react';
+import { Box, useDisclosure, IconButton, Heading, Text, VStack, Button, Flex } from '@chakra-ui/react';
 import { ArrowUpIcon } from '@chakra-ui/icons';
+import { FiUpload } from 'react-icons/fi';
 import { useAuth } from '@/context/AuthContext';
 import FilterDrawer from '@/components/FilterDrawer';
 import CardSkeleton from '@/components/CardSkeleton';
@@ -9,6 +10,7 @@ import ImageModal from '@/hooks/ImageModal';
 import useFetchData from '@/hooks/useFetchData';
 import useVote from '@/hooks/useVote';
 import useComments from '@/hooks/useComments';
+import Upload from '@/components/Upload';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Head from 'next/head';
 
@@ -30,6 +32,7 @@ export default function Home() {
   const [selectedUploadId] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isUploadOpen, onOpen: onUploadOpen, onClose: onUploadClose } = useDisclosure();
   const [sortOrder, setSortOrder] = useState('a-z');
   const [currentFilter] = useState('Filter by');
 
@@ -72,19 +75,35 @@ export default function Home() {
             p={6}
             borderRadius="xl"
             mb={6}
-            textAlign="center"
             boxShadow="lg"
             border="1px solid"
             borderColor="gray.700"
           >
-            <Heading fontSize={{ base: '2xl', md: '3xl' }} color="gray.100" fontWeight="700" mb={2}>
-              Feed
-            </Heading>
-            <Text color="gray.300" fontSize="sm">
-              {isAuthenticated
-                ? 'Discover delicious meals from our community'
-                : 'Browse amazing recipes - Sign in to interact!'}
-            </Text>
+            <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'flex-start', md: 'center' }} gap={4}>
+              <Box flex="1">
+                <Heading fontSize={{ base: '2xl', md: '3xl' }} color="gray.100" fontWeight="700" mb={2}>
+                  Feed
+                </Heading>
+                <Text color="gray.300" fontSize="sm">
+                  {isAuthenticated
+                    ? 'Discover delicious meals from our community'
+                    : 'Browse amazing recipes - Sign in to interact!'}
+                </Text>
+              </Box>
+              {isAuthenticated && (
+                <Button
+                  bg="primary.500"
+                  color="white"
+                  size="md"
+                  leftIcon={<FiUpload />}
+                  _hover={{ bg: 'primary.600' }}
+                  onClick={onUploadOpen}
+                  whiteSpace="nowrap"
+                >
+                  Upload Post
+                </Button>
+              )}
+            </Flex>
           </Box>
           {/* Feed Content */}
           {loadingPosts ? (
@@ -204,6 +223,9 @@ export default function Home() {
         sortOrder={sortOrder}
         currentFilter={currentFilter}
       />
+
+      {/* Upload Modal */}
+      <Upload isOpen={isUploadOpen} onClose={onUploadClose} />
     </>
   );
 }
