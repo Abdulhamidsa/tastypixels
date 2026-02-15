@@ -31,7 +31,7 @@ const BackToPortfolioButton = () => {
 
   const handleBackToPortfolio = () => {
     sessionStorage.removeItem(STORAGE_KEY);
-    window.location.href = 'https://abdulhamid-sa.vercel.app/projects';
+    window.location.href = 'cv.ab';
   };
 
   if (!isFromPortfolio) return null;

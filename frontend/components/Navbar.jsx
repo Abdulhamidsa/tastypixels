@@ -77,22 +77,22 @@ const Navbar = () => {
         <Flex align="center" gap={4} mr={4} display={{ base: 'none', md: 'flex' }}>
           {!isAuthenticated ? (
             <>
-              <Button
+              {/* <Button
                 as={NextLink}
                 href="/home"
                 bg="transparent"
                 border="2px solid"
                 borderColor={isHomePage ? 'primary.500' : 'transparent'}
-                color={isHomePage ? 'primary.500' : 'gray.700'}
+                color={isHomePage ? 'primary.500' : 'white'}
                 _hover={{ borderColor: 'primary.400' }}
                 size="md"
               >
                 Browse Meals
-              </Button>
+              </Button> */}
               <Button
                 bg="transparent"
                 borderColor="primary.700"
-                color="black"
+                color="white"
                 colorScheme="primary"
                 size="md"
                 onClick={onModalOpen}
@@ -258,7 +258,7 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <Button
+                    {/* <Button
                       as={NextLink}
                       href="/home"
                       bg="transparent"
@@ -270,7 +270,7 @@ const Navbar = () => {
                       onClick={onMenuClose}
                     >
                       Browse Meals
-                    </Button>
+                    </Button> */}
                     <Button
                       variant="link"
                       color="black"

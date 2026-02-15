@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import Loading from '@/components/Loading';
 import { Box } from '@chakra-ui/react';
 import Footer from '@/components/Footer';
-import BackToPortfolioButton from '@/components/BackToPortfolioButton';
+// import BackToPortfolioButton from '@/components/BackToPortfolioButton';
 
 import { Analytics } from '@vercel/analytics/next';
 
@@ -22,7 +22,7 @@ export default function Layout({ children }) {
     <>
       <Box display="flex" flexDirection="column" minH="100dvh">
         <Navbar />
-        <BackToPortfolioButton />
+        {/* <BackToPortfolioButton /> */}
         {children}
         <Analytics />
         <Footer />
